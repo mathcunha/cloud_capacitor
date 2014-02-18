@@ -1,0 +1,51 @@
+---
+- !ruby/object:CloudCapacitor::Configuration
+  name: m1.small
+  cpu: 1
+  mem: 1.7
+  price: 0.06
+- !ruby/object:CloudCapacitor::Configuration
+  name: c1.medium
+  cpu: 5
+  mem: 1.7
+  price: 0.145
+- !ruby/object:CloudCapacitor::Configuration
+  name: c1.medium (x2)
+  cpu: 10
+  mem: 3.4
+  price: 0.29
+- !ruby/object:CloudCapacitor::Configuration
+  name: c1.medium (x3)
+  cpu: 15
+  mem: 5.1
+  price: 0.435
+- !ruby/object:CloudCapacitor::Configuration
+  name: c3.large
+  cpu: 7
+  mem: 3.75
+  price: 0.15
+- !ruby/object:CloudCapacitor::Configuration
+  name: m1.large
+  cpu: 4
+  mem: 7.5
+  price: 0.24
+- !ruby/object:CloudCapacitor::Configuration
+  name: m2.xlarge
+  cpu: 6.5
+  mem: 17.1
+  price: 0.41
+- !ruby/object:CloudCapacitor::Configuration
+  name: c1.xlarge
+  cpu: 20
+  mem: 7.0
+  price: 0.58
+- !ruby/object:CloudCapacitor::Configuration
+  name: m1.xlarge
+  cpu: 8
+  mem: 15.0
+  price: 0.48
+- !ruby/object:CloudCapacitor::Configuration
+  name: m2.4xlarge
+  cpu: 26
+  mem: 68.4
+  price: 1.64
