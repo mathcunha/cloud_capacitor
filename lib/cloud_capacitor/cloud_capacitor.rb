@@ -1,4 +1,4 @@
-require_relative "cloud_capacitor/version"
+require_relative "version"
 require_relative "err/invalid_config_name_error"
 require_relative "err/invalid_mode_error"
 
