@@ -95,6 +95,10 @@ describe CloudCapacitor::CloudCapacitor do
     end
   end
 
+  it "provides an interface for test executions by means of an Executor" do
+    @cloud_capacitor.should respond_to :execute
+  end
+
   describe "#pick" do
     it "selects a valid Configuration from the deployment space" do
       @cloud_capacitor.pick("c3.large")

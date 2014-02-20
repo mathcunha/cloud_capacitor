@@ -31,6 +31,10 @@ module CloudCapacitor
       @configs_by_price = deployment_space.sort { |x,y| x.price <=> y.price }      
     end
 
+    def execute
+      #TODO
+    end
+
     def pick(config_name)
       pos = deployment_space.index { |x| x.name == config_name }
       raise Err::InvalidConfigNameError, "Unsupported config name. #{list_supported_configs}" if pos.nil?

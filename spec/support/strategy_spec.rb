@@ -6,10 +6,10 @@
 # [1] https://www.relishapp.com/rspec/rspec-core/v/2-14/docs/example-groups/shared-examples
 
 shared_examples "a Performance Assessment Strategy" do
-  let(:strategy) { described_class.new(CloudCapacitor::CloudCapacitor.new) }
+  let(:strategy) { described_class.new(capacitor:CloudCapacitor::CloudCapacitor.new) }
 
   it "can evaluate performance data for an application" do
-    strategy.should respond_to :eval_result
+    strategy.should respond_to :evaluate_performance_results
   end
 
   it "maintains a reference for the Cloud Capacitor passed in" do
@@ -22,7 +22,7 @@ shared_examples "a Performance Assessment Strategy" do
   end
 
   it "responds with the best Configuration suitable to run the SUT under certain workload" do
-    strategy.evaluate_performance_results(workload:100).should be_an_instance_of Configuration
+    strategy.evaluate_performance_results(workload:100).should be_an_instance_of CloudCapacitor::Configuration
   end
 
 end
