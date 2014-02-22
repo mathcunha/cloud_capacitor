@@ -8,21 +8,22 @@
 shared_examples "a Performance Assessment Strategy" do
   let(:strategy) { described_class.new(capacitor:CloudCapacitor::CloudCapacitor.new) }
 
-  it "can evaluate performance data for an application" do
-    strategy.should respond_to :evaluate_performance_results
-  end
-
   it "maintains a reference for the Cloud Capacitor passed in" do
     strategy.capacitor.should_not be_nil
   end
 
   it "executes tests using the Cloud Capacitor facilities" do
-    strategy.capacitor.should_receive :execute
-    strategy.evaluate_performance_results(workload:100)
+    strategy.capacitor.should_receive(:execute).at_least(:once)
+    strategy.best_configuration_for(workload:100)
+  end
+
+  it "can assess the best configuration that can handle a certain workload" do
+    strategy.should respond_to :best_configuration_for
   end
 
   it "responds with the best Configuration suitable to run the SUT under certain workload" do
-    strategy.evaluate_performance_results(workload:100).should be_an_instance_of CloudCapacitor::Configuration
+    strategy.best_configuration_for(workload:100).should be_an_instance_of CloudCapacitor::Configuration
   end
+
 
 end
