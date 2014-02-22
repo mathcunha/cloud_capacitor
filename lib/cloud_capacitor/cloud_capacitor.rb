@@ -1,17 +1,19 @@
 require_relative "version"
 require_relative "err/invalid_config_name_error"
 require_relative "err/invalid_mode_error"
+require_relative "executors/dummy_executor"
 
 module CloudCapacitor
   class CloudCapacitor
     attr_accessor :deployment_space, :current_config
     attr_accessor :configs_by_cpu, :configs_by_mem, :configs_by_price
     attr_accessor :sla, :delta
+    attr_accessor :executor
 
     CPU_LOAD_LIMIT = 80
     MEM_LOAD_LIMIT = 70
 
-    def initialize(sla:2000, delta:0.10, file:"deployment_space.yml")
+    def initialize(executor:Executors::Dummy_Executor.new, sla:2000, delta:0.10, file:"deployment_space.yml")
 
       @deployment_space = load_deployment_space_from file
 
@@ -19,8 +21,9 @@ module CloudCapacitor
       @configs_by_cpu   = @deployment_space.sort { |x,y| x.cpu <=> y.cpu }
       @configs_by_mem   = @deployment_space.sort { |x,y| x.mem <=> y.mem }
       @configs_by_price = @deployment_space.sort { |x,y| x.price <=> y.price }
-      @sla = sla
-      @delta = delta
+      @executor         = executor
+      @sla              = sla
+      @delta            = delta
     end
     
     def deployment_space=(config_list)
@@ -31,8 +34,8 @@ module CloudCapacitor
       @configs_by_price = deployment_space.sort { |x,y| x.price <=> y.price }      
     end
 
-    def execute
-      #TODO
+    def execute(configuration:, workload:)
+      @executor.run(configuration: configuration, workload: workload)
     end
 
     def pick(config_name)

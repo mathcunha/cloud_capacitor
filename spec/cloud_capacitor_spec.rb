@@ -28,6 +28,10 @@ describe CloudCapacitor::CloudCapacitor do
         @cloud_capacitor.sla.should_not be nil
         @cloud_capacitor.delta.should_not be nil
       end
+
+      it "sets a default Executor" do
+        @cloud_capacitor.executor.should_not be nil
+      end
     end
 
     context "with sla parameter" do
@@ -95,8 +99,28 @@ describe CloudCapacitor::CloudCapacitor do
     end
   end
 
-  it "provides an interface for test executions by means of an Executor" do
+  it "has an associated Executor" do
+    @cloud_capacitor.executor.should_not be_nil
+  end
+
+  it "allows changing the associated Executor at runtime" do
+    @cloud_capacitor.should respond_to :executor=
+  end
+
+  it "provides an interface to execute tests by means of an Executor" do
     @cloud_capacitor.should respond_to :execute
+  end
+
+  describe "#execute" do
+    it "runs a performance test against a specified configuration and for a specified workload" do
+      @cloud_capacitor.executor.should_receive :run
+      @cloud_capacitor.execute configuration: @config01, workload: 100
+    end
+
+    it "returns test result information" do
+      result = @cloud_capacitor.execute configuration: @config01, workload: 100
+      result.should_not be_nil
+    end
   end
 
   describe "#pick" do

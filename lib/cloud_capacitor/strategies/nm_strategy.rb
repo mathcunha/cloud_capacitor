@@ -9,7 +9,7 @@ module CloudCapacitor
       end
 
       def evaluate_performance_results(workload:)
-        @capacitor.execute
+        @capacitor.execute(configuration: @capacitor.current_config, workload: workload)
 
         @capacitor.current_config
       end
