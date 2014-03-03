@@ -9,7 +9,7 @@ describe CloudCapacitor::Executors::Dummy_Executor do
   it_behaves_like "a Performance Test Executor"
 
   it "returns a fixed result suitable only for development tests purpose" do
-    @executor.run(configuration: @config01, workload: 100).should eql( {response_time: 500, cpu: 45.5, mem: 38.9, errors: 0, requests: 1000} )
+    @executor.run(configuration: @config01, workload: 100).should be_an_instance_of Hash
   end
 
 end

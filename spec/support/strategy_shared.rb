@@ -12,18 +12,11 @@ shared_examples "a Performance Assessment Strategy" do
     strategy.capacitor.should_not be_nil
   end
 
-  it "executes tests using the Cloud Capacitor facilities" do
-    strategy.capacitor.should_receive(:execute).at_least(:once)
-    strategy.best_configuration_for(workload:100)
-  end
-
   it "can assess the best configuration that can handle a certain workload" do
-    strategy.should respond_to :best_configuration_for
+    strategy.should respond_to(:best_configuration_for).with(1).argument
   end
 
   it "responds with the best Configuration suitable to run the SUT under certain workload" do
     strategy.best_configuration_for(workload:100).should be_an_instance_of CloudCapacitor::Configuration
   end
-
-
 end

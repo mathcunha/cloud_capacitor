@@ -159,6 +159,39 @@ describe CloudCapacitor::CloudCapacitor do
       @cloud_capacitor.pick("c1")
       [:cpu, :mem, :price].each do |mode|
         @cloud_capacitor.next_config_by(mode).should be_nil
+      end
+    end
+
+    it "does NOT change the current selected configuration" do
+      @cloud_capacitor.deployment_space = [@config01, @config02, @config03, @config04]
+      [:cpu, :mem, :price].each do |mode|
+        @cloud_capacitor.pick("c1")
+        @cloud_capacitor.next_config_by(mode)
+        @cloud_capacitor.current_config.should eql @config01
+        @cloud_capacitor.pick("c3")
+        @cloud_capacitor.next_config_by(mode)
+        @cloud_capacitor.current_config.should eql @config03
+      end
+    end
+  end
+
+  describe "#next_config_by!" do
+    it "changes the current selected configuration correctly" do
+      @cloud_capacitor.deployment_space = [@config01, @config02, @config03, @config04]
+      [:cpu, :mem, :price].each do |mode|
+        @cloud_capacitor.pick("c1")
+        @cloud_capacitor.next_config_by!(mode)
+        @cloud_capacitor.current_config.should eql @config02
+        @cloud_capacitor.pick("c3")
+        @cloud_capacitor.next_config_by!(mode)
+        @cloud_capacitor.current_config.should eql @config04
+      end
+    end
+    it "returns nil when past the last Configuration" do
+      @cloud_capacitor.deployment_space = [@config01]
+      @cloud_capacitor.pick("c1")
+      [:cpu, :mem, :price].each do |mode|
+        @cloud_capacitor.next_config_by!(mode).should be_nil
         @cloud_capacitor.current_config.should eql @config01
       end
     end
@@ -188,8 +221,44 @@ describe CloudCapacitor::CloudCapacitor do
       @cloud_capacitor.pick("c2")
       [:cpu, :mem, :price].each do |mode|
         @cloud_capacitor.previous_config_by(mode).should be_nil
+      end
+    end
+
+    it "does NOT change the current selected configuration" do
+      @cloud_capacitor.deployment_space = [@config01, @config02, @config03, @config04]
+      [:cpu, :mem, :price].each do |mode|
+        @cloud_capacitor.pick("c2")
+        @cloud_capacitor.previous_config_by(mode)
+        @cloud_capacitor.current_config.should eql @config02
+        @cloud_capacitor.pick("c4")
+        @cloud_capacitor.previous_config_by(mode)
+        @cloud_capacitor.current_config.should eql @config04
+      end
+    end
+
+  end
+
+  describe "#previous_config_by!" do
+    it "changes the current selected configuration correctly" do
+      @cloud_capacitor.deployment_space = [@config01, @config02, @config03, @config04]
+      [:cpu, :mem, :price].each do |mode|
+        @cloud_capacitor.pick("c2")
+        @cloud_capacitor.previous_config_by!(mode)
+        @cloud_capacitor.current_config.should eql @config01
+        @cloud_capacitor.pick("c4")
+        @cloud_capacitor.previous_config_by!(mode)
+        @cloud_capacitor.current_config.should eql @config03
+      end
+    end
+
+    it "returns nil when past the first Configuration" do
+      @cloud_capacitor.deployment_space = [@config02]
+      @cloud_capacitor.pick("c2")
+      [:cpu, :mem, :price].each do |mode|
+        @cloud_capacitor.previous_config_by!(mode).should be_nil
         @cloud_capacitor.current_config.should eql @config02
       end
     end
   end
+
 end

@@ -69,6 +69,10 @@ module CloudCapacitor
     def next_config_by(mode)
       validate_modes mode
       cfg = eval('configs_by_' + mode.to_s)[rank(@current_config, mode) + 1]
+    end
+
+    def next_config_by!(mode)
+      cfg = next_config_by mode
       @current_config = cfg if cfg
       cfg
     end
@@ -77,10 +81,17 @@ module CloudCapacitor
       validate_modes mode
       current_pos = rank(@current_config, mode)
       if current_pos > 0
-        @current_config = eval('configs_by_' + mode.to_s)[current_pos - 1]
+        eval('configs_by_' + mode.to_s)[current_pos - 1]
       else
         nil
       end
+    end
+
+    def previous_config_by!(mode)
+      validate_modes mode
+      cfg = previous_config_by mode
+      @current_config = cfg if cfg
+      cfg
     end
 
     protected
