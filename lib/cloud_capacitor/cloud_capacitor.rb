@@ -1,7 +1,7 @@
 require_relative "version"
 require_relative "err/invalid_config_name_error"
 require_relative "err/invalid_mode_error"
-require_relative "executors/dummy_executor"
+require_relative "executors/gdrive_executor"
 
 module CloudCapacitor
   class CloudCapacitor
@@ -13,7 +13,7 @@ module CloudCapacitor
     CPU_LOAD_LIMIT = 80
     MEM_LOAD_LIMIT = 70
 
-    def initialize(executor:Executors::Dummy_Executor.new, sla:2000, delta:0.10, file:"deployment_space.yml")
+    def initialize(executor:Executors::GDrive_Executor.new, sla:2000, delta:0.10, file:"deployment_space.yml")
 
       @deployment_space = load_deployment_space_from file
 

@@ -8,7 +8,7 @@
 # [1] https://www.relishapp.com/rspec/rspec-core/v/2-14/docs/example-groups/shared-examples
 shared_examples "a Performance Test Executor" do
   before :all do
-    @config01 = CloudCapacitor::Configuration.new(name:"c1",cpu:1, mem:1, price:0.1)
+    @config01 = CloudCapacitor::Configuration.new(name:"m1.small",cpu:1, mem:1, price:0.1)
   end
 
   let(:executor) { described_class.new }

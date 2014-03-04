@@ -118,7 +118,8 @@ describe CloudCapacitor::CloudCapacitor do
     end
 
     it "returns test result information" do
-      result = @cloud_capacitor.execute configuration: @config01, workload: 100
+      cfg = CloudCapacitor::Configuration.new(name:"c1.medium",cpu:1, mem:1, price:0.1)
+      result = @cloud_capacitor.execute configuration: cfg, workload: 100
       result.should_not be_nil
     end
   end
