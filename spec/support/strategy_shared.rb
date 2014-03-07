@@ -6,7 +6,7 @@
 # [1] https://www.relishapp.com/rspec/rspec-core/v/2-14/docs/example-groups/shared-examples
 
 shared_examples "a Performance Assessment Strategy" do
-  let(:strategy) { described_class.new(capacitor:CloudCapacitor::CloudCapacitor.new) }
+  let(:strategy) { described_class.new(capacitor:CloudCapacitor::Capacitor.new) }
 
   it "maintains a reference for the Cloud Capacitor passed in" do
     strategy.capacitor.should_not be_nil

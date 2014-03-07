@@ -1,8 +1,8 @@
 require "spec_helper"
 
-describe CloudCapacitor::CloudCapacitor do
+describe CloudCapacitor::Capacitor do
   before :all do
-    @cloud_capacitor = CloudCapacitor::CloudCapacitor.new
+    @cloud_capacitor = CloudCapacitor::Capacitor.new
     @config01 = CloudCapacitor::Configuration.new(name:"c1",cpu:1, mem:1, price:0.1)
     @config02 = CloudCapacitor::Configuration.new(name:"c2",cpu:2, mem:2, price:0.2)
     @config03 = CloudCapacitor::Configuration.new(name:"c3",cpu:3, mem:3, price:0.3)
@@ -21,7 +21,7 @@ describe CloudCapacitor::CloudCapacitor do
 
     context "with no parameters" do
       it "accepts zero arguments" do
-        @cloud_capacitor.should be_an_instance_of CloudCapacitor::CloudCapacitor
+        @cloud_capacitor.should be_an_instance_of CloudCapacitor::Capacitor
       end
 
       it "sets default values for sla and delta" do
@@ -35,10 +35,10 @@ describe CloudCapacitor::CloudCapacitor do
     end
 
     context "with sla parameter" do
-      capacitor = CloudCapacitor::CloudCapacitor.new(sla:1000)
+      capacitor = CloudCapacitor::Capacitor.new(sla:1000)
 
       it "accepts sla argument" do
-        capacitor.should be_an_instance_of CloudCapacitor::CloudCapacitor
+        capacitor.should be_an_instance_of CloudCapacitor::Capacitor
       end
 
       it "sets specified value for sla and default for delta" do
@@ -48,10 +48,10 @@ describe CloudCapacitor::CloudCapacitor do
     end
 
     context "with delta parameter" do
-      capacitor = CloudCapacitor::CloudCapacitor.new(delta:0.5)
+      capacitor = CloudCapacitor::Capacitor.new(delta:0.5)
 
       it "accepts delta argument" do
-        capacitor.should be_an_instance_of CloudCapacitor::CloudCapacitor
+        capacitor.should be_an_instance_of CloudCapacitor::Capacitor
       end
 
       it "sets specified value for delta and default for sla" do
@@ -61,10 +61,10 @@ describe CloudCapacitor::CloudCapacitor do
     end
 
     context "with both sla and delta parameters" do
-      capacitor = CloudCapacitor::CloudCapacitor.new(sla:1500, delta:0.3)
+      capacitor = CloudCapacitor::Capacitor.new(sla:1500, delta:0.3)
 
       it "accepts sla argument" do
-        capacitor.should be_an_instance_of CloudCapacitor::CloudCapacitor
+        capacitor.should be_an_instance_of CloudCapacitor::Capacitor
       end
 
       it "sets specified value for sla and default for delta" do
@@ -83,18 +83,18 @@ describe CloudCapacitor::CloudCapacitor do
         f.write YAML::dump ["not a configuration 01", "not a configuration 02"]
       end
 
-      capacitor = CloudCapacitor::CloudCapacitor.new(file:"configurations.yml")
+      capacitor = CloudCapacitor::Capacitor.new(file:"configurations.yml")
 
       it "loads list of Configurations" do
         capacitor.deployment_space.should have(2).configurations
       end
 
       it "raises an error when invalid file passed" do
-        expect { CloudCapacitor::CloudCapacitor.new(file:"no_file.yml") }.to raise_error
+        expect { CloudCapacitor::Capacitor.new(file:"no_file.yml") }.to raise_error
       end
 
       it "raises an error when specified file has invalid configurations" do
-        expect { CloudCapacitor::CloudCapacitor.new(file:"wrong.yml") }.to raise_error
+        expect { CloudCapacitor::Capacitor.new(file:"wrong.yml") }.to raise_error
       end
     end
   end

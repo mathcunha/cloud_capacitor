@@ -26,8 +26,8 @@ module CloudCapacitor
 
         def get_result(config, workload)
           col  = @ws.rows[1].index(workload.to_s) + 1
-          puts "Procurando #{config} na planilha"
-          puts "Encontrei na linha #{@ws.rows.index(@ws.rows.detect{ |row| row.include?(config)})}"
+          # puts "Procurando #{config} na planilha"
+          # puts "Encontrei na linha #{@ws.rows.index(@ws.rows.detect{ |row| row.include?(config)})}"
           line = @ws.rows.index(@ws.rows.detect{ |row| row.include?(config)}) + 1
 
           { response_time: @ws[line, col], 

@@ -32,7 +32,7 @@ module CloudCapacitor
             puts "CPU: #{cpu_usage}"
             puts "Mem: #{mem_usage}"
 
-            puts "Deveria deletar #{@capacitor.current_config.name}"
+            # puts "Deveria deletar #{@capacitor.current_config.name}"
             @configurations.delete_if {|cfg| cfg.name == @capacitor.current_config.name}
             if delta[:direction] == :up
               rejected << @capacitor.current_config

@@ -1,19 +1,18 @@
-require_relative "version"
-require_relative "err/invalid_config_name_error"
-require_relative "err/invalid_mode_error"
-require_relative "executors/gdrive_executor"
+require_relative "cloud_capacitor/err/invalid_config_name_error"
+require_relative "cloud_capacitor/err/invalid_mode_error"
+require_relative "cloud_capacitor/executors/gdrive_executor"
 
 module CloudCapacitor
-  class CloudCapacitor
+  CPU_LOAD_LIMIT = 80
+  MEM_LOAD_LIMIT = 70
+
+  class Capacitor
     attr_accessor :deployment_space, :current_config
     attr_accessor :configs_by_cpu, :configs_by_mem, :configs_by_price
     attr_accessor :sla, :delta
     attr_accessor :executor
 
-    CPU_LOAD_LIMIT = 80
-    MEM_LOAD_LIMIT = 70
-
-    def initialize(executor:Executors::GDrive_Executor.new, sla:2000, delta:0.10, file:"deployment_space.yml")
+    def initialize(executor:CloudCapacitor::Executors::GDrive_Executor.new, sla:2000, delta:0.10, file:"deployment_space.yml")
 
       @deployment_space = load_deployment_space_from file
 
@@ -100,7 +99,7 @@ module CloudCapacitor
         File.open file do |f|
           depl_space = YAML::load( f.read )
         end
-        raise Err::InvalidConfigurationFileError if depl_space.reject { |x| x.instance_of? Configuration }.size > 0
+        raise CloudCapacitor::Err::InvalidConfigurationFileError if depl_space.reject { |x| x.instance_of? CloudCapacitor::Configuration }.size > 0
         depl_space
       end
 
