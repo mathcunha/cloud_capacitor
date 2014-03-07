@@ -1,5 +1,7 @@
 require_relative "cloud_capacitor/err/invalid_config_name_error"
 require_relative "cloud_capacitor/err/invalid_mode_error"
+require_relative "cloud_capacitor/configuration"
+require_relative "cloud_capacitor/strategies/nm_strategy"
 require_relative "cloud_capacitor/executors/gdrive_executor"
 
 module CloudCapacitor
