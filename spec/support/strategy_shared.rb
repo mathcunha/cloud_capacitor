@@ -16,7 +16,4 @@ shared_examples "a Performance Assessment Strategy" do
     strategy.should respond_to(:best_configuration_for).with(1).argument
   end
 
-  it "responds with the best Configuration suitable to run the SUT under certain workload" do
-    strategy.best_configuration_for(workload:100).should be_an_instance_of CloudCapacitor::Configuration
-  end
 end

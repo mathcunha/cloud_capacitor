@@ -12,7 +12,7 @@ module CloudCapacitor
     attr_accessor :deployment_space, :current_config
     attr_accessor :configs_by_cpu, :configs_by_mem, :configs_by_price
     attr_accessor :sla, :delta
-    attr_accessor :executor
+    attr_accessor :executor, :strategy
 
     def initialize(executor:CloudCapacitor::Executors::GDrive_Executor.new, sla:2000, delta:0.10, file:"deployment_space.yml")
 

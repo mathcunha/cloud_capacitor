@@ -17,8 +17,4 @@ shared_examples "a Performance Test Executor" do
     executor.should respond_to :run
   end
   
-  it "executes tests" do
-    executor.run(configuration: @config01, workload:100).should_not be_nil
-  end
-
 end
