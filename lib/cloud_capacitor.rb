@@ -3,10 +3,9 @@ require_relative "cloud_capacitor/err/invalid_mode_error"
 require_relative "cloud_capacitor/configuration"
 require_relative "cloud_capacitor/strategies/nm_strategy"
 require_relative "cloud_capacitor/executors/gdrive_executor"
+require 'settingslogic'
 
 module CloudCapacitor
-  CPU_LOAD_LIMIT = 80
-  MEM_LOAD_LIMIT = 70
 
   class Capacitor
     attr_accessor :deployment_space, :current_config
@@ -43,28 +42,6 @@ module CloudCapacitor
       pos = deployment_space.index { |x| x.name == config_name }
       raise Err::InvalidConfigNameError, "Unsupported config name. #{list_supported_configs}" if pos.nil?
       @current_config = deployment_space[pos]
-    end
-
-    def eval_delta(result)
-      puts sla
-      puts sla.to_f
-
-      diff = ((result.to_f - sla.to_f).abs) / sla
-      
-      puts "Informed result: #{result} - SLA: #{sla} - Diff: #{diff}"
-      return :small  if diff <= (delta / 2)
-      return :medium if diff <= delta
-      return :large
-    end
-
-    def eval_cpu(result_cpu_load)
-      return :high  if result_cpu_load > CPU_LOAD_LIMIT
-      return :low_moderate
-    end
-
-    def eval_mem(result_mem_load)
-      return :high  if result_mem_load > MEM_LOAD_LIMIT
-      return :low_moderate
     end
 
     def next_config_by(mode)

@@ -1,0 +1,3 @@
+capacitor:
+  cpu_limit: 75
+  mem_limit: 75
