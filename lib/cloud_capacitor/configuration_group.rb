@@ -34,7 +34,22 @@ module CloudCapacitor
     end
 
     def to_s
-      @configurations.to_s
+      @size.to_s + @configuration.name + " " +price.to_s
+    end
+
+    def hash
+      str = (@size.to_s + @configuration.name)
+      (str).hash
+    end
+    
+    def eql?(object)
+      if(object.nil?)
+        return false
+      end
+      if(self.equal?(object))
+        return true
+      end
+      return @size.eql?(object.size) && @configuration.name.eql?(object.configuration.name)
     end
   end
 end
