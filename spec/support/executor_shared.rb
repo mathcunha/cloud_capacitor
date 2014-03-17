@@ -14,7 +14,7 @@ shared_examples "a Performance Test Executor" do
   let(:executor) { described_class.new }
 
   it "can dispatch the execution of a performance benchmark test" do
-    executor.should respond_to :run
+    executor.should respond_to(:run).with(2).arguments
   end
   
 end
