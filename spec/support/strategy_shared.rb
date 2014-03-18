@@ -4,16 +4,26 @@
 # suitable to run the SUT under the specified workload.
 #
 # [1] https://www.relishapp.com/rspec/rspec-core/v/2-14/docs/example-groups/shared-examples
+module CloudCapacitor
+  shared_examples "a Performance Assessment Strategy" do
+    let(:strategy) { described_class.new }
 
-shared_examples "a Performance Assessment Strategy" do
-  let(:strategy) { described_class.new(capacitor:CloudCapacitor::Capacitor.new) }
+    # Do we reaaly need this? Lets first implement the new strategy format
+    xit "maintains a reference for the Cloud Capacitor passed in" do
+      strategy.capacitor.should_not be_nil
+    end
 
-  it "maintains a reference for the Cloud Capacitor passed in" do
-    strategy.capacitor.should_not be_nil
+    it "accepts a reference to a Capacitor" do
+      strategy.should respond_to(:capacitor=).with(1).argument
+    end
+
+    it "can select lower Configurations from the DeploymentSpace" do
+      strategy.should respond_to(:select_lower_configuration_based_on).with(1).argument
+    end
+
+    it "can select higher Configurations from the DeploymentSpace" do
+      strategy.should respond_to(:select_higher_configuration_based_on).with(1).argument
+    end
+
   end
-
-  it "can assess the best configuration that can handle a certain workload" do
-    strategy.should respond_to(:best_configuration_for).with(1).argument
-  end
-
 end

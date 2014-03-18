@@ -11,7 +11,7 @@ module CloudCapacitor
       it_behaves_like "a Performance Test Executor"
 
       it "returns a fixed result suitable only for development tests purpose" do
-        @executor.run(configuration: @config01, workload: 100).should be_an_instance_of Hash
+        @executor.run(configuration: @config01, workload: 100).should be_an_instance_of Result
       end
     end
   end

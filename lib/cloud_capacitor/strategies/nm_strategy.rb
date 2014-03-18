@@ -4,10 +4,16 @@ module CloudCapacitor
     class NM_Strategy
       attr_accessor :capacitor
       
-      def initialize(capacitor:)
-        @capacitor = capacitor
+      def initialize
       end
 
+      def select_lower_configuration_based_on(result)
+      end
+
+      def select_higher_configuration_based_on(result)
+      end
+
+# The code below will soon be transported into Capacitor as asked by issue #1 at Github
       def best_configuration_for(workload:)
         @configurations = Array.new(@capacitor.deployment_space)
         eval_performance(workload)

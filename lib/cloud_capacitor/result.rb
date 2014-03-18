@@ -26,6 +26,10 @@ module CloudCapacitor
       return :low_moderate
     end
 
+    def met?(sla)
+      @raw_value <= sla
+    end
+
     def value
 
       return raw_value unless normalized?
