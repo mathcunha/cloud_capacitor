@@ -61,167 +61,181 @@ module CloudCapacitor
       end
     end
 
-    describe "#pick" do
-      subject { DeploymentSpace.new(configurations: [@config01, @config02, @config03, @config04]) }
-      it "selects a valid Configuration from the DeploymentSpace" do
-        subject.pick("c1")
-        expect(subject.current_config).to be_an_instance_of Configuration
-        expect(subject.current_config.name).to eql "c1"
-      end
-
-      it "raises an error when invalid Configuration name is specified" do
-        expect { subject.pick("wrong_instance_name") }.to raise_error(Err::InvalidConfigNameError)
-      end
-    end
-
-    describe "#next_config_by" do
+    context "other methods" do
       subject { DeploymentSpace.new(configurations: [@config01, @config02, @config03, @config04]) }
 
-      it "validates ranking mode correctly" do
-        @modes.each do |mode|
-          expect { subject.next_config_by(mode) }.to_not raise_error
-        end
-        expect { subject.next_config_by(:age) }.to raise_error
-      end
-
-      it "does NOT change the current selected configuration" do
-        @modes.each do |mode|
+      describe "#lower_configs" do
+        xit "returns an Array of Configurations lower than the current selected" do
+          subject.pick("c2")
+          @modes.each do |mode|
+            expect(subject.lower_configs(mode)).to have(1).configuration
+          end
+          subject.pick("c4")
+          @modes.each do |mode|
+            expect(subject.lower_configs(mode)).to have(3).configurations
+          end
           subject.pick("c1")
-          expect(subject.next_config_by(mode)).to eql @config02
-          expect(subject.current_config).to eql @config01
+          @modes.each do |mode|
+            expect(subject.lower_configs(mode)).to have(0).configurations
+          end
         end
       end
 
-      context "when past the last Configuration" do
-        it "returns nil " do
-          subject.pick("c4")
-          @modes.each do |mode|
-            expect(subject.next_config_by(mode)).to be_nil
-          end
+      describe "#pick" do
+        it "selects a valid Configuration from the DeploymentSpace" do
+          subject.pick("c1")
+          expect(subject.current_config).to be_an_instance_of Configuration
+          expect(subject.current_config.name).to eql "c1"
         end
+
+        it "raises an error when invalid Configuration name is specified" do
+          expect { subject.pick("wrong_instance_name") }.to raise_error(Err::InvalidConfigNameError)
+        end
+      end
+
+      describe "#next_config_by" do
+        it "validates ranking mode correctly" do
+          @modes.each do |mode|
+            expect { subject.next_config_by(mode) }.to_not raise_error
+          end
+          expect { subject.next_config_by(:age) }.to raise_error
+        end
+
         it "does NOT change the current selected configuration" do
-          subject.pick("c4")
-          @modes.each do |mode|
-            subject.next_config_by(mode)
-            expect(subject.current_config).to eql @config04
-          end
-        end
-      end
-
-      context "when there are remaing Configuration to visit" do
-        it "returns successor Configuration based on specified parameter" do
           @modes.each do |mode|
             subject.pick("c1")
             expect(subject.next_config_by(mode)).to eql @config02
-            subject.pick("c3")
-            expect(subject.next_config_by(mode)).to eql @config04
-          end
-        end
-      end
-    end
-
-    describe "#next_config_by!" do
-      subject { DeploymentSpace.new(configurations: [@config01, @config02, @config03, @config04]) }
-      it "changes the current selected configuration correctly" do
-        @modes.each do |mode|
-          subject.pick("c1")
-          subject.next_config_by!(mode)
-          subject.current_config.should eql @config02
-          subject.pick("c3")
-          subject.next_config_by!(mode)
-          subject.current_config.should eql @config04
-        end
-      end
-
-      context "when past the last Configuration" do
-        it "returns nil" do
-          subject.pick("c4")
-          @modes.each do |mode|
-            subject.next_config_by!(mode).should be_nil
-          end
-        end
-        it "does NOT change the current selected configuration" do
-          subject.pick("c4")
-          @modes.each do |mode|
-            subject.next_config_by!(mode)
-            expect(subject.current_config).to eql @config04
-          end
-        end
-      end
-    end
-
-    describe "#previous_config_by" do
-      subject { DeploymentSpace.new(configurations: [@config01, @config02, @config03, @config04]) }
-
-      it "validates ranking mode correctly" do
-        @modes.each do |mode|
-          expect { subject.previous_config_by(mode) }.to_not raise_error
-        end
-        expect { subject.previous_config_by(:age) }.to raise_error
-      end
-
-      it "does NOT change the current selected configuration" do
-        @modes.each do |mode|
-          subject.pick("c2")
-          expect(subject.previous_config_by(mode)).to eql @config01
-          expect(subject.current_config).to eql @config02
-        end
-      end
-
-
-      context "when past the first Configuration" do
-        it "returns nil" do
-          subject.pick("c1")
-          @modes.each do |mode|
-            expect(subject.previous_config_by(mode)).to be_nil
-          end
-        end
-        it "does NOT change the current selected configuration" do
-          subject.pick("c1")
-          @modes.each do |mode|
-            subject.previous_config_by(mode)
             expect(subject.current_config).to eql @config01
           end
         end
+
+        context "when past the last Configuration" do
+          it "returns nil " do
+            subject.pick("c4")
+            @modes.each do |mode|
+              expect(subject.next_config_by(mode)).to be_nil
+            end
+          end
+          it "does NOT change the current selected configuration" do
+            subject.pick("c4")
+            @modes.each do |mode|
+              subject.next_config_by(mode)
+              expect(subject.current_config).to eql @config04
+            end
+          end
+        end
+
+        context "when there are remaing Configuration to visit" do
+          it "returns successor Configuration based on specified parameter" do
+            @modes.each do |mode|
+              subject.pick("c1")
+              expect(subject.next_config_by(mode)).to eql @config02
+              subject.pick("c3")
+              expect(subject.next_config_by(mode)).to eql @config04
+            end
+          end
+        end
       end
 
-      context "when there are remaing Configuration to visit" do
-        it "returns predecessor Configuration based on specified parameter" do
+      describe "#next_config_by!" do
+        it "changes the current selected configuration correctly" do
+          @modes.each do |mode|
+            subject.pick("c1")
+            subject.next_config_by!(mode)
+            subject.current_config.should eql @config02
+            subject.pick("c3")
+            subject.next_config_by!(mode)
+            subject.current_config.should eql @config04
+          end
+        end
+
+        context "when past the last Configuration" do
+          it "returns nil" do
+            subject.pick("c4")
+            @modes.each do |mode|
+              subject.next_config_by!(mode).should be_nil
+            end
+          end
+          it "does NOT change the current selected configuration" do
+            subject.pick("c4")
+            @modes.each do |mode|
+              subject.next_config_by!(mode)
+              expect(subject.current_config).to eql @config04
+            end
+          end
+        end
+      end
+
+      describe "#previous_config_by" do
+        it "validates ranking mode correctly" do
+          @modes.each do |mode|
+            expect { subject.previous_config_by(mode) }.to_not raise_error
+          end
+          expect { subject.previous_config_by(:age) }.to raise_error
+        end
+
+        it "does NOT change the current selected configuration" do
           @modes.each do |mode|
             subject.pick("c2")
             expect(subject.previous_config_by(mode)).to eql @config01
-            subject.pick("c4")
-            expect(subject.previous_config_by(mode)).to eql @config03
+            expect(subject.current_config).to eql @config02
+          end
+        end
+
+
+        context "when past the first Configuration" do
+          it "returns nil" do
+            subject.pick("c1")
+            @modes.each do |mode|
+              expect(subject.previous_config_by(mode)).to be_nil
+            end
+          end
+          it "does NOT change the current selected configuration" do
+            subject.pick("c1")
+            @modes.each do |mode|
+              subject.previous_config_by(mode)
+              expect(subject.current_config).to eql @config01
+            end
+          end
+        end
+
+        context "when there are remaing Configuration to visit" do
+          it "returns predecessor Configuration based on specified parameter" do
+            @modes.each do |mode|
+              subject.pick("c2")
+              expect(subject.previous_config_by(mode)).to eql @config01
+              subject.pick("c4")
+              expect(subject.previous_config_by(mode)).to eql @config03
+            end
           end
         end
       end
-    end
 
-    describe "#previous_config_by!" do
-      subject { DeploymentSpace.new(configurations: [@config01, @config02, @config03, @config04]) }
-      it "changes the current selected configuration correctly" do
-        @modes.each do |mode|
-          subject.pick("c2")
-          subject.previous_config_by!(mode)
-          expect(subject.current_config).to eql @config01
-          subject.pick("c4")
-          subject.previous_config_by!(mode)
-          expect(subject.current_config).to eql @config03
-        end
-      end
-
-      context "when past the first Configuration" do
-        it "returns nil" do
-          subject.pick("c1")
+      describe "#previous_config_by!" do
+        it "changes the current selected configuration correctly" do
           @modes.each do |mode|
-            expect(subject.previous_config_by!(mode)).to be_nil
-          end
-        end
-        it "does NOT change the current selected configuration" do
-          subject.pick("c1")
-          @modes.each do |mode|
-            subject.previous_config_by(mode)
+            subject.pick("c2")
+            subject.previous_config_by!(mode)
             expect(subject.current_config).to eql @config01
+            subject.pick("c4")
+            subject.previous_config_by!(mode)
+            expect(subject.current_config).to eql @config03
+          end
+        end
+
+        context "when past the first Configuration" do
+          it "returns nil" do
+            subject.pick("c1")
+            @modes.each do |mode|
+              expect(subject.previous_config_by!(mode)).to be_nil
+            end
+          end
+          it "does NOT change the current selected configuration" do
+            subject.pick("c1")
+            @modes.each do |mode|
+              subject.previous_config_by(mode)
+              expect(subject.current_config).to eql @config01
+            end
           end
         end
       end
