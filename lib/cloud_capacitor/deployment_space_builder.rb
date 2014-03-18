@@ -5,11 +5,11 @@ module CloudCapacitor
 
     def self.graph_by_price(configurations:, max_price:, max_num_instances:4)
       configs = configurations.sort { |x,y| x.price <=> y.price }
-      arcs = []
+      dg = Plexus::Digraph.new
      
       config_groups = array_by_price(configurations, max_price, max_num_instances)
       config_groups = config_groups.sort {|x,y| x.price <=> y.price}
-      config_groups.each {|config_group| puts"#{config_group}"}
+      #config_groups.each {|config_group| puts"#{config_group}"}
 
       price = config_groups[0].price
       vertexes = []
@@ -20,7 +20,7 @@ module CloudCapacitor
         if(equal(price, config_groups[i].price, 0.01))
           vertexes << config_groups[i]
         else
-          add_edges(vertexes_old, vertexes, arcs)
+          add_edges(vertexes_old, vertexes, dg)
           price = config_groups[i].price
           vertexes_old = Array.new(vertexes)
           vertexes = []
@@ -29,13 +29,12 @@ module CloudCapacitor
         i += 1
       end
 
-      add_edges(vertexes_old, vertexes, arcs)
+      add_edges(vertexes_old, vertexes, dg)
 
+      graph = Plexus::DirectedPseudoGraph.new(dg)
 
-      graph = Plexus::DirectedPseudoGraph.new(arcs)
-
-      puts"graph - #{graph.edges}"
-      
+      #puts"graph vertices - #{graph.vertices.size}, graph edges - #{graph.edges.size}"
+ 
       graph
     end
 
@@ -50,8 +49,8 @@ module CloudCapacitor
 
 
     def self.new_edge(source, target, label)
-      puts "source #{source} - target #{target} - label #{label}"
-      Plexus::Arc.new(source, target, label)
+      #puts "source #{source} - target #{target} - label #{label.round(2)}"
+      Plexus::Arc.new(source, target, label.round(2))
     end
 
     def self.add_edges(vertexes_old, vertexes, arcs)
@@ -60,10 +59,11 @@ module CloudCapacitor
           vertexes.each do |vertex|
             arcs << new_edge(vertex_old, vertex, vertex.price-vertex_old.price)
             arcs << new_edge(vertex, vertex_old, vertex_old.price-vertex.price)
+            #arcs << new_edge(vertex, vertex_old, vertex.price-vertex_old.price)
           end
         end
       end
-      puts ""
+      #puts ""
     end
     
     def self.array_by_price(configs, max_price, max_num_instances)
