@@ -89,7 +89,7 @@ module CloudCapacitor
         vertexes_old.each do |vertex_old|
           vertexes.each do |vertex|
             arcs << new_edge(vertex_old, vertex, vertex.method(prop_method).call() - vertex_old.method(prop_method).call())
-            #arcs << new_edge(vertex, vertex_old, vertex_old.method(prop_method).call() - vertex.method(prop_method).call())
+            arcs << new_edge(vertex, vertex_old, vertex_old.method(prop_method).call() - vertex.method(prop_method).call())
           end
         end
       end
