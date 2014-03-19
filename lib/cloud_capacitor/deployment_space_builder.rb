@@ -11,8 +11,8 @@ module CloudCapacitor
       graph_by_prop(configurations, max_price, max_num_instances, "mem")
     end
 
-    def self.graph_by_ecu(configurations:, max_price:, max_num_instances:4)
-      graph_by_prop(configurations, max_price, max_num_instances, "ecu")
+    def self.graph_by_cpu(configurations:, max_price:, max_num_instances:4)
+      graph_by_prop(configurations, max_price, max_num_instances, "cpu")
     end
 
     private
