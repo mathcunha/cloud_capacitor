@@ -3,16 +3,11 @@ module CloudCapacitor
 
   class DeploymentSpaceBuilder
 
-    def self.graph_by_price(configurations:, max_price:, max_num_instances:4)
-      graph_by_prop(configurations, max_price, max_num_instances, "price")
-    end
-
-    def self.graph_by_mem(configurations:, max_price:, max_num_instances:4)
-      graph_by_prop(configurations, max_price, max_num_instances, "mem")
-    end
-
-    def self.graph_by_cpu(configurations:, max_price:, max_num_instances:4)
-      graph_by_prop(configurations, max_price, max_num_instances, "cpu")
+    DeploymentSpace::TRAVERSAL_MODES.each do |mode| 
+      meth = "def self.graph_by_#{mode}(configurations:, max_price:, max_num_instances:4) 
+                graph_by_prop(configurations, max_price, max_num_instances, #{mode}) 
+              end"
+      class_eval meth
     end
 
     private
