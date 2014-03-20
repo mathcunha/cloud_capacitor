@@ -5,7 +5,7 @@ module CloudCapacitor
 
     DeploymentSpace::TRAVERSAL_MODES.each do |mode| 
       meth = "def self.graph_by_#{mode}(configurations:, max_price:, max_num_instances:4) 
-                graph_by_prop(configurations, max_price, max_num_instances, #{mode}) 
+                graph_by_prop(configurations, max_price, max_num_instances, '#{mode}') 
               end"
       class_eval meth
     end
