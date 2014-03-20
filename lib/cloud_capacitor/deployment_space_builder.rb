@@ -48,23 +48,18 @@ module CloudCapacitor
 
     def self.equal(prop, prop2, error)
       diff = prop2 - prop
-      if (diff < error)
-        return true
-      else
-        return false
-      end
+      diff < error
     end
 
     def self.array_by_price(configs, max_price, max_num_instances)
       config_groups = []
 
       for i in 0..configs.size()-1
-        vm_types = []
         for j in 1..max_num_instances
-          vm_types << configs[i]
+          vm_type = configs[i]
 
-          config_group = ConfigurationGroup.new(:configurations => vm_types)
-          if(config_group.price < max_price)
+          config_group = ConfigurationGroup.new(configuration: vm_type, size: j)
+          if(config_group.price <= max_price)
             config_groups << config_group
           end
         end

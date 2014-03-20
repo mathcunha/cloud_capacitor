@@ -1,24 +1,10 @@
 module CloudCapacitor
   class ConfigurationGroup
-    attr_accessor :configurations
-    attr_reader :size, :configuration, :name
-    def initialize(configurations:)
-      @configuration = configurations[0]
-      isValid?(configurations)
-      @configurations = configurations
-      @size = configurations.size()
-    end
-
-    def isValid?(configurations)
-	@name = @configuration.name
-        configurations.each do |configuration|
-		raise Err::InvalidConfigurationError, "The configuration must use the same InstanceType. #{name} != #{configuration.name}" if !(name.eql?(configuration.name))
-	end
-        true
-    end
-
-    def ecu
-      self.cpu
+    attr_reader :size, :configuration
+    def initialize(configuration:, size:)
+      @configuration = configuration
+      @size = size
+      @name = @configuration.name
     end
 
     def mem
@@ -34,12 +20,11 @@ module CloudCapacitor
     end
 
     def to_s
-      "#{@configuration.name}(#{@size})[#{ecu} #{mem} #{price}]"
+      "#{@configuration.name}(#{@size})[#{cpu} #{mem} #{price}]"
     end
 
     def hash
-      str = (@size.to_s + @configuration.name)
-      (str).hash
+      "#{@size.to_s}#{@name}".hash
     end
     
     def eql?(object)
@@ -51,5 +36,6 @@ module CloudCapacitor
       end
       return @size.eql?(object.size) && @configuration.name.eql?(object.configuration.name)
     end
+
   end
 end
