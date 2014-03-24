@@ -7,6 +7,9 @@ module CloudCapacitor
       def initialize
       end
 
+      def select_initial_workload
+      end
+      
       def select_lower_configuration_based_on(result)
       end
 

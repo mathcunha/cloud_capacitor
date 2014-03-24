@@ -13,6 +13,7 @@ module CloudCapacitor
     attr_accessor :deployment_space, :current_config
     attr_accessor :sla, :delta
     attr_accessor :executor, :strategy
+    attr_reader   :current_workload, :workloads
 
     def initialize(sla:2000, delta:0.10, file:"deployment_space.yml")
 
@@ -20,6 +21,9 @@ module CloudCapacitor
 
       @sla              = sla
       @delta            = delta
+      
+      @current_workload = nil
+      
     end
     
     def run_for(*workload_list)
@@ -31,11 +35,12 @@ module CloudCapacitor
       @workloads = Array.new(workload_list)
 
       @candidates_for = Hash.new{ [] } # each key defaults to an empty array
-      @explored_for   = Hash.new{ [] }
+      @rejected_for   = Hash.new{ [] }
 
       stop = false
       
       @workloads.each do |workload|
+        @current_workload = workload
         result = @executor.run(configuration: current_config, workload: workload)
         result.normalize!(sla: sla, delta: delta)
         if result.met?(sla)
@@ -45,7 +50,7 @@ module CloudCapacitor
 
         else
 
-          mark_configuration_as_explored_for workload
+          mark_configuration_as_rejected_for workload
           next_config = strategy.select_higher_configuration_based_on(result)
 
         end
@@ -53,6 +58,7 @@ module CloudCapacitor
         stop = next_config.nil?
         
       end
+      @current_workload = nil
       @candidates_for
     end
 
@@ -61,8 +67,14 @@ module CloudCapacitor
       @strategy.capacitor = self
     end
 
-    def unexplored_configurations_for(workload)
-      @workloads - @explored_for[workload]
+    def unexplored_configurations
+      @deployment_space.configs - (@candidates_for[@current_workload] + @rejected_for[@current_workload]).uniq
+    end
+
+    def unexplored_workloads
+      unexplored = @workloads - @rejected_for.select {|_,v| v.include? @current_config }.keys
+      unexplored = unexplored - @candidates_for.select {|_,v| v.include? @current_config }.keys
+      unexplored
     end
     
     private
@@ -78,9 +90,9 @@ module CloudCapacitor
         keys.each { |k| @candidates_for[k] <<= current_config }
       end
 
-      def mark_configuration_as_explored_for(workload)
+      def mark_configuration_as_rejected_for(workload)
         keys = @workloads.select { |k| k >= workload }
-        keys.each { |k| @explored_for[k] <<= current_config }
+        keys.each { |k| @rejected_for[k] <<= current_config }
       end
 
       def current_config

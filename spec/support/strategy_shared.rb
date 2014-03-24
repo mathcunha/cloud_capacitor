@@ -14,15 +14,19 @@ module CloudCapacitor
     end
 
     it "accepts a reference to a Capacitor" do
-      strategy.should respond_to(:capacitor=).with(1).argument
+      expect(strategy).to respond_to(:capacitor=).with(1).argument
     end
 
     it "can select lower Configurations from the DeploymentSpace" do
-      strategy.should respond_to(:select_lower_configuration_based_on).with(1).argument
+      expect(strategy).to respond_to(:select_lower_configuration_based_on).with(1).argument
     end
 
     it "can select higher Configurations from the DeploymentSpace" do
-      strategy.should respond_to(:select_higher_configuration_based_on).with(1).argument
+      expect(strategy).to respond_to(:select_higher_configuration_based_on).with(1).argument
+    end
+
+    it "can select an initial workload to start the tests with" do
+      expect(strategy).to respond_to :select_initial_workload
     end
 
   end
