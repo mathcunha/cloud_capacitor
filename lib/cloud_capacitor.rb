@@ -33,20 +33,24 @@ module CloudCapacitor
       @candidates_for = Hash.new{ [] } # each key defaults to an empty array
       @explored_for   = Hash.new{ [] }
 
+      stop = false
+      
       @workloads.each do |workload|
         result = @executor.run(configuration: current_config, workload: workload)
         result.normalize!(sla: sla, delta: delta)
         if result.met?(sla)
 
           mark_configuration_as_candidate_for workload
-          strategy.select_lower_configuration_based_on(result)
+          next_config = strategy.select_lower_configuration_based_on(result)
 
         else
 
           mark_configuration_as_explored_for workload
-          strategy.select_higher_configuration_based_on(result)
-          
+          next_config = strategy.select_higher_configuration_based_on(result)
+
         end
+        
+        stop = next_config.nil?
         
       end
       @candidates_for
@@ -57,6 +61,10 @@ module CloudCapacitor
       @strategy.capacitor = self
     end
 
+    def unexplored_configurations_for(workload)
+      @workloads - @explored_for[workload]
+    end
+    
     private
       def invalid_workloads?(workloads)
         return true unless workloads.is_a? Array
