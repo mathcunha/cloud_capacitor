@@ -36,6 +36,7 @@ module CloudCapacitor
 
       @candidates_for = Hash.new{ [] } # each key defaults to an empty array
       @rejected_for   = Hash.new{ [] }
+      @executed_for    = Hash.new{ [] }
 
       stop = false
       
@@ -43,6 +44,9 @@ module CloudCapacitor
         @current_workload = workload
         result = @executor.run(configuration: current_config, workload: workload)
         result.normalize!(sla: sla, delta: delta)
+
+        @executed_for[workload] <<= current_config
+
         if result.met?(sla)
 
           mark_configuration_as_candidate_for workload
