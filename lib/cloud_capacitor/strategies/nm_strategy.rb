@@ -1,33 +1,7 @@
 module CloudCapacitor
   module Strategies
     
-    class NM_Strategy
-      attr_accessor :capacitor
-      
-      def initialize
-      end
-
-      def select_initial_workload(workload_list)
-        workload_list[0]
-      end
-      
-      def raise_workload
-        capacitor.workloads[ capacitor.workloads.index(capacitor.current_workload) + 1 ]
-      end
-
-      def lower_workload
-        capacitor.workloads[ capacitor.workloads.index(capacitor.current_workload) - 1 ]
-      end
-      
-      def select_initial_configuration
-        capacitor.deployment_space.first_config
-      end
-      
-      def select_lower_configuration_based_on(result)
-      end
-
-      def select_higher_configuration_based_on(result)
-      end
+    class NM_Strategy < Strategy
 
 # The code below will soon be transported into Capacitor as asked by issue #1 at Github
       def best_configuration_for(workload:)
