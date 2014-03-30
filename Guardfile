@@ -1,6 +1,7 @@
-guard 'rspec' do
+guard :rspec do
 # watch /lib/ files
   watch(%r{^lib/(.+).rb$}) do |m|
+    puts "would run spec/#{m[1]}_spec.rb"
     "spec/#{m[1]}_spec.rb"
   end
  
