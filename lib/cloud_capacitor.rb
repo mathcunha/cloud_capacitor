@@ -40,26 +40,33 @@ module CloudCapacitor
 
       stop = false
       
-      @workloads.each do |workload|
-        @current_workload = workload
-        result = @executor.run(configuration: current_config, workload: workload)
+      @strategy.select_initial_configuration
+      @current_workload = @strategy.select_initial_workload(workload_list)
+      
+      while !stop do
+        
+        result = @executor.run(configuration: current_config, workload: @current_workload)
         result.normalize!(sla: sla, delta: delta)
 
-        @executed_for[workload] <<= current_config
+        @executed_for[@current_workload] <<= current_config
 
         if result.met?(sla)
 
-          mark_configuration_as_candidate_for workload
+          mark_configuration_as_candidate_for @current_workload
           next_config = strategy.select_lower_configuration_based_on(result)
+          
+          @current_workload = strategy.raise_workload if next_config.nil?
 
         else
 
-          mark_configuration_as_rejected_for workload
+          mark_configuration_as_rejected_for @current_workload
           next_config = strategy.select_higher_configuration_based_on(result)
+
+          @current_workload = strategy.lower_workload if next_config.nil?
 
         end
         
-        stop = next_config.nil?
+        stop = next_config.nil? && @current_workload.nil?
         
       end
       @current_workload = nil

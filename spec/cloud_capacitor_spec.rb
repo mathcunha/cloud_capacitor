@@ -117,7 +117,12 @@ module CloudCapacitor
         it "runs the test with no complains" do
           strategy = double("Strategy")
           allow(strategy).to receive(:capacitor=)
+          allow(strategy).to receive(:select_initial_configuration)
+          allow(strategy).to receive(:select_initial_workload).and_return(100)
+          allow(strategy).to receive(:lower_workload)
+          allow(strategy).to receive(:raise_workload)
           allow(strategy).to receive(:select_higher_configuration_based_on)
+          allow(strategy).to receive(:select_lower_configuration_based_on)
 
           subject.strategy = strategy
           subject.executor = Executors::DummyExecutor.new
@@ -139,10 +144,16 @@ module CloudCapacitor
 
           strategy = double("Strategy")
           allow(strategy).to receive(:capacitor=)
+          allow(strategy).to receive(:select_initial_configuration)
+          allow(strategy).to receive(:select_initial_workload).and_return(100)
+          allow(strategy).to receive(:lower_workload)
+          allow(strategy).to receive(:raise_workload)
           allow(strategy).to receive(:select_higher_configuration_based_on)
+          allow(strategy).to receive(:select_lower_configuration_based_on)
 
           subject.executor = executor
           subject.strategy = strategy
+          
           expect { subject.run_for(100) }.to_not raise_error
         end
       end
@@ -161,13 +172,20 @@ module CloudCapacitor
 
       it "runs a performance test for a list of workloads" do
         executor = double("Executor")
+        allow(executor).to receive(:run).and_return Result.new(value: 100, cpu: 75.5, mem: 78.9) 
+
         strategy = double("Strategy")
-        allow(executor).to receive(:run) { Result.new(value: 2100, cpu: 75.5, mem: 78.9) }
         allow(strategy).to receive(:capacitor=)
+        allow(strategy).to receive(:select_initial_configuration)
+        allow(strategy).to receive(:select_initial_workload).and_return(200)
+        allow(strategy).to receive(:lower_workload)
+        allow(strategy).to receive(:raise_workload)
         allow(strategy).to receive(:select_higher_configuration_based_on)
+        allow(strategy).to receive(:select_lower_configuration_based_on)
+
         subject.executor = executor
         subject.strategy = strategy
-        expect(subject.executor).to receive(:run).twice
+
         expect(subject.run_for(100,200)).to_not be_nil
       end
 

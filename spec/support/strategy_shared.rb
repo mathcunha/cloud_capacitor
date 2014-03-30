@@ -25,8 +25,20 @@ module CloudCapacitor
       expect(strategy).to respond_to(:select_higher_configuration_based_on).with(1).argument
     end
 
+    it "can select an initial Configuration to start the tests with" do
+      expect(strategy).to respond_to :select_initial_configuration
+    end
+
     it "can select an initial workload to start the tests with" do
-      expect(strategy).to respond_to :select_initial_workload
+      expect(strategy).to respond_to(:select_initial_workload).with(1).argument
+    end
+
+    it "can raise the current workload" do
+      expect(strategy).to respond_to(:raise_workload)
+    end
+    
+    it "can lower the current workload" do
+      expect(strategy).to respond_to(:lower_workload)
     end
 
   end
