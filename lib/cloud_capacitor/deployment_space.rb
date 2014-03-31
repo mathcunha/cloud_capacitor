@@ -2,7 +2,7 @@ module CloudCapacitor
 
   class DeploymentSpace
     attr_accessor :configs
-    attr_reader   :current_config
+    attr_reader   :current_config, :graph_by_cpu, :graph_by_mem, :graph_by_price
     attr_accessor :configs_by_cpu, :configs_by_mem, :configs_by_price
 
     TRAVERSAL_MODES = [:cpu, :mem, :price]
@@ -13,7 +13,56 @@ module CloudCapacitor
       else
         self.configs = load_deployment_space_from file
       end
- 
+
+      build
+    end
+
+    def build(max_price:10)
+      @graph_by_price = DeploymentSpaceBuilder.graph_by_price(configurations:configs, max_price:max_price)
+      @graph_by_cpu = DeploymentSpaceBuilder.graph_by_cpu(configurations:configs, max_price:max_price)
+      @graph_by_mem = DeploymentSpaceBuilder.graph_by_mem(configurations:configs, max_price:max_price)
+    end
+
+    def next(mode, current_config:@current_config, step:1)
+      array = []
+      for i in 1..step
+        if(current_config.nil?)
+          nil
+        else
+          l_array =  self.instance_variable_get("@graph_by_#{mode}").adjacent(current_config) unless current_config.nil?
+          l_array.each do |_config|
+            if(_config.method(mode).call() > current_config.method(mode).call())
+              array << _config
+            end
+          end
+        end
+      end
+      if array.include?(nil)
+        nil
+      else
+        array
+      end
+    end
+
+    def previous(mode, current_config:@current_config, step:1)
+      array = []
+      for i in 1..step
+        if(current_config.nil?)
+          nil
+        else
+          l_array =  self.instance_variable_get("@graph_by_#{mode}").adjacent(current_config) unless current_config.nil?
+          l_array.each do |_config|
+            if(_config.method(mode).call() < current_config.method(mode).call())
+              array << _config
+            end
+          end
+        end
+      end
+      if array.include?(nil)
+        nil
+      else
+        array
+      end
     end
 
     def configs=(config_list)
@@ -25,9 +74,11 @@ module CloudCapacitor
     end
 
     def pick(config_name)
+      # it should by by name and size, don't you think!?
       pos = @configs.index { |x| x.name == config_name }
       raise Err::InvalidConfigNameError, "Unsupported config name. #{list_supported_configs}" if pos.nil?
       @current_config = @configs[pos]
+      #@current_config = ConfigurationGroup.new(configuration:@configs[pos], size:1)
     end
 
     def first_config

@@ -13,7 +13,7 @@ module CloudCapacitor
     private
     def self.graph_by_prop(configurations, max_price, max_num_instances, prop_method)
       configs = configurations.sort { |x,y| x.method(prop_method).call() <=> y.method(prop_method).call() }
-      dg = Plexus::Digraph.new
+      graph = Plexus::DirectedPseudoGraph.new
 
       config_groups = array_by_price(configurations, max_price, max_num_instances)
       config_groups = config_groups.sort {|x,y| x.method(prop_method).call() <=> y.method(prop_method).call()}
@@ -28,7 +28,7 @@ module CloudCapacitor
         if(equal(prop, config_groups[i].method(prop_method).call(), 0.01))
           vertexes << config_groups[i]
         else
-          add_edges(vertexes_old, vertexes, dg, prop_method)
+          graph = add_edges(vertexes_old, vertexes, graph, prop_method)
           prop = config_groups[i].method(prop_method).call()
           vertexes_old = Array.new(vertexes)
           vertexes = []
@@ -37,9 +37,7 @@ module CloudCapacitor
         i += 1
       end
 
-      add_edges(vertexes_old, vertexes, dg, prop_method)
-
-      graph = Plexus::DirectedPseudoGraph.new(dg)
+      graph = add_edges(vertexes_old, vertexes, graph, prop_method)
 
       #puts"graph vertices - #{graph.vertices.size}, graph edges - #{graph.edges.size}"
 
@@ -74,16 +72,16 @@ module CloudCapacitor
       Plexus::Arc.new(source, target, label.round(2))
     end
 
-    def self.add_edges(vertexes_old, vertexes, arcs, prop_method)
+    def self.add_edges(vertexes_old, vertexes, graph, prop_method)
       if(!vertexes_old.nil? && !vertexes.nil?)
         vertexes_old.each do |vertex_old|
           vertexes.each do |vertex|
-            arcs << new_edge(vertex_old, vertex, vertex.method(prop_method).call() - vertex_old.method(prop_method).call())
-            arcs << new_edge(vertex, vertex_old, vertex_old.method(prop_method).call() - vertex.method(prop_method).call())
+            graph = graph.add_edge(vertex_old, vertex, (vertex.method(prop_method).call() - vertex_old.method(prop_method).call()).round(2))
+            graph = graph.add_edge(vertex, vertex_old, (vertex_old.method(prop_method).call() - vertex.method(prop_method).call()).round(2))
           end
         end
       end
-      #puts ""
+      graph
     end
   end
 end
