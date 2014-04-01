@@ -1,26 +1,33 @@
 module CloudCapacitor
 
   class DeploymentSpace
-    attr_accessor :configs
-    attr_reader   :current_config, :graph_by_cpu, :graph_by_mem, :graph_by_price
-    attr_accessor :configs_by_cpu, :configs_by_mem, :configs_by_price
+    attr_accessor :vm_types, :vm_types_by_cpu, :vm_types_by_mem, :vm_types_by_price
+    attr_accessor :max_price
+
+    attr_reader   :graph_by_cpu, :graph_by_mem, :graph_by_price
+    attr_reader   :current_config, :configs
 
     TRAVERSAL_MODES = [:cpu, :mem, :price]
-    def initialize(file:"deployment_space.yml", configurations: [])
+    def initialize(file:"deployment_space_new_generation.yml", vm_types: [])
       
-      if configurations.size > 0
-        self.configs = configurations
+      if vm_types.size > 0
+        self.vm_types= vm_types
       else
-        self.configs = load_deployment_space_from file
+        self.vm_types= load_deployment_space_from file
       end
 
-      build
+      @configs        = DeploymentSpaceBuilder.configs_available
+      @current_config = @configs[0]
+
     end
 
-    def build(max_price:10)
-      @graph_by_price = DeploymentSpaceBuilder.graph_by_price(configurations:configs, max_price:max_price)
-      @graph_by_cpu = DeploymentSpaceBuilder.graph_by_cpu(configurations:configs, max_price:max_price)
-      @graph_by_mem = DeploymentSpaceBuilder.graph_by_mem(configurations:configs, max_price:max_price)
+    def build_graphs
+      DeploymentSpaceBuilder.setup(@vm_types)
+
+      @graph_by_price = DeploymentSpaceBuilder.graph_by_price(vm_types:vm_types)
+      @graph_by_cpu   = DeploymentSpaceBuilder.graph_by_cpu(vm_types:vm_types)
+      @graph_by_mem   = DeploymentSpaceBuilder.graph_by_mem(vm_types:vm_types)
+
     end
 
     def next(mode, current_config:@current_config, step:1)
@@ -65,20 +72,18 @@ module CloudCapacitor
       end
     end
 
-    def configs=(config_list)
-      @configs = config_list
-      @current_config   = @configs[0]
-      @configs_by_cpu   = @configs.sort { |x,y| x.cpu <=> y.cpu }
-      @configs_by_mem   = @configs.sort { |x,y| x.mem <=> y.mem }
-      @configs_by_price = @configs.sort { |x,y| x.price <=> y.price }
+    def vm_types=(vm_types_list)
+      @vm_types = vm_types_list
+      @vm_types_by_cpu   = @vm_types.sort { |x,y| x.cpu <=> y.cpu }
+      @vm_types_by_mem   = @vm_types.sort { |x,y| x.mem <=> y.mem }
+      @vm_types_by_price = @vm_types.sort { |x,y| x.price <=> y.price }
+      build_graphs
     end
 
-    def pick(config_name)
-      # it should by by name and size, don't you think!?
-      pos = @configs.index { |x| x.name == config_name }
+    def pick(config_size, config_name)
+      pos = @configs.index { |x| x.name == config_name && x.size == config_size}
       raise Err::InvalidConfigNameError, "Unsupported config name. #{list_supported_configs}" if pos.nil?
       @current_config = @configs[pos]
-      #@current_config = ConfigurationGroup.new(configuration:@configs[pos], size:1)
     end
 
     def first_config
@@ -87,7 +92,7 @@ module CloudCapacitor
 
     def next_config_by(mode)
       validate_modes mode
-      cfg = eval('configs_by_' + mode.to_s)[rank(@current_config, mode) + 1]
+      cfg = eval("configs_by_#{mode}")[rank(@current_config, mode) + 1]
     end
 
     def next_config_by!(mode)
@@ -100,7 +105,7 @@ module CloudCapacitor
       validate_modes mode
       current_pos = rank(@current_config, mode)
       if current_pos > 0
-        eval('configs_by_' + mode.to_s)[current_pos - 1]
+        eval("configs_by_#{mode}")[current_pos - 1]
       else
         nil
       end
@@ -119,7 +124,7 @@ module CloudCapacitor
         File.open file do |f|
           depl_space = YAML::load( f.read )
         end
-        raise Err::InvalidConfigurationFileError if depl_space.reject { |x| x.instance_of? CloudCapacitor::Configuration }.size > 0
+        raise Err::InvalidConfigurationFileError if depl_space.reject { |x| x.instance_of? CloudCapacitor::VMType }.size > 0
         depl_space
       end
 
@@ -129,7 +134,7 @@ module CloudCapacitor
 
       def rank(config, mode)
         validate_modes mode
-        eval('configs_by_'+mode.to_s).index { |x| x.name == config.name }
+        eval("configs_by_#{mode}").index { |x| x.name == config.name }
       end
 
       def list_supported_configs

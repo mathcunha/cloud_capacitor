@@ -5,7 +5,8 @@ module CloudCapacitor
     describe DummyExecutor do
       before :all do
         @executor = DummyExecutor.new
-        @config01 = CloudCapacitor::Configuration.new(name:"c1",cpu:1, mem:1, price:0.1)
+        @vm01  = VMType.new(name:"c1",cpu:1, mem:1, price:0.1)
+        @config01 = CloudCapacitor::Configuration.new(vm_type: @vm01, size: 1)
       end
 
       it_behaves_like "a Performance Test Executor"

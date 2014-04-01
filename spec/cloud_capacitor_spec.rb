@@ -3,10 +3,10 @@ require "spec_helper"
 module CloudCapacitor
   describe Capacitor do
     before :all do
-      @config01 = Configuration.new(name:"c1",cpu:1, mem:1, price:0.1)
-      @config02 = Configuration.new(name:"c2",cpu:2, mem:2, price:0.2)
-      @config03 = Configuration.new(name:"c3",cpu:3, mem:3, price:0.3)
-      @config04 = Configuration.new(name:"c4",cpu:4, mem:4, price:0.4)
+      @vm01  = VMType.new(name:"c1",cpu:1, mem:1, price:0.1)
+      @vm02  = VMType.new(name:"c2",cpu:2, mem:2, price:0.2)
+      @vm03  = VMType.new(name:"c3",cpu:3, mem:3, price:0.3)
+      @vm04  = VMType.new(name:"c4",cpu:4, mem:4, price:0.4)
     end
 
     subject(:cloud_capacitor) { Capacitor.new }

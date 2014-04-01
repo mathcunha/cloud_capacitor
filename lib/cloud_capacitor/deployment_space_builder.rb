@@ -4,32 +4,50 @@ module CloudCapacitor
   class DeploymentSpaceBuilder
 
     DeploymentSpace::TRAVERSAL_MODES.each do |mode| 
-      meth = "def self.graph_by_#{mode}(configurations:, max_price:, max_num_instances:4) 
-                graph_by_prop(configurations, max_price, max_num_instances, '#{mode}') 
+      meth = "def self.graph_by_#{mode}(vm_types:) 
+                graph_by_prop(vm_types, '#{mode}') 
               end"
       class_eval meth
     end
 
+    def self.setup(vm_types)
+      @@max_price         = Settings.deployment_space.max_price
+      @@max_num_instances = Settings.deployment_space.max_num_instances
+      @@configs_available = configs_under_price_limit(vm_types)
+    end
+
+    def self.configs_available
+      @@configs_available
+    end
+    def self.max_price
+      @@max_price
+    end
+    def self.max_num_instances
+      @@max_num_instances
+    end
+
     private
-    def self.graph_by_prop(configurations, max_price, max_num_instances, prop_method)
-      configs = configurations.sort { |x,y| x.method(prop_method).call() <=> y.method(prop_method).call() }
+    def self.validate_setup
+      raise InvalidConfigurationError unless defined? @@configs_available && !@@configs_available.nil?
+    end
+
+    def self.graph_by_prop(vm_types, prop_method)
+      validate_setup
       graph = Plexus::DirectedPseudoGraph.new
 
-      config_groups = array_by_price(configurations, max_price, max_num_instances)
-      config_groups = config_groups.sort {|x,y| x.method(prop_method).call() <=> y.method(prop_method).call()}
-      #config_groups.each {|config_group| puts"#{config_group}"}
+      configurations = @@configs_available.sort {|x,y| x.method(prop_method).call() <=> y.method(prop_method).call()}
 
-      prop = config_groups[0].method(prop_method).call()
+      prop = configurations[0].method(prop_method).call()
       vertexes = []
       vertexes_old = nil
 
       i = 0
-      until i >= config_groups.size() do
-        if(equal(prop, config_groups[i].method(prop_method).call(), 0.01))
-          vertexes << config_groups[i]
+      until i >= configurations.size() do
+        if(equal(prop, configurations[i].method(prop_method).call(), 0.01))
+          vertexes << configurations[i]
         else
           graph = add_edges(vertexes_old, vertexes, graph, prop_method)
-          prop = config_groups[i].method(prop_method).call()
+          prop = configurations[i].method(prop_method).call()
           vertexes_old = Array.new(vertexes)
           vertexes = []
           i = i - 1
@@ -38,9 +56,6 @@ module CloudCapacitor
       end
 
       graph = add_edges(vertexes_old, vertexes, graph, prop_method)
-
-      #puts"graph vertices - #{graph.vertices.size}, graph edges - #{graph.edges.size}"
-
       graph
     end
 
@@ -49,22 +64,18 @@ module CloudCapacitor
       diff < error
     end
 
-    def self.array_by_price(configs, max_price, max_num_instances)
-      config_groups = []
+    def self.configs_under_price_limit(vm_types)
+      configs = []
 
-      for i in 0..configs.size()-1
-        for j in 1..max_num_instances
-          vm_type = configs[i]
-
-          config_group = ConfigurationGroup.new(configuration: vm_type, size: j)
-          if(config_group.price <= max_price)
-            config_groups << config_group
+      vm_types.each do |vm|
+        (1..@@max_num_instances).each do |num_instances|
+          if( (vm.price * num_instances) <= @@max_price)
+            configs << Configuration.new(vm_type: vm, size: num_instances)
           end
         end
-
       end
 
-      config_groups
+      configs
     end
     
     def self.new_edge(source, target, label)

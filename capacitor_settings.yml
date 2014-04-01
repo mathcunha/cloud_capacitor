@@ -1,3 +1,6 @@
 capacitor:
   cpu_limit: 75
   mem_limit: 75
+deployment_space:
+  max_price: 10.0
+  max_num_instances: 4
