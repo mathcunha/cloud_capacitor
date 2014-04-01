@@ -30,46 +30,30 @@ module CloudCapacitor
 
     end
 
-    def next(mode, current_config:@current_config, step:1)
-      array = []
-      for i in 1..step
-        if(current_config.nil?)
-          nil
-        else
-          l_array =  self.instance_variable_get("@graph_by_#{mode}").adjacent(current_config) unless current_config.nil?
-          l_array.each do |_config|
-            if(_config.method(mode).call() > current_config.method(mode).call())
-              array << _config
-            end
-          end
-        end
-      end
-      if array.include?(nil)
-        nil
+    def select_higher(mode, from: @current_config, step: 1)
+      validate_modes mode
+      return nil if @current_config.nil?
+
+      if step == 1
+        return instance_variable_get("@graph_by_#{mode}").adjacent(from, :direction=> :out).uniq
       else
-        array
+        array ||= []
+        l_array = instance_variable_get("@graph_by_#{mode}").adjacent(from).uniq
+        l_array.each do |cfg|
+          array << self.select_higher(mode, from:cfg, step:step-1)
+        end
+        return array
       end
     end
 
-    def previous(mode, current_config:@current_config, step:1)
-      array = []
-      for i in 1..step
-        if(current_config.nil?)
-          nil
-        else
-          l_array =  self.instance_variable_get("@graph_by_#{mode}").adjacent(current_config) unless current_config.nil?
-          l_array.each do |_config|
-            if(_config.method(mode).call() < current_config.method(mode).call())
-              array << _config
-            end
-          end
-        end
-      end
-      if array.include?(nil)
-        nil
-      else
-        array
-      end
+    def select_lower(mode, from: @current_config, step: 1)
+      cfgs = prepare_selection(mode, from, step)
+      cfgs.select { |c| c.method(mode).call < from.method(mode).call } unless cfgs.nil?
+    end
+
+    def select_higher(mode, from: @current_config, step: 1)
+      cfgs = prepare_selection(mode, from, step)
+      cfgs.select { |c| c.method(mode).call > from.method(mode).call } unless cfgs.nil?
     end
 
     def vm_types=(vm_types_list)
@@ -85,40 +69,28 @@ module CloudCapacitor
       raise Err::InvalidConfigNameError, "Unsupported config name. #{list_supported_configs}" if pos.nil?
       @current_config = @configs[pos]
     end
+   
+    private
 
-    def first_config
-      @configs[0]
-    end
-
-    def next_config_by(mode)
-      validate_modes mode
-      cfg = eval("configs_by_#{mode}")[rank(@current_config, mode) + 1]
-    end
-
-    def next_config_by!(mode)
-      cfg = next_config_by mode
-      @current_config = cfg if cfg
-      cfg
-    end
-
-    def previous_config_by(mode)
-      validate_modes mode
-      current_pos = rank(@current_config, mode)
-      if current_pos > 0
-        eval("configs_by_#{mode}")[current_pos - 1]
-      else
-        nil
+      def prepare_selection(mode, from, step)
+        validate_modes mode
+        return nil if @current_config.nil?
+        adjacent_configs(mode, from, step)
       end
-    end
 
-    def previous_config_by!(mode)
-      validate_modes mode
-      cfg = previous_config_by mode
-      @current_config = cfg if cfg
-      cfg
-    end
-    
-    protected
+      def adjacent_configs(mode, from, step)
+        if step == 1
+          return instance_variable_get("@graph_by_#{mode}").adjacent(from).uniq
+        else
+          array ||= []
+          l_array = instance_variable_get("@graph_by_#{mode}").adjacent(from).uniq
+          l_array.each do |cfg|
+            array << self.adjacent_configs(mode, cfg, step-1)
+          end
+          return array
+        end
+      end
+
       def load_deployment_space_from(file)
         depl_space = []
         File.open file do |f|
