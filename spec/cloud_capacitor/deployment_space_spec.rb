@@ -3,17 +3,15 @@ require 'plexus/dot'
 
 module CloudCapacitor
   describe DeploymentSpace do
-    
-    before(:all) do
-      @modes = DeploymentSpace::TRAVERSAL_MODES
-      @vm01  = VMType.new(name:"c1",cpu:1, mem:1, price:0.1)
-      @vm02  = VMType.new(name:"c2",cpu:2, mem:2, price:0.2)
-      @vm03  = VMType.new(name:"c3",cpu:3, mem:3, price:0.3)
-      @vm04  = VMType.new(name:"c4",cpu:4, mem:4, price:0.4)
+    before :all do
+      @vm01   = VMType.new(name:"c1",cpu:1, mem:1, price:0.1)
+      @vm02   = VMType.new(name:"c2",cpu:2, mem:2, price:0.2)
+      @conf01 = Configuration.new(vm_type: @vm01, size: 1)
     end
+    
+    subject(:deployment_space) { DeploymentSpace.new vm_types: [@vm01, @vm02] }
 
     describe "#new" do      
-      subject(:deployment_space) { DeploymentSpace.new }
 
       it "sets a current configuration by default" do
         expect(deployment_space.current_config).to be_an_instance_of Configuration
@@ -60,7 +58,7 @@ module CloudCapacitor
     end
 
     context "other methods" do
-      subject { DeploymentSpace.new(vm_types: [@vm01, @vm02, @vm03, @vm04]) }
+      # subject { DeploymentSpace.new(vm_types: [@vm01, @vm02, @vm03, @vm04]) }
 
       describe "#pick" do
         it "selects a valid Configuration from the DeploymentSpace" do
@@ -71,6 +69,25 @@ module CloudCapacitor
 
         it "raises an error when invalid Configuration name is specified" do
           expect { subject.pick(1, "wrong_instance_name") }.to raise_error(Err::InvalidConfigNameError)
+        end
+      end
+
+      describe "#first" do
+        context "with no params" do
+          it "returns a Configuration based on :price by default" do
+            expect(subject.first).to be_an_instance_of Configuration
+            expect(subject.first).to eql @conf01
+          end
+        end
+        context "with mode informed" do
+          it "returns a Configuration based on mode" do
+            expect(subject.first(:price)).to be_an_instance_of Configuration
+            expect(subject.first).to eql @conf01
+            expect(subject.first(:mem)).to be_an_instance_of Configuration
+            expect(subject.first).to eql @conf01
+            expect(subject.first(:cpu)).to be_an_instance_of Configuration
+            expect(subject.first).to eql @conf01
+          end
         end
       end
 

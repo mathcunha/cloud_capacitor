@@ -69,6 +69,11 @@ module CloudCapacitor
       raise Err::InvalidConfigNameError, "Unsupported config name. #{list_supported_configs}" if pos.nil?
       @current_config = @configs[pos]
     end
+    
+    
+    def first(mode=:price)
+      pick(1, @vm_types_by_price[0].name)
+    end
    
     private
 
