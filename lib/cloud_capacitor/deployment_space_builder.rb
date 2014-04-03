@@ -4,10 +4,10 @@ module CloudCapacitor
   class DeploymentSpaceBuilder
 
     DeploymentSpace::TRAVERSAL_MODES.each do |mode| 
-      meth = "def self.graph_by_#{mode}(vm_types:) 
-                graph_by_prop(vm_types, '#{mode}') 
-              end"
-      class_eval meth
+      define_singleton_method "graph_by_#{mode}" do
+        validate_setup
+        graph_by_prop(@@configs_available, mode) 
+      end
     end
 
     def self.setup(vm_types)

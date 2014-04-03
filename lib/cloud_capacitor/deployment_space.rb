@@ -24,9 +24,9 @@ module CloudCapacitor
     def build_graphs
       DeploymentSpaceBuilder.setup(@vm_types)
 
-      @graph_by_price = DeploymentSpaceBuilder.graph_by_price(vm_types:vm_types)
-      @graph_by_cpu   = DeploymentSpaceBuilder.graph_by_cpu(vm_types:vm_types)
-      @graph_by_mem   = DeploymentSpaceBuilder.graph_by_mem(vm_types:vm_types)
+      @graph_by_price = DeploymentSpaceBuilder.graph_by_price
+      @graph_by_cpu   = DeploymentSpaceBuilder.graph_by_cpu
+      @graph_by_mem   = DeploymentSpaceBuilder.graph_by_mem
 
     end
 

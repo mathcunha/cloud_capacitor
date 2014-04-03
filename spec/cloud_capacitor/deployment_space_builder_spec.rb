@@ -26,7 +26,8 @@ module CloudCapacitor
 
     DeploymentSpace::TRAVERSAL_MODES.each do |mode| 
       it "can generate DeploymentSpace graphs based on Configuration attributes" do
-        described_class.should respond_to("graph_by_"+mode.to_s).with(3).arguments
+        described_class.should respond_to("graph_by_"+mode.to_s)
+        # expect { subject.method("graph_by_"+mode.to_s).call }.to be_a Plexus::DirectedPseudoGraph
       end
     end
   end

@@ -3,6 +3,7 @@ require 'plexus/dot'
 
 module CloudCapacitor
   describe DeploymentSpace do
+    
     before :all do
       @vm01   = VMType.new(name:"c1",cpu:1, mem:1, price:0.1)
       @vm02   = VMType.new(name:"c2",cpu:2, mem:2, price:0.2)
@@ -31,7 +32,6 @@ module CloudCapacitor
         subject(:deployment_space) { DeploymentSpace.new(vm_types: [@vm01, @vm02]) }
         its(:vm_types) { should have(2).vm_types }
         its(:vm_types) { should eql [@vm01, @vm02] }
-
       end
 
       context "with specified deployment space file parameter" do
