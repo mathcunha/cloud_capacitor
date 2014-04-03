@@ -5,7 +5,6 @@ module CloudCapacitor
 
     DeploymentSpace::TRAVERSAL_MODES.each do |mode| 
       define_singleton_method "graph_by_#{mode}" do
-        validate_setup
         graph_by_prop(@@configs_available, mode) 
       end
     end
