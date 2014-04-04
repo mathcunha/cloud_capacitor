@@ -3,9 +3,11 @@ module CloudCapacitor
 
   class DeploymentSpaceBuilder
 
-    DeploymentSpace::TRAVERSAL_MODES.each do |mode| 
-      define_singleton_method "graph_by_#{mode}" do
-        graph_by_prop(@@configs_available, mode) 
+    def self.create_graph_generators
+      DeploymentSpace::TRAVERSAL_MODES.each do |mode| 
+        define_singleton_method "graph_by_#{mode}" do
+          graph_by_prop(mode) 
+        end
       end
     end
 
@@ -13,6 +15,7 @@ module CloudCapacitor
       @@max_price         = Settings.deployment_space.max_price
       @@max_num_instances = Settings.deployment_space.max_num_instances
       @@configs_available = configs_under_price_limit(vm_types)
+      create_graph_generators
     end
 
     def self.configs_available
@@ -30,7 +33,7 @@ module CloudCapacitor
       raise InvalidConfigurationError unless defined? @@configs_available && !@@configs_available.nil?
     end
 
-    def self.graph_by_prop(vm_types, prop_method)
+    def self.graph_by_prop(prop_method)
       validate_setup
       graph = Plexus::DirectedPseudoGraph.new
 
