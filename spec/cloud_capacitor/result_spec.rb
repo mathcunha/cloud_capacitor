@@ -25,27 +25,21 @@ module CloudCapacitor
       med = Settings.capacitor.medium_deviation
 
       result.sla=(1000 * (1 + low))
-      puts "SLA: #{result.sla} Result: #{result.raw_value}"
       result.value.should == { deviation: :low, direction: :down }
 
       result.sla=(1000 * (1 - low) + 50)
-      puts "SLA: #{result.sla} Result: #{result.raw_value}"
       result.value.should == { deviation: :low, direction: :up }
 
       result.sla=(1000 * (1 + med))
-      puts "SLA: #{result.sla} Result: #{result.raw_value}"
       result.value.should == { deviation: :medium, direction: :down }
 
       result.sla=(1000 * (1 - med) + 50)
-      puts "SLA: #{result.sla} Result: #{result.raw_value}"
       result.value.should == { deviation: :medium, direction: :up }
 
       result.sla=(1000 * (1 + med) + 100)
-      puts "SLA: #{result.sla} Result: #{result.raw_value}"
       result.value.should == { deviation: :high, direction: :down }
 
       result.sla=(1000 * (1 - med) - 100)
-      puts "SLA: #{result.sla} Result: #{result.raw_value}"
       result.value.should == { deviation: :high, direction: :up }
 
     end
