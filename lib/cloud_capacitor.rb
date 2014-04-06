@@ -13,19 +13,11 @@ module CloudCapacitor
 
   class Capacitor
     attr_accessor :deployment_space, :current_config
-    attr_accessor :sla, :delta
     attr_accessor :executor, :strategy
     attr_reader   :current_workload, :workloads
 
-    def initialize(sla:2000, delta:0.10, file:"deployment_space.yml")
-
+    def initialize
       @deployment_space = DeploymentSpace.new
-
-      @sla              = sla
-      @delta            = delta
-      
-      @current_workload = nil
-      
     end
     
     def run_for(*workload_list)
@@ -48,11 +40,10 @@ module CloudCapacitor
       while !stop do
         
         result = @executor.run(configuration: current_config, workload: @current_workload)
-        result.normalize!(sla: sla, delta: delta)
 
         @executed_for[@current_workload] <<= current_config
 
-        if result.met?(sla)
+        if result.met_sla?
 
           mark_configuration_as_candidate_for @current_workload
           next_config = strategy.select_lower_configuration_based_on(result)

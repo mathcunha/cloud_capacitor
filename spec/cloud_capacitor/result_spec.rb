@@ -2,47 +2,52 @@ require "spec_helper"
 
 module CloudCapacitor
   describe Result do
-    it "accepts result values and no options at initialization" do
-      Result.new(value: 1100, cpu: 50, mem:50).should be_an_instance_of Result
-    end
 
-    it "accepts result values with options" do
-      Result.new(value: 1100, cpu: 50, mem:50, normalized: true, sla: 1500, delta: 0.1).should be_an_instance_of Result
-    end
+    subject(:result) { Result.new(value: 1000, cpu: 50, mem:50) }
 
-    it "is created normalized only if sla and delta informed at constructor" do
-      result = Result.new(value: 1100, cpu: 50, mem:50, normalized: true, sla: 1500, delta: 0.1)
+    it "accepts result values at initialization" do
       result.should be_an_instance_of Result
-      result.normalized?.should eql true
-
-      result = Result.new(value: 1100, cpu: 50, mem:50, normalized: true, sla: 1500)
-      result.should be_an_instance_of Result
-      result.normalized?.should eql false
-
-      result = Result.new(value: 1100, cpu: 50, mem:50, normalized: true, delta: 0.1)
-      result.should be_an_instance_of Result
-      result.normalized?.should eql false
     end
 
-    it "returns raw values when not normalized" do
-      result = Result.new(value: 1100, cpu: 50, mem:50)
-
-      result.cpu.should eql 50
-      result.mem.should eql 50
-      result.value.should eql 1100
+    it "requires result values at initialization" do
+      expect { Result.new }.to raise_error
     end
 
-    it "normalizes correctly and exposes correct raw values" do
-      result = Result.new(value: 1100, cpu: 50, mem:50)
-      result.normalize! sla: 950, delta: 0.1 
-
-      result.cpu.should eql :low_moderate
-      result.mem.should eql :low_moderate
-      result.value.should == { deviation: :large, direction: :up }
-
+    it "returns raw values" do
       result.raw_cpu.should eql 50
       result.raw_mem.should eql 50
-      result.raw_value.should eql 1100
+      result.raw_value.should eql 1000
+    end
+
+    it "returns normalized result values" do
+
+      low = Settings.capacitor.low_deviation
+      med = Settings.capacitor.medium_deviation
+
+      result.sla=(1000 * (1 + low))
+      puts "SLA: #{result.sla} Result: #{result.raw_value}"
+      result.value.should == { deviation: :low, direction: :down }
+
+      result.sla=(1000 * (1 - low) + 50)
+      puts "SLA: #{result.sla} Result: #{result.raw_value}"
+      result.value.should == { deviation: :low, direction: :up }
+
+      result.sla=(1000 * (1 + med))
+      puts "SLA: #{result.sla} Result: #{result.raw_value}"
+      result.value.should == { deviation: :medium, direction: :down }
+
+      result.sla=(1000 * (1 - med) + 50)
+      puts "SLA: #{result.sla} Result: #{result.raw_value}"
+      result.value.should == { deviation: :medium, direction: :up }
+
+      result.sla=(1000 * (1 + med) + 100)
+      puts "SLA: #{result.sla} Result: #{result.raw_value}"
+      result.value.should == { deviation: :high, direction: :down }
+
+      result.sla=(1000 * (1 - med) - 100)
+      puts "SLA: #{result.sla} Result: #{result.raw_value}"
+      result.value.should == { deviation: :high, direction: :up }
+
     end
 
 

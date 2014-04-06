@@ -10,54 +10,7 @@ module CloudCapacitor
     end
 
     subject(:cloud_capacitor) { Capacitor.new }
-
-    describe "#new" do
-
-      its(:deployment_space) { should_not be_nil }
-
-      context "with no parameters" do
-        it "accepts zero arguments" do
-          expect(subject).to be_an_instance_of Capacitor
-        end
-
-        its(:sla)   {should_not be nil}
-        its(:delta) {should_not be nil}
-
-      end
-
-      context "with sla parameter" do
-        subject(:capacitor) { Capacitor.new(sla:1000) }
-
-        it "accepts sla argument" do
-          expect(subject).to be_an_instance_of Capacitor
-        end
-
-        its(:sla)   {should eql 1000}
-        its(:delta) {should_not be nil}
-      end
-
-      context "with delta parameter" do
-        subject(:capacitor) { Capacitor.new(delta:0.5) }
-
-        it "accepts delta argument" do
-          expect(subject).to be_an_instance_of Capacitor
-        end
-
-        its(:sla)   {should_not be nil}
-        its(:delta) {should eql 0.5}
-      end
-
-      context "with both sla and delta parameters" do
-        subject(:capacitor) { Capacitor.new(sla:1500, delta:0.3) }
-
-        it "accepts sla argument" do
-          expect(subject).to be_an_instance_of Capacitor
-        end
-
-        its(:sla)   {should eql 1500}
-        its(:delta) {should eql 0.3}
-      end
-    end
+    its(:deployment_space) { should_not be_nil }
 
     it "allows querying for the associated Executor at runtime" do
       expect(subject).to respond_to :executor
