@@ -17,6 +17,7 @@ module CloudCapacitor
 
     def initialize
       @deployment_space = DeploymentSpace.new
+      @executor = Executors::DefaultExecutor.new
     end
     
     def run_for(*workload_list)
