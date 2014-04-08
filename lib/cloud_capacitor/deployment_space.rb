@@ -16,9 +16,14 @@ module CloudCapacitor
         self.vm_types= load_deployment_space_from file
       end
 
-      @configs        = DeploymentSpaceBuilder.configs_available
-      @current_config = @configs[0]
+    end
 
+    def vm_types=(vm_types_list)
+      @vm_types = vm_types_list
+      @vm_types_by_cpu   = @vm_types.sort { |x,y| x.cpu <=> y.cpu }
+      @vm_types_by_mem   = @vm_types.sort { |x,y| x.mem <=> y.mem }
+      @vm_types_by_price = @vm_types.sort { |x,y| x.price <=> y.price }
+      build_graphs
     end
 
     def build_graphs
@@ -28,6 +33,8 @@ module CloudCapacitor
       @graph_by_cpu   = DeploymentSpaceBuilder.graph_by_cpu
       @graph_by_mem   = DeploymentSpaceBuilder.graph_by_mem
 
+      @configs        = DeploymentSpaceBuilder.configs_available
+      @current_config = @configs[0]
     end
 
     def select_higher(mode, from: @current_config, step: 1)
@@ -54,14 +61,6 @@ module CloudCapacitor
     def select_higher(mode, from: @current_config, step: 1)
       cfgs = prepare_selection(mode, from, step)
       cfgs.select { |c| c.method(mode).call > from.method(mode).call } unless cfgs.nil?
-    end
-
-    def vm_types=(vm_types_list)
-      @vm_types = vm_types_list
-      @vm_types_by_cpu   = @vm_types.sort { |x,y| x.cpu <=> y.cpu }
-      @vm_types_by_mem   = @vm_types.sort { |x,y| x.mem <=> y.mem }
-      @vm_types_by_price = @vm_types.sort { |x,y| x.price <=> y.price }
-      build_graphs
     end
 
     def pick(config_size, config_name)
