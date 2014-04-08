@@ -25,8 +25,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "guard"
   spec.add_development_dependency "guard-rspec"
+  spec.add_development_dependency "mock_redis"
 
   spec.add_dependency "settingslogic"
   spec.add_dependency "plexus"
+  spec.add_dependency "redis"
 
 end
