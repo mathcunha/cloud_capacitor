@@ -6,7 +6,6 @@ require_relative "cloud_capacitor/vm_type"
 require_relative "cloud_capacitor/deployment_space"
 require_relative "cloud_capacitor/strategies/strategy"
 require_relative "cloud_capacitor/strategies/nm_strategy"
-require_relative "cloud_capacitor/executors/gdrive_executor"
 require 'settingslogic'
 
 module CloudCapacitor

@@ -27,7 +27,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "guard-rspec"
 
   spec.add_dependency "settingslogic"
-  spec.add_dependency "google_drive"
   spec.add_dependency "plexus"
 
 end
