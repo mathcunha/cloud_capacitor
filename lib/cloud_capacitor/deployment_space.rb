@@ -64,11 +64,11 @@ module CloudCapacitor
     end
 
     def pick(config_size, config_name)
+      raise Err::InvalidConfigNameError, "Unsupported config name. #{list_supported_configs}" if @vm_types.select {|vm| vm.name == config_name }.size == 0
+      raise Err::InvalidConfigNameError, "Invalid config size. Maximum # of instances is #{Settings.deployment_space.max_num_instances}" if config_size > Settings.deployment_space.max_num_instances
       pos = @configs.index { |x| x.name == config_name && x.size == config_size}
-      raise Err::InvalidConfigNameError, "Unsupported config name. #{list_supported_configs}" if pos.nil?
       @current_config = @configs[pos]
     end
-    
     
     def first(mode=:price)
       pick(1, @vm_types_by_price[0].name)
@@ -114,9 +114,9 @@ module CloudCapacitor
       end
 
       def list_supported_configs
-        cfgs = ""
-        @configs.each { |cfg| cfgs << cfg.name + "\n" }
-        "Supported configs are:\n#{cfgs}"
+        vms = ""
+        @vm_types.each { |vm| vms << vm.name + "\n" }
+        "Supported configs are:\n#{vms}"
       end
     
   end
