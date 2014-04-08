@@ -35,7 +35,7 @@ module CloudCapacitor
 
     def self.graph_by_prop(prop_method)
       validate_setup
-      graph = Plexus::DirectedPseudoGraph.new
+      edges = []
 
       configurations = @@configs_available.sort {|x,y| x.method(prop_method).call() <=> y.method(prop_method).call()}
 
@@ -48,7 +48,7 @@ module CloudCapacitor
         if(equal(prop, configurations[i].method(prop_method).call(), 0.01))
           vertexes << configurations[i]
         else
-          graph = add_edges(vertexes_old, vertexes, graph, prop_method)
+          add_edges(vertexes_old, vertexes, edges, prop_method)
           prop = configurations[i].method(prop_method).call()
           vertexes_old = Array.new(vertexes)
           vertexes = []
@@ -57,7 +57,9 @@ module CloudCapacitor
         i += 1
       end
 
-      graph = add_edges(vertexes_old, vertexes, graph, prop_method)
+      add_edges(vertexes_old, vertexes, edges, prop_method)
+      graph = Plexus::DirectedPseudoGraph.new
+      edges.each {|edge| graph.add_edge! edge}
       graph
     end
 
@@ -80,21 +82,20 @@ module CloudCapacitor
       configs
     end
     
-    def self.new_edge(source, target, label)
+    def self.add_edge(source, target, label)
       #puts "source #{source} - target #{target} - label #{label.round(2)}"
       Plexus::Arc.new(source, target, label.round(2))
     end
 
-    def self.add_edges(vertexes_old, vertexes, graph, prop_method)
+    def self.add_edges(vertexes_old, vertexes, edges, prop_method)
       if(!vertexes_old.nil? && !vertexes.nil?)
         vertexes_old.each do |vertex_old|
           vertexes.each do |vertex|
-            graph = graph.add_edge(vertex_old, vertex, (vertex.method(prop_method).call() - vertex_old.method(prop_method).call()).round(2))
-            graph = graph.add_edge(vertex, vertex_old, (vertex_old.method(prop_method).call() - vertex.method(prop_method).call()).round(2))
+            edges << add_edge(vertex_old, vertex, (vertex.method(prop_method).call() - vertex_old.method(prop_method).call()).round(2))
+            edges << add_edge(vertex, vertex_old, (vertex_old.method(prop_method).call() - vertex.method(prop_method).call()).round(2))
           end
         end
       end
-      graph
     end
   end
 end
