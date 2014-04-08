@@ -9,6 +9,14 @@ module CloudCapacitor
       result.should be_an_instance_of Result
     end
 
+    it "default error count should be 0" do
+      expect(result.errors).to eql 0
+    end
+
+    it "default request count should be 1" do
+      expect(result.requests).to eql 1
+    end
+
     it "requires result values at initialization" do
       expect { Result.new }.to raise_error
     end
@@ -17,6 +25,13 @@ module CloudCapacitor
       result.raw_cpu.should eql 50
       result.raw_mem.should eql 50
       result.raw_value.should eql 1000
+    end
+
+    it "accpets values for errors and requests" do
+      result.errors = 5
+      result.requests = 3500
+      expect(result.errors).to eql 5
+      expect(result.requests).to eql 3500
     end
 
     it "returns normalized result values" do
@@ -41,9 +56,6 @@ module CloudCapacitor
 
       result.sla=(1000 * (1 - med) - 100)
       result.value.should == { deviation: :high, direction: :up }
-
     end
-
-
   end
 end
