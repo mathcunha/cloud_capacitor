@@ -1,12 +1,15 @@
 require_relative "cloud_capacitor/err/invalid_config_name_error"
 require_relative "cloud_capacitor/err/invalid_mode_error"
 require_relative "cloud_capacitor/err/no_executor_configured_error"
+require_relative "cloud_capacitor/err/no_strategy_configured_error"
+require_relative "cloud_capacitor/executors/default_executor"
 require_relative "cloud_capacitor/configuration"
 require_relative "cloud_capacitor/vm_type"
 require_relative "cloud_capacitor/deployment_space"
+require_relative "cloud_capacitor/deployment_space_builder"
 require_relative "cloud_capacitor/strategies/strategy"
 require_relative "cloud_capacitor/strategies/nm_strategy"
-require 'settingslogic'
+require_relative 'cloud_capacitor/settings/settings'
 
 module CloudCapacitor
 
@@ -104,3 +107,7 @@ module CloudCapacitor
       end
   end
 end
+
+# capacitor = CloudCapacitor::Capacitor.new
+# capacitor.strategy = CloudCapacitor::Strategies::NM_Strategy.new
+# capacitor.run_for(100)

@@ -6,9 +6,9 @@ module CloudCapacitor
 
     attr_reader   :graph_by_cpu, :graph_by_mem, :graph_by_price
     attr_reader   :current_config, :configs
-
+    DEFAULT_DEPLOYMENT_SPACE_FILE = File.join( File.expand_path('../../..', __FILE__), "deployment_space_new_generation.yml" )
     TRAVERSAL_MODES = [:cpu, :mem, :price]
-    def initialize(file:"deployment_space_new_generation.yml", vm_types: [])
+    def initialize(file:DEFAULT_DEPLOYMENT_SPACE_FILE, vm_types: [])
       
       if vm_types.size > 0
         self.vm_types= vm_types
