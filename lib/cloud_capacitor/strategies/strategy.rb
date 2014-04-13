@@ -20,7 +20,7 @@ module CloudCapacitor
       end
       
       def select_initial_configuration
-        capacitor.deployment_space.first_config
+        capacitor.deployment_space.first
       end
       
       def select_lower_configuration_based_on(result)
