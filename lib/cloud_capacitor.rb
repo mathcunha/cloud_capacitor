@@ -3,8 +3,10 @@ require_relative "cloud_capacitor/err/invalid_mode_error"
 require_relative "cloud_capacitor/err/no_executor_configured_error"
 require_relative "cloud_capacitor/err/no_strategy_configured_error"
 require_relative "cloud_capacitor/executors/default_executor"
+require_relative "cloud_capacitor/executors/dummy_executor"
 require_relative "cloud_capacitor/configuration"
 require_relative "cloud_capacitor/vm_type"
+require_relative "cloud_capacitor/result"
 require_relative "cloud_capacitor/deployment_space"
 require_relative "cloud_capacitor/deployment_space_builder"
 require_relative "cloud_capacitor/strategies/strategy"
@@ -27,7 +29,7 @@ module CloudCapacitor
       raise Err::NoExecutorConfiguredError if @executor.nil?
       raise Err::NoStrategyConfiguredError if @strategy.nil?
       raise ArgumentError if invalid_workloads?(workload_list)
-
+      
       # create a copy to preserve original parameter
       @workloads = Array.new(workload_list)
 
@@ -109,5 +111,6 @@ module CloudCapacitor
 end
 
 # capacitor = CloudCapacitor::Capacitor.new
+# capacitor.executor = CloudCapacitor::Executors::DummyExecutor.new
 # capacitor.strategy = CloudCapacitor::Strategies::NM_Strategy.new
 # capacitor.run_for(100)
