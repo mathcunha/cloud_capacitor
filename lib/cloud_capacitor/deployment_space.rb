@@ -36,21 +36,10 @@ module CloudCapacitor
       @configs        = DeploymentSpaceBuilder.configs_available
       @current_config = @configs[0]
     end
-
+    
     def select_higher(mode, from: @current_config, step: 1)
-      validate_modes mode
-      return nil if @current_config.nil?
-
-      if step == 1
-        return instance_variable_get("@graph_by_#{mode}").adjacent(from, :direction=> :out).uniq
-      else
-        array ||= []
-        l_array = instance_variable_get("@graph_by_#{mode}").adjacent(from).uniq
-        l_array.each do |cfg|
-          array << self.select_higher(mode, from:cfg, step:step-1)
-        end
-        return array
-      end
+      cfgs = prepare_selection(mode, from, step)
+      cfgs.select { |c| c.method(mode).call > from.method(mode).call } unless cfgs.nil?
     end
 
     def select_lower(mode, from: @current_config, step: 1)
@@ -58,10 +47,6 @@ module CloudCapacitor
       cfgs.select { |c| c.method(mode).call < from.method(mode).call } unless cfgs.nil?
     end
 
-    def select_higher(mode, from: @current_config, step: 1)
-      cfgs = prepare_selection(mode, from, step)
-      cfgs.select { |c| c.method(mode).call > from.method(mode).call } unless cfgs.nil?
-    end
 
     def pick(config_size, config_name)
       raise Err::InvalidConfigNameError, "Unsupported config name. #{list_supported_configs}" if @vm_types.select {|vm| vm.name == config_name }.size == 0
