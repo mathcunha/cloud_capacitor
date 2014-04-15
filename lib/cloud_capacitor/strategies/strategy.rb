@@ -24,11 +24,11 @@ module CloudCapacitor
       end
       
       def select_lower_configuration_based_on(result)
-        capacitor.deployment_space.previous_config_by!(:price)
+        capacitor.deployment_space.select_lower(:price)
       end
 
       def select_higher_configuration_based_on(result)
-        capacitor.deployment_space.next_config_by!(:price)
+        capacitor.deployment_space.select_higher(:price)
       end
 
     end
