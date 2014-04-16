@@ -22,4 +22,12 @@ deployment_space:
   max_price: 10.0
 
   #The maximum number of instances in a Configuration. This is for horizontal scaling.
-  max_num_instances: 4
+  max_num_instances: 2
+
+logger:
+  #Log target: 1-file 0-STDOUT
+  log_to_file: 0
+
+  #Log filename
+  log_filename: capacitor.log
+  

@@ -2,6 +2,7 @@ require_relative "cloud_capacitor/err/invalid_config_name_error"
 require_relative "cloud_capacitor/err/invalid_mode_error"
 require_relative "cloud_capacitor/err/no_executor_configured_error"
 require_relative "cloud_capacitor/err/no_strategy_configured_error"
+require_relative "cloud_capacitor/util/logger"
 require_relative "cloud_capacitor/executors/default_executor"
 require_relative "cloud_capacitor/executors/dummy_executor"
 require_relative "cloud_capacitor/configuration"
@@ -16,6 +17,8 @@ require_relative 'cloud_capacitor/settings/settings'
 module CloudCapacitor
 
   class Capacitor
+    include Log
+
     attr_accessor :deployment_space, :current_config
     attr_accessor :executor, :strategy
     attr_reader   :current_workload, :workloads

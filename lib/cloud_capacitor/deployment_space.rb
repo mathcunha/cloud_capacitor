@@ -1,6 +1,8 @@
 module CloudCapacitor
 
   class DeploymentSpace
+    include Log
+
     attr_accessor :vm_types, :vm_types_by_cpu, :vm_types_by_mem, :vm_types_by_price
     attr_accessor :max_price
 
@@ -19,18 +21,23 @@ module CloudCapacitor
     end
 
     def vm_types=(vm_types_list)
+      log.debug "Initializing deployment space with these vms:\n#{vm_types_list}"
       @vm_types = vm_types_list
       @vm_types_by_cpu   = @vm_types.sort { |x,y| x.cpu <=> y.cpu }
       @vm_types_by_mem   = @vm_types.sort { |x,y| x.mem <=> y.mem }
       @vm_types_by_price = @vm_types.sort { |x,y| x.price <=> y.price }
+      log.debug "Ok. Building deployment space graphs"
       build_graphs
     end
 
     def build_graphs
+      log.debug "Setting up Deployment Space Builder..."
       DeploymentSpaceBuilder.setup(@vm_types)
-
+      log.debug "Generating graph by price"
       @graph_by_price = DeploymentSpaceBuilder.graph_by_price
+      log.debug "Generating graph by CPU"
       @graph_by_cpu   = DeploymentSpaceBuilder.graph_by_cpu
+      log.debug "Generating graph by memory"
       @graph_by_mem   = DeploymentSpaceBuilder.graph_by_mem
 
       @configs        = DeploymentSpaceBuilder.configs_available
