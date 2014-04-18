@@ -13,9 +13,9 @@ module CloudCapacitor
     def initialize(file:DEFAULT_DEPLOYMENT_SPACE_FILE, vm_types: [])
       
       if vm_types.size > 0
-        self.vm_types= vm_types
+        self.vm_types = vm_types
       else
-        self.vm_types= load_deployment_space_from file
+        self.vm_types = load_deployment_space_from file
       end
 
     end
@@ -23,25 +23,36 @@ module CloudCapacitor
     def vm_types=(vm_types_list)
       log.debug "Initializing deployment space with these vms:\n#{vm_types_list.map { |vm| vm.name }}"
       @vm_types = vm_types_list
+      build_deployment_space
+    end
+
+    def build_deployment_space
       @vm_types_by_cpu   = @vm_types.sort { |x,y| x.cpu <=> y.cpu }
       @vm_types_by_mem   = @vm_types.sort { |x,y| x.mem <=> y.mem }
       @vm_types_by_price = @vm_types.sort { |x,y| x.price <=> y.price }
-      log.debug "Ok. Building deployment space graphs"
+
+      log.debug "Setting up Deployment Space Builder..."
+      DeploymentSpaceBuilder.setup(@vm_types)
+
+      log.debug "Building deployment space graphs"
       build_graphs
+
+      @configs = DeploymentSpaceBuilder.configs_available
+
+      @configs_by_cpu   = @configs.sort { |x,y| x.cpu <=> y.cpu }
+      @configs_by_mem   = @configs.sort { |x,y| x.mem <=> y.mem }
+      @configs_by_price = @configs.sort { |x,y| x.price <=> y.price }
+
+      @current_config = @configs[0]
     end
 
     def build_graphs
-      log.debug "Setting up Deployment Space Builder..."
-      DeploymentSpaceBuilder.setup(@vm_types)
       log.debug "Generating graph by price"
       @graph_by_price = DeploymentSpaceBuilder.graph_by_price
       log.debug "Generating graph by CPU"
       @graph_by_cpu   = DeploymentSpaceBuilder.graph_by_cpu
       log.debug "Generating graph by memory"
       @graph_by_mem   = DeploymentSpaceBuilder.graph_by_mem
-
-      @configs        = DeploymentSpaceBuilder.configs_available
-      @current_config = @configs[0]
     end
     
     def select_higher(mode, from: @current_config, step: 1)
@@ -62,7 +73,13 @@ module CloudCapacitor
     end
     
     def first(mode=:price)
-      pick(1, @vm_types_by_price[0].name)
+      config_list = instance_variable_get("@configs_by_#{mode}")
+      @current_config = config_list[0]
+    end
+
+    def last(mode=:price)
+      config_list = instance_variable_get("@configs_by_#{mode}")
+      @current_config = config_list[-1]
     end
 
     private
