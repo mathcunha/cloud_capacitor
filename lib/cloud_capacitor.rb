@@ -19,9 +19,10 @@ module CloudCapacitor
   class Capacitor
     include Log
 
-    attr_accessor :deployment_space, :current_config
+    attr_accessor :deployment_space
     attr_accessor :executor, :strategy
     attr_reader   :current_workload, :workloads
+    attr_reader   :candidates_for, :rejected_for, :executed_for
 
     def initialize
       @deployment_space = DeploymentSpace.new
@@ -46,12 +47,12 @@ module CloudCapacitor
       @current_workload = @strategy.select_initial_workload(workload_list)
       
       while !stop do
-        
+
         result = @executor.run(configuration: current_config, workload: @current_workload)
 
-        @executed_for[@current_workload] <<= current_config
+        @executed_for[@current_workload]<<= current_config
 
-        if result.met_sla?
+       if result.met_sla?
 
           mark_configuration_as_candidate_for @current_workload
           next_config = strategy.select_lower_configuration_based_on(result)
@@ -66,7 +67,7 @@ module CloudCapacitor
           @current_workload = strategy.lower_workload if next_config.nil?
 
         end
-        
+        log.debug "Capacitor: next_config = #{next_config}"
         stop = next_config.nil? && @current_workload.nil?
         
       end
@@ -84,11 +85,11 @@ module CloudCapacitor
     end
 
     def unexplored_workloads
-      unexplored = @workloads - @rejected_for.select {|_,v| v.include? @current_config }.keys
-      unexplored = unexplored - @candidates_for.select {|_,v| v.include? @current_config }.keys
+      unexplored = @workloads - @rejected_for.select {|_,v| v.include? current_config }.keys
+      unexplored = unexplored - @candidates_for.select {|_,v| v.include? current_config }.keys
       unexplored
     end
-    
+
     private
       def invalid_workloads?(workloads)
         return true unless workloads.is_a? Array
@@ -117,3 +118,8 @@ end
 # capacitor.executor = CloudCapacitor::Executors::DummyExecutor.new
 # capacitor.strategy = CloudCapacitor::Strategies::NM_Strategy.new
 # capacitor.run_for(100)
+
+# candidates = capacitor.candidates_for.map { |k,v| "Workload #{k}: #{v.map {|c| c.to_s}.join(", ")}" }.join("\n")
+# puts "Candidate configs are as follows:\n#{candidates}"
+# rejected = capacitor.rejected_for.map { |k,v| "Workload #{k}: #{v.map {|c| c.to_s}.join(", ")}" }.join("\n")
+# puts "Rejected configs are as follows:\n#{rejected}"

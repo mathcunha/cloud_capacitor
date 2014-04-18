@@ -4,10 +4,10 @@ module CloudCapacitor
     include Log
 
     attr_accessor :vm_types, :vm_types_by_cpu, :vm_types_by_mem, :vm_types_by_price
-    attr_accessor :max_price
+    attr_accessor :current_config, :max_price
 
     attr_reader   :graph_by_cpu, :graph_by_mem, :graph_by_price
-    attr_reader   :current_config, :configs
+    attr_reader   :configs
     DEFAULT_DEPLOYMENT_SPACE_FILE = File.join( File.expand_path('../../..', __FILE__), "deployment_space_new_generation.yml" )
     TRAVERSAL_MODES = [:cpu, :mem, :price]
     def initialize(file:DEFAULT_DEPLOYMENT_SPACE_FILE, vm_types: [])
@@ -21,7 +21,7 @@ module CloudCapacitor
     end
 
     def vm_types=(vm_types_list)
-      log.debug "Initializing deployment space with these vms:\n#{vm_types_list}"
+      log.debug "Initializing deployment space with these vms:\n#{vm_types_list.map { |vm| vm.name }}"
       @vm_types = vm_types_list
       @vm_types_by_cpu   = @vm_types.sort { |x,y| x.cpu <=> y.cpu }
       @vm_types_by_mem   = @vm_types.sort { |x,y| x.mem <=> y.mem }
@@ -54,7 +54,6 @@ module CloudCapacitor
       cfgs.select { |c| c.method(mode).call < from.method(mode).call } unless cfgs.nil?
     end
 
-
     def pick(config_size, config_name)
       raise Err::InvalidConfigNameError, "Unsupported config name. #{list_supported_configs}" if @vm_types.select {|vm| vm.name == config_name }.size == 0
       raise Err::InvalidConfigNameError, "Invalid config size. Maximum # of instances is #{Settings.deployment_space.max_num_instances}" if config_size > Settings.deployment_space.max_num_instances
@@ -65,7 +64,7 @@ module CloudCapacitor
     def first(mode=:price)
       pick(1, @vm_types_by_price[0].name)
     end
-   
+
     private
 
       def prepare_selection(mode, from, step)

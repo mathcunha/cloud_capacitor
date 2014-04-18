@@ -21,6 +21,7 @@ module CloudCapacitor
 
       def lower_workload
         log.debug "Strategy: lowering workload"
+        return nil if capacitor.workloads.index(capacitor.current_workload) == 0
         capacitor.workloads[ capacitor.workloads.index(capacitor.current_workload) - 1 ]
       end
       
@@ -31,12 +32,18 @@ module CloudCapacitor
       
       def select_lower_configuration_based_on(result)
         log.debug "Strategy: lowering configuration"
-        capacitor.deployment_space.select_lower(:price)
+        cfgs = capacitor.deployment_space.select_lower(:price)
+        log.debug "Strategy: Lower config selected: #{cfgs[0]}"
+        return nil if cfgs[0].nil?
+        capacitor.deployment_space.pick cfgs[0].size, cfgs[0].name
       end
 
       def select_higher_configuration_based_on(result)
-        log.debug "Strategy: raising configuration"
-        capacitor.deployment_space.select_higher(:price)
+        log.debug "Strategy: raising configuration from #{capacitor.deployment_space.current_config}"
+        cfgs = capacitor.deployment_space.select_higher(:price)
+        log.debug "Strategy: Higher configs selected: #{cfgs}"
+        return nil if cfgs[0].nil?
+        capacitor.deployment_space.current_config = cfgs[0]
       end
 
     end
