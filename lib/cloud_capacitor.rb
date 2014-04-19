@@ -22,7 +22,7 @@ module CloudCapacitor
     attr_accessor :deployment_space
     attr_accessor :executor, :strategy
     attr_reader   :current_workload, :workloads
-    attr_reader   :candidates_for, :rejected_for, :executed_for
+    attr_reader   :candidates_for, :rejected_for, :executed_for, :executions
 
     def initialize
       @deployment_space = DeploymentSpace.new
@@ -39,7 +39,10 @@ module CloudCapacitor
 
       @candidates_for = Hash.new{ [] } # each key defaults to an empty array
       @rejected_for   = Hash.new{ [] }
-      @executed_for    = Hash.new{ [] }
+      @executed_for   = Hash.new{ [] }
+
+      #How many times the choosen Strategy leads to invocation of the Executor
+      @executions = 0
 
       stop = false
       
@@ -49,10 +52,11 @@ module CloudCapacitor
       while !stop do
 
         result = @executor.run(configuration: current_config, workload: @current_workload)
+        @executions += 1
 
         @executed_for[@current_workload]<<= current_config
 
-       if result.met_sla?
+        if result.met_sla?
 
           mark_configuration_as_candidate_for @current_workload
           next_config = strategy.select_lower_configuration_based_on(result)
@@ -119,7 +123,12 @@ end
 # capacitor.strategy = CloudCapacitor::Strategies::NM_Strategy.new
 # capacitor.run_for(100)
 
+# puts "_" * 80
+# puts ""
+# puts "The selected Strategy was able to complete the assessment with #{capacitor.executions} executions.\n\n"
 # candidates = capacitor.candidates_for.map { |k,v| "Workload #{k}: #{v.map {|c| c.to_s}.join(", ")}" }.join("\n")
-# puts "Candidate configs are as follows:\n#{candidates}"
+# puts "Candidate configs are as follows:\n#{candidates}\n" unless candidates.empty?
+# puts "No configs were able to meet the SLA parameter.\n" if candidates.empty?
 # rejected = capacitor.rejected_for.map { |k,v| "Workload #{k}: #{v.map {|c| c.to_s}.join(", ")}" }.join("\n")
-# puts "Rejected configs are as follows:\n#{rejected}"
+# puts "Rejected configs are as follows:\n#{rejected}\n\n" unless rejected.empty?
+# puts "All configs were able to meet the SLA parameter.\n" if rejected.empty?
