@@ -44,6 +44,10 @@ module CloudCapacitor
       expect(subject).to respond_to(:run_for).with(1).argument
     end
 
+    it "allows tracking the number of times the Executor is invoked" do
+      expect(subject).to respond_to :executions
+    end
+
     describe "#unexplored_workloads" do
       xit "lists all workloads for which the current Configuration has not been tested yet" do
       end
