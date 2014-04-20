@@ -7,7 +7,10 @@ module CloudCapacitor
     before :all do
       @vm01   = VMType.new(name:"c1",cpu:1, mem:1, price:0.1)
       @vm02   = VMType.new(name:"c2",cpu:2, mem:2, price:0.2)
-      @conf01 = Configuration.new(vm_type: @vm01, size: 1)
+      @conf01_01 = Configuration.new(vm_type: @vm01, size: 1)
+      @conf01_02 = Configuration.new(vm_type: @vm01, size: 2)
+      @conf02_01 = Configuration.new(vm_type: @vm02, size: 1)
+      @conf02_02 = Configuration.new(vm_type: @vm02, size: 2)
     end
     
     subject(:deployment_space) { DeploymentSpace.new vm_types: [@vm01, @vm02] }
@@ -43,10 +46,7 @@ module CloudCapacitor
             f.write YAML::dump ["not a configuration 01", "not a configuration 02"]
           end
         end 
-
-        subject(:deployment_space) { DeploymentSpace.new(file:"configurations.yml") }
-        its(:configs) { should have(8).configurations }
-
+        
         it "raises an error when non existent file passed" do
           expect { DeploymentSpace.new(file:"no_file.yml") }.to raise_error
         end
@@ -75,18 +75,29 @@ module CloudCapacitor
       describe "#first" do
         context "with no params" do
           it "returns a Configuration based on :price by default" do
-            expect(subject.first).to be_an_instance_of Configuration
-            expect(subject.first).to eql @conf01
+            expect(subject.first).to eql @conf01_01
           end
         end
         context "with mode informed" do
           it "returns a Configuration based on mode" do
-            expect(subject.first(:price)).to be_an_instance_of Configuration
-            expect(subject.first).to eql @conf01
-            expect(subject.first(:mem)).to be_an_instance_of Configuration
-            expect(subject.first).to eql @conf01
-            expect(subject.first(:cpu)).to be_an_instance_of Configuration
-            expect(subject.first).to eql @conf01
+            expect(subject.first(:price)).to eql @conf01_01
+            expect(subject.first(:mem)).to   eql @conf01_01
+            expect(subject.first(:cpu)).to   eql @conf01_01
+          end
+        end
+      end
+
+      describe "#last" do
+        context "with no params" do
+          it "returns a Configuration based on :price by default" do
+            expect(subject.last).to eql @conf02_02
+          end
+        end
+        context "with mode informed" do
+          it "returns a Configuration based on mode" do
+            expect(subject.last(:price)).to eql @conf02_02
+            expect(subject.last(:mem)).to   eql @conf02_02
+            expect(subject.last(:cpu)).to   eql @conf02_02
           end
         end
       end
