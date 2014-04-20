@@ -32,16 +32,65 @@ module CloudCapacitor
     def hash
       "#{@size.to_s}#{@name}".hash
     end
+
+    # Keep in mind that when one config is NOT < other
+    # it does NOT necessarily mean it IS > other
+    def < (other)
+      return false if other.nil?
+      return false if self.equal? other
+      return false if self.size >= other.size
+      
+      return true if ( (self.name.eql? other.name) && 
+                       (self.size < other.size) )
+
+      return true if ( (self.size == other.size) &&
+                       (self.cpu < other.cpu)    &&
+                       (self.mem < other.cpu) )
+
+      return false
+    end
     
-    def eql?(object)
-      if(object.nil?)
-        return false
-      end
-      if(self.equal?(object))
-        return true
-      end
-      return @size.eql?(object.size) && @vm_type.name.eql?(object.vm_type.name)
+    # Keep in mind that when one config is NOT > other
+    # it does NOT necessarily mean it IS < other
+    def > (other)
+      return false if other.nil?
+      return false if self.equal? other
+      return false if self.size <= other.size
+      
+      return true if ( (self.name.eql? other.name) &&
+                       (self.size > other.size) )
+
+      return true if ( (self.size == other.size) &&
+                       (self.cpu > other.cpu)    &&
+                       (self.mem > other.cpu) )
+
+      return false
     end
 
+    def <= (other)
+      return false if other.nil?
+      return true  if self.equal? other
+      return true  if self < other
+      return true  if self == other
+    end
+
+    def >= (other)
+      return false if other.nil?
+      return true  if self.equal? other
+      return true  if self > other
+      return true  if self == other
+    end
+
+    def == (other)
+      return false if other.nil?
+      return true  if self.equal? other
+      return true  if self.size == other.size &&
+                      self.cpu  == other.cpu  &&
+                      self.mem  == other.mem
+    end
+
+    def eql? (other)
+      return self == other
+    end
   end
 end
