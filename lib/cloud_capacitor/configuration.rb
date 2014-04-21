@@ -89,6 +89,12 @@ module CloudCapacitor
                       self.mem  == other.mem
     end
 
+    def <=> (other)
+      return -1 if self <  other
+      return  0 if self == other
+      return  1 if self > other
+    end
+
     def eql? (other)
       return self == other
     end
