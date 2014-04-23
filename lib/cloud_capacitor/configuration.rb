@@ -45,7 +45,7 @@ module CloudCapacitor
 
       return true if ( (self.size == other.size) &&
                        (self.cpu < other.cpu)    &&
-                       (self.mem < other.cpu) )
+                       (self.mem < other.mem) )
 
       return false
     end
@@ -62,7 +62,7 @@ module CloudCapacitor
 
       return true if ( (self.size == other.size) &&
                        (self.cpu > other.cpu)    &&
-                       (self.mem > other.cpu) )
+                       (self.mem > other.mem) )
 
       return false
     end
@@ -84,15 +84,16 @@ module CloudCapacitor
     def == (other)
       return false if other.nil?
       return true  if self.equal? other
-      return true  if self.size == other.size &&
-                      self.cpu  == other.cpu  &&
-                      self.mem  == other.mem
+      return true  if ( (self.size == other.size) &&
+                        (self.cpu  == other.cpu)  &&
+                        (self.mem  == other.mem) )
     end
 
     def <=> (other)
-      return -1 if self <  other
-      return  0 if self == other
-      return  1 if self > other
+      return -1 if (self  < other)
+      return  0 if (self == other)
+      return  1 if (self  > other)
+      return true
     end
 
     def eql? (other)
