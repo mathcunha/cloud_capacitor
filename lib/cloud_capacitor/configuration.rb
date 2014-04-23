@@ -38,7 +38,7 @@ module CloudCapacitor
     def < (other)
       return false if other.nil?
       return false if self.equal? other
-      return false if self.size >= other.size
+      return false if self.size > other.size
       
       return true if ( (self.name.eql? other.name) && 
                        (self.size < other.size) )
@@ -55,7 +55,7 @@ module CloudCapacitor
     def > (other)
       return false if other.nil?
       return false if self.equal? other
-      return false if self.size <= other.size
+      return false if self.size < other.size
       
       return true if ( (self.name.eql? other.name) &&
                        (self.size > other.size) )
@@ -93,7 +93,7 @@ module CloudCapacitor
       return -1 if (self  < other)
       return  0 if (self == other)
       return  1 if (self  > other)
-      return true
+      raise Err::UncomparableConfigurationError
     end
 
     def eql? (other)

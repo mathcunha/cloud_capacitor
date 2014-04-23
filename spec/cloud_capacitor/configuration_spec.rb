@@ -2,7 +2,7 @@ require "spec_helper"
 
 module CloudCapacitor
   describe Configuration do
-    before :all do
+    before do
       @vm01  = VMType.new(name:"c1",cpu:1, mem:1, price:0.1)
       @vm02  = VMType.new(name:"c2",cpu:2, mem:2, price:0.2)
 
@@ -19,30 +19,61 @@ module CloudCapacitor
     end
 
     it "compares with <" do
+      @config01_01.should < @config02_01
+      @config01_01.should < @config01_02
       @config01_01.should_not < @config01_01
-      @config01_01.should <   @config01_02
+      @config01_02.should_not < @config01_01
+      @config02_01.should_not < @config01_01
+      @config02_01.should_not < @config01_02
     end
     it "compares with >" do
+      @config01_02.should > @config01_01
+      @config02_01.should > @config01_01
       @config01_01.should_not > @config01_01
-      @config01_02.should >   @config01_01
+      @config01_01.should_not > @config01_02
+      @config01_01.should_not > @config02_01
+      @config01_02.should_not > @config02_01
     end
     it "compares with <=" do
       @config01_01.should <= @config01_01
-      @config01_01.should <=  @config01_02
-      @config01_02.should_not <=  @config01_01
+      @config01_01.should <= @config01_02
+      @config01_02.should <= @config02_02
+      @config01_02.should_not <= @config01_01
+      @config02_01.should_not <= @config01_01
+      @config02_01.should_not <= @config01_02
     end
     it "compares with >=" do
-      @config01_02.should >=  @config01_02
-      @config01_02.should >=  @config01_02
-      @config01_01.should_not >=  @config01_02
+      @config01_02.should >= @config01_02
+      @config01_02.should >= @config01_01
+      @config01_01.should_not >= @config01_02
+      @config01_01.should_not >= @config02_01
+      @config01_02.should_not >= @config02_01
+      @config01_02.should_not >= @config02_02
     end
     it "compares with ==" do
-      @config01_01.should ==  @config01_01
-      @config01_01.should_not ==  @config01_02
+      @config01_01.should == @config01_01
+
+      @config01_01.should_not == @config01_02
+      @config01_02.should_not == @config01_01
+      @config02_01.should_not == @config01_01
+      @config02_01.should_not == @config01_02
     end
     it "compares with eql?" do
       @config01_01.should eql @config01_01
+
       @config01_01.should_not eql @config01_02
+      @config01_02.should_not eql @config01_01
+      @config02_01.should_not eql @config01_01
+      @config02_01.should_not eql @config01_02
+    end
+    it "compares with <=>" do
+      ( @config01_01 <=> @config01_02 ).should eql -1
+      ( @config01_01 <=> @config01_01 ).should eql  0
+      ( @config01_02 <=> @config01_01 ).should eql  1
+
+      ( @config02_02 <=> @config01_02 ).should eql  1
+      ( @config01_01 <=> @config02_01 ).should eql -1
+      expect { @config02_01 <=> @config01_02 }.to raise_error
     end
   end
 end
