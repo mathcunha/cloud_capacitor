@@ -87,6 +87,7 @@ module CloudCapacitor
       return true  if ( (self.size == other.size) &&
                         (self.cpu  == other.cpu)  &&
                         (self.mem  == other.mem) )
+      return false
     end
 
     def <=> (other)
