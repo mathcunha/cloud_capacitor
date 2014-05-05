@@ -43,14 +43,14 @@ module CloudCapacitor
         if result.met_sla?
 
           mark_configuration_as_candidate_for @current_workload
-          next_config = strategy.select_lower_configuration_based_on(result)
+          next_config = select_lower_configuration(result)
           
           @current_workload = strategy.raise_workload if next_config.nil?
 
         else
 
           mark_configuration_as_rejected_for @current_workload
-          next_config = strategy.select_higher_configuration_based_on(result)
+          next_config = select_higher_configuration(result)
 
           @current_workload = strategy.lower_workload if next_config.nil?
 
@@ -79,6 +79,20 @@ module CloudCapacitor
     end
 
     private
+      def select_lower_configuration(result)
+        filter_explored strategy.select_lower_configurations_based_on(result)
+      end
+
+      def select_higher_configuration(result)
+        filter_explored strategy.select_higher_configurations_based_on(result)
+      end
+
+      def filter_explored(config_list)
+        cfgs = config_list.select {|c| unexplored_configurations.include? c}
+        update_current_config cfgs[0] unless cfgs[0].nil?
+        cfgs[0]
+      end
+
       def invalid_workloads?(workloads)
         return true unless workloads.is_a? Array
         valid = true
@@ -88,7 +102,7 @@ module CloudCapacitor
 
       def mark_configuration_as_candidate_for(workload)
         keys = @workloads.select { |k| k <= workload }
-        keys.each { |k| @candidates_for[k] <<= current_config if !@candidates_for[k].include?(current_config) }
+        keys.each { |k| @candidates_for[k] <<= current_config unless @candidates_for[k].include?(current_config) }
         higher_configs = deployment_space.configs.select { |cfg| cfg > current_config &&
                                                                 !@candidates_for[workload].include?(cfg) }
         @candidates_for[workload] += higher_configs
@@ -96,7 +110,7 @@ module CloudCapacitor
 
       def mark_configuration_as_rejected_for(workload)
         keys = @workloads.select { |k| k >= workload }
-        keys.each { |k| @rejected_for[k] <<= current_config if !@rejected_for[k].include?(current_config) }
+        keys.each { |k| @rejected_for[k] <<= current_config unless @rejected_for[k].include?(current_config) }
         lower_configs = deployment_space.configs.select { |cfg| cfg < current_config && 
                                                                 !@rejected_for[workload].include?(cfg) }
         @rejected_for[workload] += lower_configs
@@ -104,6 +118,10 @@ module CloudCapacitor
 
       def current_config
         @deployment_space.current_config
+      end
+
+      def update_current_config(config)
+        @deployment_space.pick config.size, config.name
       end
   end
 end

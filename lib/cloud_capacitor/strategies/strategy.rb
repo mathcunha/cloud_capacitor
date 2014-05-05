@@ -10,7 +10,7 @@ module CloudCapacitor
       end
 
       def select_initial_workload(workload_list)
-        log.debug "Strategy: selecting initial workload"
+        log.debug "Strategy: Initial workload set to #{workload_list[0]}"
         workload_list[0]
       end
       
@@ -26,26 +26,18 @@ module CloudCapacitor
       end
       
       def select_initial_configuration
-        log.debug "Strategy: selecting initial configuration"
+        log.debug "Strategy: Initial configuration set to #{capacitor.deployment_space.current_config}"
         capacitor.deployment_space.first
       end
       
-      def select_lower_configuration_based_on(result)
-        log.debug "Strategy: lowering configuration"
+      def select_lower_configurations_based_on(result)
+        log.debug "Strategy: lowering configuration from #{capacitor.deployment_space.current_config}"
         cfgs = capacitor.deployment_space.select_lower(:price)
-        cfgs.select! {|c| capacitor.unexplored_configurations.include? c}
-        return nil if cfgs[0].nil?
-        log.debug "Strategy: Lower config selected: #{cfgs[0]}"
-        capacitor.deployment_space.pick cfgs[0].size, cfgs[0].name
       end
 
-      def select_higher_configuration_based_on(result)
+      def select_higher_configurations_based_on(result)
         log.debug "Strategy: raising configuration from #{capacitor.deployment_space.current_config}"
         cfgs = capacitor.deployment_space.select_higher(:price)
-        cfgs.select! {|c| capacitor.unexplored_configurations.include? c}
-        return nil if cfgs[0].nil?
-        log.debug "Strategy: Higher config selected: #{cfgs[0]}"
-        capacitor.deployment_space.current_config = cfgs[0]
       end
 
     end
