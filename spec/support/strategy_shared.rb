@@ -18,11 +18,11 @@ module CloudCapacitor
     end
 
     it "can select lower Configurations from the DeploymentSpace" do
-      expect(strategy).to respond_to(:select_lower_configuration_based_on).with(1).argument
+      expect(strategy).to respond_to(:select_lower_configurations_based_on).with(1).argument
     end
 
     it "can select higher Configurations from the DeploymentSpace" do
-      expect(strategy).to respond_to(:select_higher_configuration_based_on).with(1).argument
+      expect(strategy).to respond_to(:select_higher_configurations_based_on).with(1).argument
     end
 
     it "can select an initial Configuration to start the tests with" do

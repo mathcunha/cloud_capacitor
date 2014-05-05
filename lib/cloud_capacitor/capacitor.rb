@@ -88,6 +88,7 @@ module CloudCapacitor
       end
 
       def filter_explored(config_list)
+        return nil if config_list.nil?
         cfgs = config_list.select {|c| unexplored_configurations.include? c}
         update_current_config cfgs[0] unless cfgs[0].nil?
         cfgs[0]

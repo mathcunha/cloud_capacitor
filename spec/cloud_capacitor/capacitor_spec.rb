@@ -63,7 +63,7 @@ module CloudCapacitor
       it "requires an Executor to be associated" do
         strategy = double("Strategy")
         allow(strategy).to receive(:capacitor=)
-        allow(strategy).to receive(:select_higher_configuration_based_on)
+        allow(strategy).to receive(:select_higher_configurations_based_on)
 
         subject.strategy = strategy
         subject.executor = nil
@@ -78,8 +78,8 @@ module CloudCapacitor
           allow(strategy).to receive(:select_initial_workload).and_return(100)
           allow(strategy).to receive(:lower_workload)
           allow(strategy).to receive(:raise_workload)
-          allow(strategy).to receive(:select_higher_configuration_based_on)
-          allow(strategy).to receive(:select_lower_configuration_based_on)
+          allow(strategy).to receive(:select_higher_configurations_based_on)
+          allow(strategy).to receive(:select_lower_configurations_based_on)
 
           subject.strategy = strategy
           subject.executor = Executors::DummyExecutor.new
@@ -105,8 +105,8 @@ module CloudCapacitor
           allow(strategy).to receive(:select_initial_workload).and_return(100)
           allow(strategy).to receive(:lower_workload)
           allow(strategy).to receive(:raise_workload)
-          allow(strategy).to receive(:select_higher_configuration_based_on)
-          allow(strategy).to receive(:select_lower_configuration_based_on)
+          allow(strategy).to receive(:select_higher_configurations_based_on)
+          allow(strategy).to receive(:select_lower_configurations_based_on)
 
           subject.executor = executor
           subject.strategy = strategy
@@ -137,8 +137,8 @@ module CloudCapacitor
         allow(strategy).to receive(:select_initial_workload).and_return(200)
         allow(strategy).to receive(:lower_workload)
         allow(strategy).to receive(:raise_workload)
-        allow(strategy).to receive(:select_higher_configuration_based_on)
-        allow(strategy).to receive(:select_lower_configuration_based_on)
+        allow(strategy).to receive(:select_higher_configurations_based_on)
+        allow(strategy).to receive(:select_lower_configurations_based_on)
 
         subject.executor = executor
         subject.strategy = strategy
