@@ -88,15 +88,17 @@ module CloudCapacitor
 
       def mark_configuration_as_candidate_for(workload)
         keys = @workloads.select { |k| k <= workload }
-        keys.each { |k| @candidates_for[k] <<= current_config }
-        higher_configs = deployment_space.configs.select { |cfg| cfg > current_config }
+        keys.each { |k| @candidates_for[k] <<= current_config if !@candidates_for[k].include?(current_config) }
+        higher_configs = deployment_space.configs.select { |cfg| cfg > current_config &&
+                                                                !@candidates_for[workload].include?(cfg) }
         @candidates_for[workload] += higher_configs
       end
 
       def mark_configuration_as_rejected_for(workload)
         keys = @workloads.select { |k| k >= workload }
-        keys.each { |k| @rejected_for[k] <<= current_config }
-        lower_configs = deployment_space.configs.select { |cfg| cfg < current_config }
+        keys.each { |k| @rejected_for[k] <<= current_config if !@rejected_for[k].include?(current_config) }
+        lower_configs = deployment_space.configs.select { |cfg| cfg < current_config && 
+                                                                !@rejected_for[workload].include?(cfg) }
         @rejected_for[workload] += lower_configs
       end
 

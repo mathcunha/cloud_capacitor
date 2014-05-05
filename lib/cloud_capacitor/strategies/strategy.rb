@@ -33,7 +33,7 @@ module CloudCapacitor
       def select_lower_configuration_based_on(result)
         log.debug "Strategy: lowering configuration"
         cfgs = capacitor.deployment_space.select_lower(:price)
-        cfgs.reject! {|c| capacitor.executed_for.include? c}
+        cfgs.select! {|c| capacitor.unexplored_configurations.include? c}
         return nil if cfgs[0].nil?
         log.debug "Strategy: Lower config selected: #{cfgs[0]}"
         capacitor.deployment_space.pick cfgs[0].size, cfgs[0].name
@@ -42,7 +42,7 @@ module CloudCapacitor
       def select_higher_configuration_based_on(result)
         log.debug "Strategy: raising configuration from #{capacitor.deployment_space.current_config}"
         cfgs = capacitor.deployment_space.select_higher(:price)
-        cfgs.reject! {|c| capacitor.executed_for.include? c}
+        cfgs.select! {|c| capacitor.unexplored_configurations.include? c}
         return nil if cfgs[0].nil?
         log.debug "Strategy: Higher config selected: #{cfgs[0]}"
         capacitor.deployment_space.current_config = cfgs[0]
