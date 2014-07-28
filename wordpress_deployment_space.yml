@@ -1,0 +1,35 @@
+- !ruby/object:CloudCapacitor::VMType
+  name: c3_l
+  cpu: 2
+  mem: 3.75
+  price: 0.105
+- !ruby/object:CloudCapacitor::VMType
+  name: c3_xl
+  cpu: 4
+  mem: 7.5
+  price: 0.21
+- !ruby/object:CloudCapacitor::VMType
+  name: c3_2xl
+  cpu: 8
+  mem: 15
+  price: 0.42
+- !ruby/object:CloudCapacitor::VMType
+  name: m3_m
+  cpu: 1
+  mem: 3.75
+  price: 0.07
+- !ruby/object:CloudCapacitor::VMType
+  name: m3_l
+  cpu: 2
+  mem: 7.5
+  price: 0.14
+- !ruby/object:CloudCapacitor::VMType
+  name: m3_xl
+  cpu: 4
+  mem: 15
+  price: 0.28
+- !ruby/object:CloudCapacitor::VMType
+  name: m3_2xl
+  cpu: 8
+  mem: 30.0
+  price: 0.56
