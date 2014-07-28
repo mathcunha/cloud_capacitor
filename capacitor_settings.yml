@@ -1,6 +1,6 @@
 capacitor:
   #The reference value that indicates a successful execution result
-  sla: 1000
+  sla: 30000
 
   #Deviations below this (+/-) factor are considered low
   low_deviation: 0.05
@@ -19,10 +19,10 @@ deployment_space:
   #The maximum price for a whole Configuration.
   #This refers to the individual VM_Type price multiplied by the number of instances that
   #make up the Configuration
-  max_price: 10.0
+  max_price: 2.5
 
   #The maximum number of instances in a Configuration. This is for horizontal scaling.
-  max_num_instances: 2
+  max_num_instances: 4
 
 logger:
   #Log target: 1-file 0-STDOUT
