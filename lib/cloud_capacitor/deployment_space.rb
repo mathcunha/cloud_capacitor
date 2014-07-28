@@ -1,3 +1,5 @@
+require 'plexus/dot'
+
 module CloudCapacitor
 
   class DeploymentSpace
@@ -8,7 +10,7 @@ module CloudCapacitor
 
     attr_reader   :graph_by_cpu, :graph_by_mem, :graph_by_price
     attr_reader   :configs
-    DEFAULT_DEPLOYMENT_SPACE_FILE = File.join( File.expand_path('../../..', __FILE__), "deployment_space_new_generation.yml" )
+    DEFAULT_DEPLOYMENT_SPACE_FILE = File.join( File.expand_path('../../..', __FILE__), "wordpress_deployment_space.yml" )
     TRAVERSAL_MODES = [:cpu, :mem, :price]
     def initialize(file:DEFAULT_DEPLOYMENT_SPACE_FILE, vm_types: [])
       
@@ -49,10 +51,13 @@ module CloudCapacitor
     def build_graphs
       log.debug "Generating graph by price"
       @graph_by_price = DeploymentSpaceBuilder.graph_by_price
+      @graph_by_price.write_to_graphic_file('jpg','graph_by_price')
       log.debug "Generating graph by CPU"
       @graph_by_cpu   = DeploymentSpaceBuilder.graph_by_cpu
+      @graph_by_cpu.write_to_graphic_file('jpg','graph_by_cpu')
       log.debug "Generating graph by memory"
       @graph_by_mem   = DeploymentSpaceBuilder.graph_by_mem
+      @graph_by_mem.write_to_graphic_file('jpg','graph_by_mem')
     end
     
     def select_higher(mode, from: @current_config, step: 1)
