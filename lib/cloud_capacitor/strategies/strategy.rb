@@ -26,8 +26,8 @@ module CloudCapacitor
       end
       
       def select_initial_configuration
-        log.debug "Strategy: Initial configuration set to #{capacitor.deployment_space.current_config}"
         capacitor.deployment_space.first
+        log.debug "Strategy: Initial configuration set to #{capacitor.deployment_space.current_config}"
       end
       
       def select_lower_configurations_based_on(result)
