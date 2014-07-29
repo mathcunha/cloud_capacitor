@@ -32,7 +32,8 @@ module CloudCapacitor
       
       @strategy.select_initial_configuration
       @current_workload = @strategy.select_initial_workload(workload_list)
-      
+      log.debug "Strategy: Initial workload set to #{@current_workload}"
+
       while !stop do
 
         result = @executor.run(configuration: current_config, workload: @current_workload)
@@ -55,6 +56,10 @@ module CloudCapacitor
           @current_workload = strategy.lower_workload if next_config.nil?
 
         end
+
+        log.debug "Workloads with Candidate Configs: #{@candidates_for.keys}"
+        log.debug "Workloads with Rejected Configs: #{@rejected_for.keys}\n"
+
         log.debug "Capacitor: next_config = #{next_config}"
         stop = next_config.nil? && @current_workload.nil?
         
@@ -75,7 +80,7 @@ module CloudCapacitor
     def unexplored_workloads
       unexplored = @workloads - @rejected_for.select {|_,v| v.include? current_config }.keys
       unexplored = unexplored - @candidates_for.select {|_,v| v.include? current_config }.keys
-      unexplored
+      unexplored.sort!
     end
 
     private

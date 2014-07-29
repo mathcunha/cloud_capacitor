@@ -15,14 +15,15 @@ module CloudCapacitor
       end
       
       def raise_workload
-        log.debug "Strategy: raising workload"
-        capacitor.workloads[ capacitor.workloads.index(capacitor.current_workload) + 1 ]
+        unexplored = capacitor.unexplored_workloads.reject { |w| w <= capacitor.current_workload }.sort!
+        log.debug "Strategy: raising workload from #{capacitor.current_workload} to #{unexplored.first}"
+        unexplored.first
       end
 
       def lower_workload
-        log.debug "Strategy: lowering workload"
-        return nil if capacitor.workloads.index(capacitor.current_workload) == 0
-        capacitor.workloads[ capacitor.workloads.index(capacitor.current_workload) - 1 ]
+        unexplored = capacitor.unexplored_workloads.reject { |w| w >= capacitor.current_workload }.sort!
+        log.debug "Strategy: lowering workload from #{capacitor.current_workload} to #{unexplored.last}"
+        unexplored.last
       end
       
       def select_initial_configuration
@@ -31,12 +32,12 @@ module CloudCapacitor
       end
       
       def select_lower_configurations_based_on(result)
-        log.debug "Strategy: lowering configuration from #{capacitor.deployment_space.current_config}"
+        # log.debug "Strategy: lowering configuration from #{capacitor.deployment_space.current_config}"
         cfgs = capacitor.deployment_space.select_lower(:price)
       end
 
       def select_higher_configurations_based_on(result)
-        log.debug "Strategy: raising configuration from #{capacitor.deployment_space.current_config}"
+        # log.debug "Strategy: raising configuration from #{capacitor.deployment_space.current_config}"
         cfgs = capacitor.deployment_space.select_higher(:price)
       end
 

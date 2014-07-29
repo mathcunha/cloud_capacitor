@@ -13,6 +13,10 @@ module CloudCapacitor
       @vm_type.name
     end
 
+    def fullname
+      "#{@size}.#{@vm_type.name}"
+    end
+
     def mem
       @size * @vm_type.mem
     end
@@ -43,7 +47,7 @@ module CloudCapacitor
       return true if ( (self.name.eql? other.name) && 
                        (self.size < other.size) )
 
-      return true if ( (self.size == other.size) &&
+      return true if ( (self.size <= other.size) &&
                        (self.cpu < other.cpu)    &&
                        (self.mem < other.mem) )
 
@@ -60,7 +64,7 @@ module CloudCapacitor
       return true if ( (self.name.eql? other.name) &&
                        (self.size > other.size) )
 
-      return true if ( (self.size == other.size) &&
+      return true if ( (self.size >= other.size) &&
                        (self.cpu > other.cpu)    &&
                        (self.mem > other.mem) )
 
