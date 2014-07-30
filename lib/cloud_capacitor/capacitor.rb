@@ -46,7 +46,14 @@ module CloudCapacitor
           mark_configuration_as_candidate_for @current_workload
           next_config = select_lower_configuration(result)
           
+          previous_workload = @current_workload
           @current_workload = strategy.raise_workload if next_config.nil?
+
+          # If achieved a dead-end, then try to escape the other way
+          if @current_workload.nil? && next_config.nil?
+            next_config = select_higher_configuration(result)
+            @current_workload = previous_workload
+          end
 
         else
 
@@ -56,9 +63,6 @@ module CloudCapacitor
           @current_workload = strategy.lower_workload if next_config.nil?
 
         end
-
-        log.debug "Workloads with Candidate Configs: #{@candidates_for.keys}"
-        log.debug "Workloads with Rejected Configs: #{@rejected_for.keys}\n"
 
         log.debug "Capacitor: next_config = #{next_config}"
         stop = next_config.nil? && @current_workload.nil?
@@ -74,7 +78,10 @@ module CloudCapacitor
     end
 
     def unexplored_configurations
-      @deployment_space.configs - (@candidates_for[@current_workload] + @rejected_for[@current_workload]).uniq
+      cfgs = @deployment_space.configs - (@candidates_for[@current_workload] + @rejected_for[@current_workload]).uniq
+
+      log.debug "Unexplored configs for workload #{@current_workload}:\n#{cfgs.map { |cfg| cfg.fullname }}"
+      cfgs
     end
 
     def unexplored_workloads
@@ -109,17 +116,19 @@ module CloudCapacitor
       def mark_configuration_as_candidate_for(workload)
         keys = @workloads.select { |k| k <= workload }
         keys.each { |k| @candidates_for[k] <<= current_config unless @candidates_for[k].include?(current_config) }
-        higher_configs = deployment_space.configs.select { |cfg| cfg > current_config &&
-                                                                !@candidates_for[workload].include?(cfg) }
+        higher_configs = deployment_space.configs.select { |cfg| cfg > current_config }
         @candidates_for[workload] += higher_configs
+        @candidates_for[workload].uniq!
+        @candidates_for[workload].sort! { |x,y| x.price <=> y.price }
       end
 
       def mark_configuration_as_rejected_for(workload)
         keys = @workloads.select { |k| k >= workload }
         keys.each { |k| @rejected_for[k] <<= current_config unless @rejected_for[k].include?(current_config) }
-        lower_configs = deployment_space.configs.select { |cfg| cfg < current_config && 
-                                                                !@rejected_for[workload].include?(cfg) }
+        lower_configs = deployment_space.configs.select { |cfg| cfg < current_config }
         @rejected_for[workload] += lower_configs
+        @rejected_for[workload].uniq!
+        @rejected_for[workload].sort! { |x,y| x.price <=> y.price }
       end
 
       def current_config

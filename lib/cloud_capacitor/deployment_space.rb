@@ -23,7 +23,6 @@ module CloudCapacitor
     end
 
     def vm_types=(vm_types_list)
-      log.debug "Initializing deployment space with these vms:\n#{vm_types_list.map { |vm| vm.name }}"
       @vm_types = vm_types_list
       build_deployment_space
     end
@@ -32,6 +31,7 @@ module CloudCapacitor
       @vm_types_by_cpu   = @vm_types.sort { |x,y| x.cpu <=> y.cpu }
       @vm_types_by_mem   = @vm_types.sort { |x,y| x.mem <=> y.mem }
       @vm_types_by_price = @vm_types.sort { |x,y| x.price <=> y.price }
+      log.debug "Initializing deployment space with these vms:\n#{@vm_types_by_price.map { |vm| vm.name }}"
 
       log.debug "Setting up Deployment Space Builder..."
       DeploymentSpaceBuilder.setup(@vm_types)
@@ -44,7 +44,7 @@ module CloudCapacitor
       @configs_by_cpu   = @configs.sort { |x,y| x.cpu <=> y.cpu }
       @configs_by_mem   = @configs.sort { |x,y| x.mem <=> y.mem }
       @configs_by_price = @configs.sort { |x,y| x.price <=> y.price }
-
+      log.debug "Deployment space complete with these configs:\n#{@configs_by_price.map { |cfg| cfg.fullname }}"
       @current_config = @configs[0]
     end
 
