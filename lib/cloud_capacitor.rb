@@ -27,8 +27,8 @@ capacitor = CloudCapacitor::Capacitor.new
 capacitor.executor = CloudCapacitor::Executors::DummyExecutor.new
 capacitor.strategy = CloudCapacitor::Strategies::NM_Strategy.new
 # capacitor.strategy.attitude :conservative
-capacitor.strategy.attitude :pessimistic
-# capacitor.strategy.attitude :optimistic
+# capacitor.strategy.attitude :pessimistic
+capacitor.strategy.attitude :optimistic
 capacitor.run_for(100,200,300,400,500,600,700,800,900,1000)
 
 puts "_" * 80

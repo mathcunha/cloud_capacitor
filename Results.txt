@@ -1,0 +1,387 @@
+Results.txt
+_________________________________________________________________________________
+SLA: 60s
+Attitude: conservative
+
+The selected Strategy was able to complete the assessment with 24 executions.
+
+Candidate configs are as follows:
+
+Workload 100: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 2.m3_large, 4.m3_medium, 3.c3_large
+
+Workload 200: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 2.m3_large, 4.m3_medium, 3.c3_large
+
+Workload 300: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 2.m3_large, 4.m3_medium, 3.c3_large
+
+Workload 400: 2.c3_large, 1.c3_xlarge, 2.m3_large, 1.m3_xlarge, 4.m3_medium, 3.c3_large, 3.m3_large, 4.m3_large, 2.m3_xlarge, 3.c3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 500: 2.c3_large, 1.c3_xlarge, 2.m3_large, 1.m3_xlarge, 3.c3_large, 3.m3_large, 4.m3_large, 2.m3_xlarge, 3.c3_xlarge, 4.c3_xlarge, 3.m3_xlarge, 2.c3_2xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 600: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 2.m3_large, 3.c3_large, 3.m3_large, 2.c3_xlarge, 1.c3_2xlarge, 4.c3_large, 1.m3_2xlarge, 4.m3_large, 2.m3_xlarge, 3.c3_xlarge, 3.m3_xlarge, 2.c3_2xlarge, 4.c3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 700: 1.c3_xlarge, 2.c3_large, 1.m3_xlarge, 2.m3_large, 3.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 4.c3_large, 3.m3_large, 1.m3_2xlarge, 2.m3_xlarge, 4.m3_large, 3.c3_xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 800: 3.c3_large, 4.c3_large, 4.m3_large, 3.c3_xlarge, 4.c3_xlarge, 3.m3_xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+
+Rejected configs are as follows:
+
+Workload 400: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium
+
+Workload 500: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium
+
+Workload 600: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium
+
+Workload 700: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium
+
+Workload 800: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large
+
+Workload 900: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large
+
+Workload 1000: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large
+
+_________________________________________________________________________________
+SLA: 60s
+Attitude: optimistic
+
+The selected Strategy was able to complete the assessment with 9 executions.
+
+Candidate configs are as follows:
+
+Workload 100: 2.c3_large, 1.c3_xlarge, 2.m3_large, 1.m3_xlarge
+
+Workload 200: 2.c3_large, 1.c3_xlarge, 2.m3_large, 1.m3_xlarge
+
+Workload 300: 2.c3_large, 1.c3_xlarge, 2.m3_large, 1.m3_xlarge
+
+Workload 400: 2.c3_large, 1.c3_xlarge, 2.m3_large, 1.m3_xlarge
+
+Workload 500: 2.c3_large, 1.c3_xlarge, 2.m3_large, 1.m3_xlarge
+
+Workload 600: 2.c3_large, 1.c3_xlarge, 2.m3_large, 1.m3_xlarge
+
+Workload 700: 2.c3_large, 1.c3_xlarge, 2.m3_large, 1.m3_xlarge
+
+Workload 800: 2.c3_large, 1.c3_xlarge, 2.m3_large, 1.m3_xlarge
+
+Workload 900: 2.c3_large, 1.c3_xlarge, 2.m3_large, 1.m3_xlarge
+
+Workload 1000: 2.c3_large, 1.c3_xlarge, 2.m3_large, 1.m3_xlarge, 3.c3_large, 3.m3_large, 2.c3_xlarge, 1.c3_2xlarge, 4.c3_large, 1.m3_2xlarge, 4.m3_large, 2.m3_xlarge, 3.c3_xlarge, 3.m3_xlarge, 2.c3_2xlarge, 4.c3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+
+Rejected configs are as follows:
+
+Workload 1000: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium
+
+_________________________________________________________________________________
+SLA: 60s
+Attitude: pessimistic
+
+The selected Strategy was able to complete the assessment with 24 executions.
+
+Candidate configs are as follows:
+
+Workload 100: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 2.c3_large, 1.c3_xlarge, 3.m3_medium, 1.m3_xlarge, 2.m3_large, 4.m3_medium, 3.c3_large, 2.c3_xlarge, 3.m3_large, 1.c3_2xlarge, 4.c3_large, 2.m3_xlarge, 1.m3_2xlarge, 4.m3_large, 3.c3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 200: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 2.c3_large, 1.c3_xlarge, 3.m3_medium, 1.m3_xlarge, 2.m3_large, 4.m3_medium, 3.c3_large, 2.c3_xlarge, 3.m3_large, 1.c3_2xlarge, 4.c3_large, 2.m3_xlarge, 1.m3_2xlarge, 4.m3_large, 3.c3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 300: 1.c3_large, 1.m3_large, 2.c3_large, 3.m3_medium, 1.c3_xlarge, 1.m3_xlarge, 4.m3_medium, 2.m3_large, 3.c3_large, 4.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 3.m3_large, 4.m3_large, 1.m3_2xlarge, 2.m3_xlarge, 3.c3_xlarge, 2.c3_2xlarge, 4.c3_xlarge, 3.m3_xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 400: 1.c3_large, 1.m3_large, 2.c3_large, 3.m3_medium, 1.c3_xlarge, 1.m3_xlarge, 4.m3_medium, 2.m3_large, 3.c3_large, 4.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 3.m3_large, 4.m3_large, 1.m3_2xlarge, 2.m3_xlarge, 3.c3_xlarge, 2.c3_2xlarge, 4.c3_xlarge, 3.m3_xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 500: 1.c3_large, 1.m3_large, 2.c3_large, 3.m3_medium, 1.c3_xlarge, 1.m3_xlarge, 4.m3_medium, 2.m3_large, 3.c3_large, 4.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 3.m3_large, 4.m3_large, 1.m3_2xlarge, 2.m3_xlarge, 3.c3_xlarge, 2.c3_2xlarge, 4.c3_xlarge, 3.m3_xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 600: 1.m3_large, 2.c3_large, 3.m3_medium, 1.c3_xlarge, 2.m3_large, 4.m3_medium, 1.m3_xlarge, 3.c3_large, 1.c3_2xlarge, 4.c3_large, 3.m3_large, 2.c3_xlarge, 2.m3_xlarge, 1.m3_2xlarge, 4.m3_large, 3.c3_xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 700: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 2.m3_large, 4.m3_medium, 3.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 4.c3_large, 3.m3_large, 4.m3_large, 2.m3_xlarge, 1.m3_2xlarge, 3.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 800: 1.c3_xlarge, 2.c3_large, 1.m3_xlarge, 2.m3_large, 4.m3_medium, 3.c3_large, 2.c3_xlarge, 1.c3_2xlarge, 3.m3_large, 4.c3_large, 4.m3_large, 1.m3_2xlarge, 2.m3_xlarge, 3.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.c3_xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 900: 1.c3_xlarge, 2.c3_large, 2.m3_large, 1.m3_xlarge, 3.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 4.c3_large, 3.m3_large, 1.m3_2xlarge, 2.m3_xlarge, 4.m3_large, 3.c3_xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 1000: 1.c3_xlarge, 2.c3_large, 2.m3_large, 1.m3_xlarge, 3.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 4.c3_large, 3.m3_large, 1.m3_2xlarge, 2.m3_xlarge, 4.m3_large, 3.c3_xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+
+Rejected configs are as follows:
+
+Workload 300: 1.m3_medium
+
+Workload 400: 1.m3_medium
+
+Workload 500: 1.m3_medium
+
+Workload 600: 1.m3_medium, 1.c3_large
+
+Workload 700: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium
+
+Workload 800: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium
+
+Workload 900: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium
+
+Workload 1000: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium
+
+_________________________________________________________________________________
+SLA: 30s
+Attitude: conservative
+
+The selected Strategy was able to complete the assessment with 24 executions.
+
+Candidate configs are as follows:
+
+Workload 100: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 2.m3_large, 4.m3_medium, 3.c3_large
+
+Workload 200: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 2.m3_large, 4.m3_medium, 3.c3_large
+
+Workload 300: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 2.m3_large, 4.m3_medium, 3.c3_large
+
+Workload 400: 2.c3_large, 1.c3_xlarge, 2.m3_large, 1.m3_xlarge, 4.m3_medium, 3.c3_large, 3.m3_large, 4.m3_large, 2.m3_xlarge, 3.c3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 500: 2.c3_large, 1.c3_xlarge, 2.m3_large, 1.m3_xlarge, 3.c3_large, 3.m3_large, 4.m3_large, 2.m3_xlarge, 3.c3_xlarge, 4.c3_xlarge, 3.m3_xlarge, 2.c3_2xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 600: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 2.m3_large, 3.c3_large, 3.m3_large, 2.c3_xlarge, 1.c3_2xlarge, 4.c3_large, 1.m3_2xlarge, 4.m3_large, 2.m3_xlarge, 3.c3_xlarge, 3.m3_xlarge, 2.c3_2xlarge, 4.c3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 700: 1.c3_xlarge, 2.c3_large, 1.m3_xlarge, 2.m3_large, 3.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 4.c3_large, 3.m3_large, 1.m3_2xlarge, 2.m3_xlarge, 4.m3_large, 3.c3_xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 800: 3.c3_large, 4.c3_large, 4.m3_large, 3.c3_xlarge, 4.c3_xlarge, 3.m3_xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+
+Rejected configs are as follows:
+
+Workload 400: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium
+
+Workload 500: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium
+
+Workload 600: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium
+
+Workload 700: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium
+
+Workload 800: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large
+
+Workload 900: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large
+
+Workload 1000: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large
+
+_________________________________________________________________________________
+SLA: 30s
+Attitude: optimistic
+
+The selected Strategy was able to complete the assessment with 30 executions.
+
+Candidate configs are as follows:
+
+Workload 100: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 2.c3_large, 1.c3_xlarge, 3.m3_medium, 4.m3_medium, 2.m3_large, 1.m3_xlarge, 3.c3_large, 3.m3_large, 2.c3_xlarge, 4.c3_large, 1.c3_2xlarge, 2.m3_xlarge, 1.m3_2xlarge, 4.m3_large, 3.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.c3_xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 200: 1.c3_large, 1.m3_large, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large, 3.c3_large
+
+Workload 300: 1.c3_large, 1.m3_large, 2.c3_large, 1.c3_xlarge, 3.m3_medium, 4.m3_medium, 1.m3_xlarge, 2.m3_large, 3.c3_large, 4.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 3.m3_large, 2.m3_xlarge, 1.m3_2xlarge, 4.m3_large, 3.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 400: 2.c3_large, 1.c3_xlarge, 4.m3_medium, 1.m3_xlarge, 2.m3_large, 3.c3_large, 4.m3_large, 4.c3_xlarge, 4.m3_xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 500: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 2.m3_large, 3.c3_large
+
+Workload 600: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 2.m3_large, 3.c3_large
+
+Workload 700: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 2.m3_large, 3.c3_large, 4.c3_large, 1.c3_2xlarge, 3.m3_large, 2.c3_xlarge, 4.m3_large, 1.m3_2xlarge, 2.m3_xlarge, 3.c3_xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 800: 3.c3_large
+
+Workload 900: 3.c3_large
+
+Workload 1000: 3.c3_large, 4.c3_large, 4.m3_large, 3.c3_xlarge, 4.c3_xlarge, 3.m3_xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+
+Rejected configs are as follows:
+
+Workload 200: 1.m3_medium
+
+Workload 300: 1.m3_medium
+
+Workload 400: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium
+
+Workload 500: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium
+
+Workload 600: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium
+
+Workload 700: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium, 4.m3_medium
+
+Workload 800: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 2.m3_large, 4.m3_medium
+
+Workload 900: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 2.m3_large, 4.m3_medium
+
+Workload 1000: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 2.c3_large, 2.m3_large, 1.m3_xlarge, 4.m3_medium
+
+_________________________________________________________________________________
+SLA: 30s
+Attitude: pessimistic
+
+The selected Strategy was able to complete the assessment with 29 executions.
+
+Candidate configs are as follows:
+
+Workload 100: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 2.c3_large, 1.c3_xlarge, 3.m3_medium, 1.m3_xlarge, 2.m3_large, 4.m3_medium, 3.c3_large, 2.c3_xlarge, 3.m3_large, 1.c3_2xlarge, 4.c3_large, 2.m3_xlarge, 1.m3_2xlarge, 4.m3_large, 3.c3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 200: 1.c3_large, 2.c3_large, 1.c3_xlarge, 3.m3_medium, 2.m3_large, 1.m3_xlarge, 4.m3_medium, 3.c3_large, 4.c3_large, 2.c3_xlarge, 1.c3_2xlarge, 3.m3_large, 2.m3_xlarge, 4.m3_large, 1.m3_2xlarge, 3.c3_xlarge, 2.c3_2xlarge, 4.c3_xlarge, 3.m3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 300: 1.c3_large, 2.c3_large, 1.c3_xlarge, 3.m3_medium, 2.m3_large, 1.m3_xlarge, 4.m3_medium, 3.c3_large, 4.c3_large, 2.c3_xlarge, 1.c3_2xlarge, 3.m3_large, 2.m3_xlarge, 4.m3_large, 1.m3_2xlarge, 3.c3_xlarge, 2.c3_2xlarge, 4.c3_xlarge, 3.m3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 400: 2.c3_large, 1.c3_xlarge, 4.m3_medium, 1.m3_xlarge, 2.m3_large, 3.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 4.c3_large, 3.m3_large, 4.m3_large, 2.m3_xlarge, 1.m3_2xlarge, 3.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 500: 1.c3_xlarge, 2.c3_large, 1.m3_xlarge, 2.m3_large, 3.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 4.c3_large, 3.m3_large, 1.m3_2xlarge, 2.m3_xlarge, 4.m3_large, 3.c3_xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 600: 1.c3_xlarge, 2.c3_large, 1.m3_xlarge, 2.m3_large, 3.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 4.c3_large, 3.m3_large, 1.m3_2xlarge, 2.m3_xlarge, 4.m3_large, 3.c3_xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 700: 1.c3_xlarge, 2.c3_large, 1.m3_xlarge, 2.m3_large, 3.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 4.c3_large, 3.m3_large, 1.m3_2xlarge, 2.m3_xlarge, 4.m3_large, 3.c3_xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 800: 3.c3_large, 4.c3_large, 4.m3_large, 3.c3_xlarge, 4.c3_xlarge, 3.m3_xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+
+Rejected configs are as follows:
+
+Workload 200: 1.m3_medium
+
+Workload 300: 1.m3_medium
+
+Workload 400: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium
+
+Workload 500: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium
+
+Workload 600: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium
+
+Workload 700: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium
+
+Workload 800: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large
+
+Workload 900: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large
+
+Workload 1000: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large
+
+_________________________________________________________________________________
+SLA: 20s
+Attitude: conservative
+
+The selected Strategy was able to complete the assessment with 26 executions.
+
+Candidate configs are as follows:
+
+Workload 100: 1.c3_large, 1.m3_large, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large, 3.c3_large
+
+Workload 200: 1.c3_large, 1.m3_large, 2.c3_large, 1.c3_xlarge, 3.m3_medium, 4.m3_medium, 1.m3_xlarge, 2.m3_large, 3.c3_large, 4.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 3.m3_large, 2.m3_xlarge, 1.m3_2xlarge, 4.m3_large, 3.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 300: 2.c3_large, 1.c3_xlarge, 4.m3_medium, 1.m3_xlarge, 2.m3_large, 3.c3_large, 4.m3_large, 4.c3_xlarge, 4.m3_xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 400: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 2.m3_large, 3.c3_large, 4.c3_large, 1.c3_2xlarge, 3.m3_large, 2.c3_xlarge, 4.m3_large, 1.m3_2xlarge, 2.m3_xlarge, 3.c3_xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 500: 2.c3_large, 2.m3_large, 3.c3_large, 4.c3_large, 3.m3_large, 2.c3_xlarge, 2.m3_xlarge, 4.m3_large, 3.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.c3_xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 600: 3.c3_large, 4.c3_large, 4.m3_large, 3.c3_xlarge, 4.c3_xlarge, 3.m3_xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+
+Rejected configs are as follows:
+
+Workload 100: 1.m3_medium
+
+Workload 200: 1.m3_medium
+
+Workload 300: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium
+
+Workload 400: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium, 4.m3_medium
+
+Workload 500: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 1.m3_xlarge, 4.m3_medium
+
+Workload 600: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 2.c3_large, 2.m3_large, 1.m3_xlarge, 4.m3_medium
+
+Workload 700: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 2.c3_large, 2.m3_large, 1.m3_xlarge, 4.m3_medium
+
+Workload 800: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 2.c3_large, 2.m3_large, 1.m3_xlarge, 4.m3_medium
+
+Workload 900: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 2.c3_large, 2.m3_large, 1.m3_xlarge, 4.m3_medium
+
+Workload 1000: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 2.c3_large, 2.m3_large, 1.m3_xlarge, 4.m3_medium
+_________________________________________________________________________________
+SLA: 20s
+Attitude: optimistic
+
+The selected Strategy was able to complete the assessment with 44 executions.
+
+Candidate configs are as follows:
+
+Workload 100: 1.c3_large, 1.m3_large, 3.m3_medium, 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 4.m3_medium, 2.m3_large, 3.c3_large, 2.c3_xlarge, 4.m3_large, 3.c3_xlarge, 4.c3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 200: 1.c3_large, 1.m3_large, 3.m3_medium, 1.c3_xlarge, 2.c3_large, 1.m3_xlarge, 2.m3_large, 4.m3_medium, 3.c3_large, 2.c3_xlarge, 4.c3_large, 3.m3_large, 1.c3_2xlarge, 4.m3_large, 2.m3_xlarge, 1.m3_2xlarge, 3.c3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 300: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 4.m3_medium, 2.m3_large, 3.c3_large, 2.c3_xlarge, 4.m3_large, 3.c3_xlarge, 4.c3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 400: 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 2.m3_large, 3.c3_large, 3.m3_large, 2.c3_xlarge, 4.m3_large, 2.m3_xlarge, 1.m3_2xlarge, 3.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 500: 2.c3_large, 1.c3_xlarge, 2.m3_large, 3.c3_large, 3.m3_large, 4.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 1.m3_2xlarge, 4.m3_large, 2.m3_xlarge, 3.c3_xlarge, 4.c3_xlarge, 3.m3_xlarge, 2.c3_2xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 600: 3.c3_large, 2.c3_xlarge, 4.m3_large, 3.c3_xlarge, 4.c3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 700: 3.c3_large, 4.c3_large, 2.c3_xlarge, 4.m3_large, 3.c3_xlarge, 4.c3_xlarge, 3.m3_xlarge, 2.c3_2xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+
+Rejected configs are as follows:
+
+Workload 100: 1.m3_medium
+
+Workload 200: 1.m3_medium
+
+Workload 300: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium
+
+Workload 400: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium, 4.m3_medium
+
+Workload 500: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium
+
+Workload 600: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 2.m3_large, 1.m3_xlarge, 4.m3_medium
+
+Workload 700: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 2.m3_large, 1.m3_xlarge, 4.m3_medium
+
+Workload 800: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium, 1.c3_xlarge, 2.c3_large, 1.m3_xlarge, 4.m3_medium, 2.m3_large, 3.c3_large, 3.m3_large, 1.c3_2xlarge, 2.c3_xlarge, 4.c3_large, 4.m3_large, 2.m3_xlarge, 1.m3_2xlarge, 3.c3_xlarge, 2.c3_2xlarge, 4.c3_xlarge, 3.m3_xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 900: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium, 1.c3_xlarge, 2.c3_large, 1.m3_xlarge, 4.m3_medium, 2.m3_large, 3.c3_large, 3.m3_large, 1.c3_2xlarge, 2.c3_xlarge, 4.c3_large, 4.m3_large, 2.m3_xlarge, 1.m3_2xlarge, 3.c3_xlarge, 2.c3_2xlarge, 4.c3_xlarge, 3.m3_xlarge, 4.m3_xlarge, 2.m3_2xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 1000: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 2.c3_large, 1.c3_xlarge, 1.m3_xlarge, 4.m3_medium, 2.m3_large, 3.c3_large, 3.m3_large, 2.c3_xlarge, 1.c3_2xlarge, 4.c3_large, 2.m3_xlarge, 1.m3_2xlarge, 4.m3_large, 3.c3_xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+_________________________________________________________________________________
+SLA: 20s
+Attitude: pessimistic
+
+The selected Strategy was able to complete the assessment with 27 executions.
+
+Candidate configs are as follows:
+
+Workload 100: 1.c3_large, 2.c3_large, 1.c3_xlarge, 3.m3_medium, 2.m3_large, 1.m3_xlarge, 4.m3_medium, 3.c3_large, 4.c3_large, 2.c3_xlarge, 1.c3_2xlarge, 3.m3_large, 2.m3_xlarge, 4.m3_large, 1.m3_2xlarge, 3.c3_xlarge, 2.c3_2xlarge, 4.c3_xlarge, 3.m3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 200: 1.c3_large, 2.c3_large, 1.c3_xlarge, 3.m3_medium, 2.m3_large, 1.m3_xlarge, 4.m3_medium, 3.c3_large, 4.c3_large, 2.c3_xlarge, 1.c3_2xlarge, 3.m3_large, 2.m3_xlarge, 4.m3_large, 1.m3_2xlarge, 3.c3_xlarge, 2.c3_2xlarge, 4.c3_xlarge, 3.m3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 300: 2.c3_large, 1.c3_xlarge, 4.m3_medium, 1.m3_xlarge, 2.m3_large, 3.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 4.c3_large, 3.m3_large, 4.m3_large, 2.m3_xlarge, 1.m3_2xlarge, 3.c3_xlarge, 2.c3_2xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 400: 1.c3_xlarge, 2.c3_large, 1.m3_xlarge, 2.m3_large, 3.c3_large, 1.c3_2xlarge, 2.c3_xlarge, 4.c3_large, 3.m3_large, 1.m3_2xlarge, 2.m3_xlarge, 4.m3_large, 3.c3_xlarge, 3.m3_xlarge, 4.c3_xlarge, 2.c3_2xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+Workload 500: 1.c3_xlarge, 2.c3_large, 2.m3_large, 3.c3_large, 4.c3_large, 2.c3_xlarge, 1.c3_2xlarge, 3.m3_large, 2.m3_xlarge, 4.m3_large, 1.m3_2xlarge, 3.c3_xlarge, 3.m3_xlarge, 2.c3_2xlarge, 4.c3_xlarge, 2.m3_2xlarge, 4.m3_xlarge, 3.c3_2xlarge, 4.c3_2xlarge, 3.m3_2xlarge, 4.m3_2xlarge
+
+Workload 600: 3.c3_large, 4.c3_large, 4.m3_large, 3.c3_xlarge, 4.c3_xlarge, 3.m3_xlarge, 4.m3_xlarge, 3.c3_2xlarge, 3.m3_2xlarge, 4.c3_2xlarge, 4.m3_2xlarge
+
+
+Rejected configs are as follows:
+
+Workload 100: 1.m3_medium
+
+Workload 200: 1.m3_medium
+
+Workload 300: 1.m3_medium, 1.c3_large, 2.m3_medium, 1.m3_large, 3.m3_medium
+
+Workload 400: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium
+
+Workload 500: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 3.m3_medium, 4.m3_medium, 1.m3_xlarge
+
+Workload 600: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large
+
+Workload 700: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large
+
+Workload 800: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large
+
+Workload 900: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large
+
+Workload 1000: 1.m3_medium, 1.c3_large, 1.m3_large, 2.m3_medium, 1.c3_xlarge, 2.c3_large, 3.m3_medium, 1.m3_xlarge, 4.m3_medium, 2.m3_large
+_________________________________________________________________________________

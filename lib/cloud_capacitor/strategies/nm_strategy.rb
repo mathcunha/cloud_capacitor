@@ -12,6 +12,7 @@ module CloudCapacitor
     	end
 
       def select_initial_workload(workload_list)
+        log.debug "Strategy: Selecting initial workload with #{@attitude} attitude"
         case @attitude
         when :pessimistic
           workload_list.first
