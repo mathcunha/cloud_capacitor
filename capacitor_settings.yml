@@ -1,6 +1,6 @@
 capacitor:
   #The reference value that indicates a successful execution result
-  sla: 30000
+  sla: 20000
 
   #Deviations below this (+/-) factor are considered low
   low_deviation: 0.05

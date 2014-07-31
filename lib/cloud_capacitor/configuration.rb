@@ -18,11 +18,11 @@ module CloudCapacitor
     end
 
     def mem
-      @size * @vm_type.mem
+      (@size * @vm_type.mem).round(3)
     end
 
     def price
-      @size * @vm_type.price
+      (@size * @vm_type.price).round(3)
     end
 
     def cpu
@@ -30,7 +30,7 @@ module CloudCapacitor
     end
 
     def to_s
-      "#{@vm_type.name}(#{@size})[#{cpu} #{mem} #{price}]"
+      "#{fullname}[#{cpu} #{mem} #{price}]"
     end
 
     def hash

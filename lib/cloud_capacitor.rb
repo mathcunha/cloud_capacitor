@@ -26,17 +26,17 @@ end
 capacitor = CloudCapacitor::Capacitor.new
 capacitor.executor = CloudCapacitor::Executors::DummyExecutor.new
 capacitor.strategy = CloudCapacitor::Strategies::NM_Strategy.new
- capacitor.strategy.attitude :conservative
-#capacitor.strategy.attitude :pessimistic
+# capacitor.strategy.attitude :conservative
+capacitor.strategy.attitude :pessimistic
 # capacitor.strategy.attitude :optimistic
 capacitor.run_for(100,200,300,400,500,600,700,800,900,1000)
 
 puts "_" * 80
 puts ""
 puts "The selected Strategy was able to complete the assessment with #{capacitor.executions} executions.\n\n"
-candidates = capacitor.candidates_for.map { |k,v| "Workload #{k}: #{v.map {|c| c.fullname}.join(", ")}" }.join("\n")
-puts "Candidate configs are as follows:\n#{candidates}\n" unless candidates.empty?
+candidates = capacitor.candidates_for.sort.map { |k,v| "Workload #{k}: #{v.sort {|x,y| x.price <=> y.price }.map {|c| c.fullname}.join(", ")}" }.join("\n\n")
+puts "Candidate configs are as follows:\n\n#{candidates}\n\n\n" unless candidates.empty?
 puts "No configs were able to meet the SLA parameter.\n" if candidates.empty?
-rejected = capacitor.rejected_for.map { |k,v| "Workload #{k}: #{v.map {|c| c.fullname}.join(", ")}" }.join("\n")
-puts "Rejected configs are as follows:\n#{rejected}\n\n" unless rejected.empty?
+rejected = capacitor.rejected_for.sort.map { |k,v| "Workload #{k}: #{v.sort {|x,y| x.price <=> y.price }.map {|c| c.fullname}.join(", ")}" }.join("\n\n")
+puts "Rejected configs are as follows:\n\n#{rejected}\n\n" unless rejected.empty?
 puts "All configs were able to meet the SLA parameter.\n" if rejected.empty?
