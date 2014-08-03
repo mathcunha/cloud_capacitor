@@ -87,6 +87,11 @@ module CloudCapacitor
       @current_config = config_list[-1]
     end
 
+    def mean(mode=:price)
+      config_list = instance_variable_get("@configs_by_#{mode}")
+      @current_config = config_list[config_list.size / 2]
+    end
+
     private
 
       def prepare_selection(mode, from, step)
