@@ -6,7 +6,8 @@ module CloudCapacitor
     attr_accessor :deployment_space
     attr_accessor :executor, :strategy
     attr_reader   :current_workload, :workloads
-    attr_reader   :candidates_for, :rejected_for, :executed_for, :executions
+    attr_reader   :candidates_for, :rejected_for, :executed_for
+    attr_reader   :executions, :run_cost, :execution_trace
 
     def initialize
       @deployment_space = DeploymentSpace.new
@@ -27,21 +28,27 @@ module CloudCapacitor
 
       #How many times the choosen Strategy leads to invocation of the Executor
       @executions = 0
-
+      #The total cost of tbe Strategy invocations of the Executor
+      @run_cost = 0.0
       stop = false
       
       @strategy.select_initial_configuration
       @current_workload = @strategy.select_initial_workload(workload_list)
-      log.debug "Strategy: Initial workload set to #{@current_workload}"
+      # log.debug "Strategy: Initial workload set to #{@current_workload}"
+      current_exec = 1
+      @execution_trace = Hash.new{{}}
 
       while !stop do
 
         result = @executor.run(configuration: current_config, workload: @current_workload)
         @executions += 1
+        @run_cost += current_config.price
 
         @executed_for[@current_workload]<<= current_config
 
         if result.met_sla?
+
+          @execution_trace[current_exec] = {config:current_config, workload:@current_workload, met_sla: true}
 
           mark_configuration_as_candidate_for @current_workload
           next_config = select_lower_configuration(result)
@@ -58,6 +65,8 @@ module CloudCapacitor
 
         else
 
+          @execution_trace[current_exec] = {config:current_config, workload:@current_workload, met_sla: false}
+
           mark_configuration_as_rejected_for @current_workload
           next_config = select_higher_configuration(result)
 
@@ -73,7 +82,7 @@ module CloudCapacitor
 
         end
 
-        log.debug "Capacitor: next_config = #{next_config}"
+        # log.debug "Capacitor: next_config = #{next_config}"
         stop = next_config.nil? && @current_workload.nil?
         
       end
