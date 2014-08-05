@@ -7,7 +7,10 @@ module CloudCapacitor
       include Log
 
       def initialize
-        @result_for = Hash.new {|h,k| h[k] = Hash.new(&h.default_proc) } # nested hash
+        # nested hash initialization
+        # Thanks to Anand Immannavar
+        # http://anandimmannavar.wordpress.com/2013/05/06/ruby-nested-hash-initialization/
+        @result_for = Hash.new {|h,k| h[k] = Hash.new(&h.default_proc) }
 
         path = File.expand_path('../../../..', __FILE__)
         file = File.join( path, "wordpress_cpu_mem.csv" )

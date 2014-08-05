@@ -12,7 +12,7 @@ require_relative "cloud_capacitor/strategies/strategy"
 require_relative "cloud_capacitor/strategies/nm_strategy"
 require_relative "cloud_capacitor/strategies/mcg_strategy"
 
-require_relative 'cloud_capacitor/settings/settings'
+require_relative 'cloud_capacitor/settings/settings' if !defined?(Rails)
 
 require_relative "cloud_capacitor/capacitor"
 require_relative "cloud_capacitor/configuration"

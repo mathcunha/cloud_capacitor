@@ -6,7 +6,7 @@ module CloudCapacitor
     attr_accessor :deployment_space
     attr_accessor :executor, :strategy
     attr_reader   :current_workload, :workloads
-    attr_reader   :candidates_for, :rejected_for, :executed_for
+    attr_reader   :candidates_for, :candidates, :rejected_for, :executed_for
     attr_reader   :executions, :run_cost, :execution_trace
 
     def initialize
@@ -105,6 +105,10 @@ module CloudCapacitor
       unexplored = @workloads - (@rejected_for.select {|_,v| v.include? current_config }.keys | @candidates_for.select {|_,v| v.include? current_config }.keys)
       # unexplored = unexplored - @candidates_for.select {|_,v| v.include? current_config }.keys
       unexplored.sort!
+    end
+
+    def candidates
+      candidates_for
     end
 
     private
