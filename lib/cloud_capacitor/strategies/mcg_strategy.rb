@@ -15,7 +15,7 @@ module CloudCapacitor
     	end
 
       def select_initial_workload(workload_list)
-        # log.debug "Strategy: Selecting initial workload with #{@wkl_attitude} attitude"
+        log.debug "Strategy: Selecting initial workload with #{@wkl_attitude} attitude"
         case @wkl_attitude
         when :pessimistic
           workload_list.first
@@ -27,7 +27,7 @@ module CloudCapacitor
       end
 
       def select_initial_configuration
-        # log.debug "Strategy: Selecting initial configuration with #{@cfg_attitude} attitude"
+        log.debug "Strategy: Selecting initial configuration with #{@cfg_attitude} attitude"
         case @cfg_attitude
         when :pessimistic
           capacitor.deployment_space.last
@@ -36,7 +36,7 @@ module CloudCapacitor
         when :conservative
           capacitor.deployment_space.mean
         end
-        # log.debug "Strategy: Initial configuration set to #{capacitor.deployment_space.current_config}"
+        log.debug "Strategy: Initial configuration set to #{capacitor.deployment_space.current_config}"
       end
 
     end
