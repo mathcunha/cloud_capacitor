@@ -108,11 +108,11 @@ module CloudCapacitor
     end
 
     def candidates
-      candidates_for
+      @candidates_for
     end
 
     def run_cost
-      run_cost.round(3)
+      @run_cost
     end
 
     private
