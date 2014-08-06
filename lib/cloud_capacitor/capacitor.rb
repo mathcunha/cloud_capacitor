@@ -111,6 +111,10 @@ module CloudCapacitor
       candidates_for
     end
 
+    def run_cost
+      run_cost.round(3)
+    end
+
     private
       def select_lower_configuration(result)
         filter_explored strategy.select_lower_configurations_based_on(result)
