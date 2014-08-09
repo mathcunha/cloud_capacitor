@@ -35,7 +35,7 @@ module CloudCapacitor
       @strategy.select_initial_configuration
       @current_workload = @strategy.select_initial_workload(workload_list)
       # log.debug "Strategy: Initial workload set to #{@current_workload}"
-      current_exec = 1
+      
       @execution_trace = Hash.new{{}}
 
       while !stop do
@@ -45,10 +45,9 @@ module CloudCapacitor
         @run_cost += current_config.price
 
         @executed_for[@current_workload]<<= current_config
-
+        @execution_trace[@executions] = {config:current_config, workload:@current_workload, met_sla: result.met_sla?}
+          
         if result.met_sla?
-
-          @execution_trace[current_exec] = {config:current_config, workload:@current_workload, met_sla: true}
 
           mark_configuration_as_candidate_for @current_workload
           next_config = select_lower_configuration(result)
@@ -64,8 +63,6 @@ module CloudCapacitor
           end
 
         else
-
-          @execution_trace[current_exec] = {config:current_config, workload:@current_workload, met_sla: false}
 
           mark_configuration_as_rejected_for @current_workload
           next_config = select_higher_configuration(result)
