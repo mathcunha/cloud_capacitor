@@ -42,7 +42,7 @@ module CloudCapacitor
       
       # Filled in mark_configuration_as_candidate_for 
       # and mark_configuration_as_rejected_for
-      # Format: {1.m3_medium: {100: {met_sla: false, executed: true}}}
+      # Format: {1.m3_medium: {100: {met_sla: false, executed: true, execution: 1}}}
       @results_trace   = Hash.new{{}}
 
       while !stop do
@@ -147,7 +147,7 @@ module CloudCapacitor
 
         keys.each do |k| 
           @candidates_for[k] <<= current_config unless @candidates_for[k].include?(current_config)
-          @results_trace[current_config.fullname][k] = {met_sla: true, executed: (k == @current_workload)}
+          @results_trace[current_config.fullname][k] = {met_sla: true, executed: (k == @current_workload), execution: @executions}
         end
 
         higher_configs = deployment_space.configs.select { |cfg| cfg > current_config }
@@ -156,7 +156,7 @@ module CloudCapacitor
         @candidates_for[workload].uniq!
         
         higher_configs.each do |cfg| 
-          @results_trace[cfg.fullname][workload] = {met_sla: true, executed: false}
+          @results_trace[cfg.fullname][workload] = {met_sla: true, executed: false, execution: @executions}
         end
       end
 
@@ -165,7 +165,7 @@ module CloudCapacitor
 
         keys.each do |k| 
           @rejected_for[k] <<= current_config unless @rejected_for[k].include?(current_config)
-          @results_trace[current_config.fullname][k] = {met_sla: false, executed: (k == @current_workload)}
+          @results_trace[current_config.fullname][k] = {met_sla: false, executed: (k == @current_workload), execution: @executions}
         end
 
         lower_configs = deployment_space.configs.select { |cfg| cfg < current_config }
@@ -174,7 +174,7 @@ module CloudCapacitor
         @rejected_for[workload].uniq!
 
         lower_configs.each do |cfg|
-          @results_trace[cfg.fullname][workload] = {met_sla: false, executed: false}
+          @results_trace[cfg.fullname][workload] = {met_sla: false, executed: false, execution: @executions}
         end
       end
 
