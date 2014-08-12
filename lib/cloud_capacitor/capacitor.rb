@@ -7,7 +7,7 @@ module CloudCapacitor
     attr_accessor :executor, :strategy
     attr_reader   :current_workload, :workloads
     attr_reader   :candidates_for, :candidates, :rejected_for, :executed_for
-    attr_reader   :executions, :run_cost, :execution_trace
+    attr_reader   :executions, :run_cost, :execution_trace, :results_trace
 
     def initialize
       @deployment_space = DeploymentSpace.new
@@ -35,8 +35,15 @@ module CloudCapacitor
       @strategy.select_initial_configuration
       @current_workload = @strategy.select_initial_workload(workload_list)
       # log.debug "Strategy: Initial workload set to #{@current_workload}"
-      
+
+      # @execution_trace[@executions] = {config:current_config, workload:@current_workload, met_sla: result.met_sla?}
+      # Format: {1: config: <Configuration instance>1.m3_medium, workload: 100, met_sla: true}
       @execution_trace = Hash.new{{}}
+      
+      # Filled in mark_configuration_as_candidate_for 
+      # and mark_configuration_as_rejected_for
+      # Format: {1.m3_medium: {100: {met_sla: false, executed: true}}}
+      @results_trace   = Hash.new{{}}
 
       while !stop do
 
@@ -46,7 +53,7 @@ module CloudCapacitor
 
         @executed_for[@current_workload]<<= current_config
         @execution_trace[@executions] = {config:current_config, workload:@current_workload, met_sla: result.met_sla?}
-          
+
         if result.met_sla?
 
           mark_configuration_as_candidate_for @current_workload
@@ -137,18 +144,38 @@ module CloudCapacitor
 
       def mark_configuration_as_candidate_for(workload)
         keys = @workloads.select { |k| k <= workload }
-        keys.each { |k| @candidates_for[k] <<= current_config unless @candidates_for[k].include?(current_config) }
+
+        keys.each do |k| 
+          @candidates_for[k] <<= current_config unless @candidates_for[k].include?(current_config)
+          @results_trace[current_config.fullname][k] = {met_sla: true, executed: (k == @current_workload)}
+        end
+
         higher_configs = deployment_space.configs.select { |cfg| cfg > current_config }
+
         @candidates_for[workload] += higher_configs
         @candidates_for[workload].uniq!
+        
+        higher_configs.each do |cfg| 
+          @results_trace[cfg.fullname][workload] = {met_sla: true, executed: false}
+        end
       end
 
       def mark_configuration_as_rejected_for(workload)
         keys = @workloads.select { |k| k >= workload }
-        keys.each { |k| @rejected_for[k] <<= current_config unless @rejected_for[k].include?(current_config) }
+
+        keys.each do |k| 
+          @rejected_for[k] <<= current_config unless @rejected_for[k].include?(current_config)
+          @results_trace[current_config.fullname][k] = {met_sla: false, executed: (k == @current_workload)}
+        end
+
         lower_configs = deployment_space.configs.select { |cfg| cfg < current_config }
+
         @rejected_for[workload] += lower_configs
         @rejected_for[workload].uniq!
+
+        lower_configs.each do |cfg|
+          @results_trace[cfg.fullname][workload] = {met_sla: false, executed: false}
+        end
       end
 
       def current_config
