@@ -44,6 +44,10 @@ module CloudCapacitor
       # and mark_configuration_as_rejected_for
       # Format: {1.m3_medium: {100: {met_sla: false, executed: true, execution: 1}}}
       @results_trace   = Hash.new{{}}
+      deployment_space.configs_by_price.map do |c| 
+        @results_trace[c.fullname] = Hash.new {}
+        workload_list.map { |w| @results_trace[c.fullname].update({ w => Hash.new {} }) }
+      end
 
       while !stop do
 
@@ -147,7 +151,8 @@ module CloudCapacitor
 
         keys.each do |k| 
           @candidates_for[k] <<= current_config unless @candidates_for[k].include?(current_config)
-          @results_trace[current_config.fullname][k] = {met_sla: true, executed: (k == @current_workload), execution: @executions}
+          @results_trace[current_config.fullname][k].
+            update({met_sla: true, executed: (k == @current_workload), execution: @executions}) { |key, v1, v2| v1 }
         end
 
         higher_configs = deployment_space.configs.select { |cfg| cfg > current_config }
@@ -156,7 +161,8 @@ module CloudCapacitor
         @candidates_for[workload].uniq!
         
         higher_configs.each do |cfg| 
-          @results_trace[cfg.fullname][workload] = {met_sla: true, executed: false, execution: @executions}
+          @results_trace[cfg.fullname][workload].
+            update({met_sla: true, executed: false, execution: @executions}) { |key, v1, v2| v1 }
         end
       end
 
@@ -165,7 +171,8 @@ module CloudCapacitor
 
         keys.each do |k| 
           @rejected_for[k] <<= current_config unless @rejected_for[k].include?(current_config)
-          @results_trace[current_config.fullname][k] = {met_sla: false, executed: (k == @current_workload), execution: @executions}
+          @results_trace[current_config.fullname][k].
+            update({met_sla: false, executed: (k == @current_workload), execution: @executions}) { |key, v1, v2| v1 }
         end
 
         lower_configs = deployment_space.configs.select { |cfg| cfg < current_config }
@@ -174,7 +181,8 @@ module CloudCapacitor
         @rejected_for[workload].uniq!
 
         lower_configs.each do |cfg|
-          @results_trace[cfg.fullname][workload] = {met_sla: false, executed: false, execution: @executions}
+          @results_trace[cfg.fullname][workload].
+            update({met_sla: false, executed: false, execution: @executions}) { |key, v1, v2| v1 }
         end
       end
 
