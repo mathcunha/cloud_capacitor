@@ -9,9 +9,11 @@ module CloudCapacitor
     attr_accessor :current_config, :max_price
 
     attr_reader   :graph_by_cpu, :graph_by_mem, :graph_by_price
-    attr_reader   :configs
+    attr_reader   :configs, :configs_by_price
+
     DEFAULT_DEPLOYMENT_SPACE_FILE = File.join( File.expand_path('../../..', __FILE__), "wordpress_deployment_space.yml" )
     TRAVERSAL_MODES = [:cpu, :mem, :price]
+    
     def initialize(file:DEFAULT_DEPLOYMENT_SPACE_FILE, vm_types: [])
       
       if vm_types.size > 0
