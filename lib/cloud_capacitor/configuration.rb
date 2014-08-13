@@ -1,6 +1,6 @@
 module CloudCapacitor
   class Configuration
-    attr_reader :name, :mem, :price, :cpu
+    attr_reader :name, :mem, :price, :cpu, :category
     attr_accessor :size, :vm_type
     
     def initialize(vm_type:, size:)
@@ -29,8 +29,12 @@ module CloudCapacitor
       @size * @vm_type.cpu
     end
 
+    def category
+      @vm_type.category
+    end
+
     def to_s
-      "#{fullname}[#{cpu} #{mem} #{price}]"
+      "#{fullname}[#{cpu} #{mem} #{price} #{category}]"
     end
 
     def hash
@@ -49,7 +53,8 @@ module CloudCapacitor
 
       return true if ( (self.size <= other.size) &&
                        (self.cpu < other.cpu)    &&
-                       (self.mem < other.mem) )
+                       (self.mem < other.mem)    &&
+                       (self.category < other.category))
 
       return false
     end
@@ -66,7 +71,8 @@ module CloudCapacitor
 
       return true if ( (self.size >= other.size) &&
                        (self.cpu > other.cpu)    &&
-                       (self.mem > other.mem) )
+                       (self.mem > other.mem)    &&
+                       (self.category > other.category))
 
       return false
     end
@@ -90,7 +96,8 @@ module CloudCapacitor
       return true  if self.equal? other
       return true  if ( (self.size == other.size) &&
                         (self.cpu  == other.cpu)  &&
-                        (self.mem  == other.mem) )
+                        (self.mem  == other.mem)  && 
+                        (self.category  == other.category))
       return false
     end
 
