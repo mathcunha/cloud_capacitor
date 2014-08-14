@@ -34,14 +34,43 @@ module CloudCapacitor
     end
 
     def self.graph_by_prop(prop_method)
+      edges = []
+      root = Configuration.new(vm_type:VMType.new(name:"root",cpu:0,mem:0,price:0,category:"root"), size:0)
+      configurations = @@configs_available.sort {|x,y| x.category <=> y.category}
+
+      prop = configurations[0].category
+      vertexes = []
+
+      i = 0
+      until i >= configurations.size() do
+        if(prop.eql?configurations[i].category())
+          vertexes << configurations[i]
+        else
+          edges.concat(array_by_prop(prop_method, vertexes, root))
+          prop = configurations[i].category
+          vertexes = []
+          i = i - 1
+        end
+        i += 1
+      end
+
+      edges.concat(array_by_prop(prop_method, vertexes, root))
+      
+      graph = Plexus::DirectedPseudoGraph.new
+      edges.each {|edge| graph.add_edge! edge}
+      graph
+    end
+
+    def self.array_by_prop(prop_method, config, root)
       validate_setup
       edges = []
 
-      configurations = @@configs_available.sort {|x,y| x.method(prop_method).call() <=> y.method(prop_method).call()}
+      configurations = config.sort {|x,y| x.method(prop_method).call() <=> y.method(prop_method).call()}
 
       prop = configurations[0].method(prop_method).call()
       vertexes = []
-      vertexes_old = nil
+      vertexes_old = []
+      vertexes_old << root
 
       i = 0
       until i >= configurations.size() do
@@ -58,9 +87,7 @@ module CloudCapacitor
       end
 
       add_edges(vertexes_old, vertexes, edges, prop_method)
-      graph = Plexus::DirectedPseudoGraph.new
-      edges.each {|edge| graph.add_edge! edge}
-      graph
+      edges
     end
 
     def self.equal(prop, prop2, error)
