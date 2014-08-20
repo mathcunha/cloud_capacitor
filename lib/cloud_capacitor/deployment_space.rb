@@ -51,10 +51,13 @@ module CloudCapacitor
     end
 
     def strict_graph
-      DeploymentSpaceBuilder.strict_graph
+      @strict_graph
     end
 
     def build_graphs
+      log.debug "Generating graph by strict comparison"
+      @strict_graph = DeploymentSpaceBuilder.strict_graph
+      # @strict_graph.write_to_graphic_file('jpg','strict_graph')
       log.debug "Generating graph by price"
       @graph_by_price = DeploymentSpaceBuilder.graph_by_price
       # @graph_by_price.write_to_graphic_file('jpg','graph_by_price')
@@ -68,7 +71,7 @@ module CloudCapacitor
     
     def select_higher(mode, from: @current_config, step: 1)
       cfgs = prepare_selection(mode, from, step)
-      if Settings.deployment_space.use_strict_comparison_mode == 1
+      if strict_mode?
         cfgs.select { |c| c > from } unless cfgs.nil?
       else
         cfgs.select { |c| c.method(mode).call > from.method(mode).call } unless cfgs.nil?
@@ -77,7 +80,7 @@ module CloudCapacitor
 
     def select_lower(mode, from: @current_config, step: 1)
       cfgs = prepare_selection(mode, from, step)
-      if Settings.deployment_space.use_strict_comparison_mode == 1
+      if strict_mode?
         cfgs.select { |c| c < from } unless cfgs.nil?
       else
         cfgs.select { |c| c.method(mode).call < from.method(mode).call } unless cfgs.nil?
@@ -108,6 +111,10 @@ module CloudCapacitor
 
     private
 
+      def strict_mode?
+        Settings.deployment_space.use_strict_comparison_mode == 1  
+      end
+
       def prepare_selection(mode, from, step)
         validate_modes mode
         return nil if @current_config.nil?
@@ -115,11 +122,13 @@ module CloudCapacitor
       end
 
       def adjacent_configs(mode, from, step)
+        graph = instance_variable_get("@graph_by_#{mode}") if !strict_mode?
+        graph = @strict_graph if strict_mode?
         if step == 1
-          return instance_variable_get("@graph_by_#{mode}").adjacent(from).uniq
+          return graph.adjacent(from).uniq
         else
           array ||= []
-          l_array = instance_variable_get("@graph_by_#{mode}").adjacent(from).uniq
+          l_array = graph.adjacent(from).uniq
           l_array.each do |cfg|
             array << self.adjacent_configs(mode, cfg, step-1)
           end
