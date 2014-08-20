@@ -41,6 +41,14 @@ module CloudCapacitor
       "#{@size.to_s}#{@name}".hash
     end
 
+    def comparable_to(other)
+      return false if other.nil?
+      return true if self.size == other.size
+      return true if self.name.eql? other.name && 
+                     self.category == other.category
+      return false
+    end
+
     # Keep in mind that when one config is NOT < other
     # it does NOT necessarily mean it IS > other
     def < (other)
@@ -51,10 +59,10 @@ module CloudCapacitor
       return true if ( (self.name.eql? other.name) && 
                        (self.size < other.size) )
 
-      return true if ( (self.size <= other.size) &&
+      return true if ( (self.size == other.size) &&
                        (self.cpu < other.cpu)    &&
                        (self.mem < other.mem)    &&
-                       (self.category < other.category))
+                       (self.category == other.category))
 
       return false
     end
@@ -69,10 +77,10 @@ module CloudCapacitor
       return true if ( (self.name.eql? other.name) &&
                        (self.size > other.size) )
 
-      return true if ( (self.size >= other.size) &&
+      return true if ( (self.size == other.size) &&
                        (self.cpu > other.cpu)    &&
                        (self.mem > other.mem)    &&
-                       (self.category > other.category))
+                       (self.category == other.category))
 
       return false
     end

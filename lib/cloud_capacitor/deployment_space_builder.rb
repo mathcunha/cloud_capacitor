@@ -28,7 +28,73 @@ module CloudCapacitor
       @@max_num_instances
     end
 
+    def self.strict_graph
+      graph = Plexus::DirectedPseudoGraph.new
+      edges = []
+      root = create_root_node
+      
+      #We separate configs by category
+      categories = separate_categories
+      
+      #Each category has an array of configurations.
+      categories.each_value do |configs|
+        #Sort each category configs by price in order
+        #to find the tiniest one
+        configs.sort! { |x, y| x.price <=> y.price }
+
+        #Each category is a branch from the graph root
+        #So, round-trip connect the first configs to the root
+        edges << add_edge(root, configs[0], configs[0].category)
+        edges << add_edge(configs[0], root, "root")
+
+        #For each configuration, find its successors
+        configs.each do |current_config|
+          successors = filter_successors(configs, current_config)
+          edges += connect(current_config, successors)
+        end
+      end
+      
+      edges.each { |e| graph.add_edge! e }
+      graph
+
+    end
+
     private
+    def self.create_root_node
+      root_vm = VMType.new(name:"root",
+                           cpu:0, mem:0, price:0,
+                           category:"root")
+
+      Configuration.new(vm_type:root_vm, size:0)
+    end
+
+    def self.filter_successors(configs, current_config)
+      #The > operator works thanks to the strict comparison
+      #nature of the Configurations, eliminating only the
+      #comparable ones. See Configuration#>
+      successors = configs.select {|config| config > current_config }
+      #Filter immediate strict successors only
+      successors.each do |successor| 
+        successors.reject! { |bigger_config| bigger_config > successor}
+      end
+      successors
+    end
+
+    def self.separate_categories
+      categories = Hash.new{[]}
+      @@configs_available.each { |cfg| categories[cfg.category] <<= cfg }
+      categories
+    end
+
+    def self.connect(current_config, successors)
+      edges = []
+      successors.each do |s|
+        edges << add_edge(current_config, s, "bigger")
+        edges << add_edge(s, current_config, "smaller")
+      end
+      edges
+    end
+
     def self.validate_setup
       raise InvalidConfigurationError unless defined? @@configs_available && !@@configs_available.nil?
     end
@@ -110,8 +176,7 @@ module CloudCapacitor
     end
     
     def self.add_edge(source, target, label)
-      #puts "source #{source} - target #{target} - label #{label.round(2)}"
-      Plexus::Arc.new(source, target, label.round(2))
+      Plexus::Arc.new(source, target, label)
     end
 
     def self.add_edges(vertexes_old, vertexes, edges, prop_method)
