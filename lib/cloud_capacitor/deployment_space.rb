@@ -9,7 +9,7 @@ module CloudCapacitor
     attr_accessor :current_config, :max_price
 
     attr_reader   :graph_by_cpu, :graph_by_mem, :graph_by_price
-    attr_reader   :configs, :configs_by_price
+    attr_reader   :configs, :configs_by_price, :strict_graph
 
     DEFAULT_DEPLOYMENT_SPACE_FILE = File.join( File.expand_path('../../..', __FILE__), "wordpress_deployment_space.yml" )
     TRAVERSAL_MODES = [:cpu, :mem, :price]
@@ -50,6 +50,10 @@ module CloudCapacitor
       @current_config = @configs[0]
     end
 
+    def strict_graph
+      DeploymentSpaceBuilder.strict_graph
+    end
+
     def build_graphs
       log.debug "Generating graph by price"
       @graph_by_price = DeploymentSpaceBuilder.graph_by_price
@@ -64,12 +68,20 @@ module CloudCapacitor
     
     def select_higher(mode, from: @current_config, step: 1)
       cfgs = prepare_selection(mode, from, step)
-      cfgs.select { |c| c.method(mode).call > from.method(mode).call } unless cfgs.nil?
+      if Settings.deployment_space.use_strict_comparison_mode == 1
+        cfgs.select { |c| c > from } unless cfgs.nil?
+      else
+        cfgs.select { |c| c.method(mode).call > from.method(mode).call } unless cfgs.nil?
+      end
     end
 
     def select_lower(mode, from: @current_config, step: 1)
       cfgs = prepare_selection(mode, from, step)
-      cfgs.select { |c| c.method(mode).call < from.method(mode).call } unless cfgs.nil?
+      if Settings.deployment_space.use_strict_comparison_mode == 1
+        cfgs.select { |c| c < from } unless cfgs.nil?
+      else
+        cfgs.select { |c| c.method(mode).call < from.method(mode).call } unless cfgs.nil?
+      end
     end
 
     def pick(config_size, config_name)
