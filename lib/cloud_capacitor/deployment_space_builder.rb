@@ -3,19 +3,11 @@ module CloudCapacitor
 
   class DeploymentSpaceBuilder
 
-    def self.create_graph_generators
-      DeploymentSpace::TRAVERSAL_MODES.each do |mode| 
-        define_singleton_method "graph_by_#{mode}" do
-          graph_by_prop(mode) 
-        end
-      end
-    end
-
     def self.setup(vm_types)
+      @@categories        = vm_types.map { |vm| vm.category }.uniq
       @@max_price         = Settings.deployment_space.max_price
       @@max_num_instances = Settings.deployment_space.max_num_instances
       @@configs_available = configs_under_price_limit(vm_types)
-      create_graph_generators
     end
 
     def self.configs_available
@@ -27,11 +19,14 @@ module CloudCapacitor
     def self.max_num_instances
       @@max_num_instances
     end
+    def self.categories
+      @@categories
+    end
 
-    def self.strict_graph
+    def self.strict_graph(root)
+      raise Err::NilGraphRootError, "Graph root node cannot be nil." if root.nil?
       graph = Plexus::DirectedPseudoGraph.new
       edges = []
-      root = create_root_node
       
       #We separate configs by category
       categories = separate_categories
@@ -59,7 +54,6 @@ module CloudCapacitor
 
     end
 
-    private
     def self.create_root_node
       root_vm = VMType.new(name:"root",
                            cpu:0, mem:0, price:0,
@@ -68,6 +62,19 @@ module CloudCapacitor
       Configuration.new(vm_type:root_vm, size:0)
     end
 
+    def self.graph_by_price(root)
+      graph_by_prop(:price, root) 
+    end
+
+    def self.graph_by_mem(root)
+      graph_by_prop(:mem, root) 
+    end
+
+    def self.graph_by_cpu(root)
+      graph_by_prop(:cpu, root) 
+    end
+
+    private
     def self.filter_successors(configs, current_config)
       #The > operator works thanks to the strict comparison
       #nature of the Configurations, eliminating only the
@@ -99,9 +106,9 @@ module CloudCapacitor
       raise InvalidConfigurationError unless defined? @@configs_available && !@@configs_available.nil?
     end
 
-    def self.graph_by_prop(prop_method)
+    def self.graph_by_prop(prop_method, root)
+      raise Err::NilGraphRootError, "Graph root node cannot be nil." if root.nil?
       edges = []
-      root = Configuration.new(vm_type:VMType.new(name:"root",cpu:0,mem:0,price:0,category:"root"), size:0)
       configurations = @@configs_available.sort {|x,y| x.category <=> y.category}
 
       prop = configurations[0].category

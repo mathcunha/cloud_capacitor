@@ -6,10 +6,10 @@ module CloudCapacitor
     include Log
 
     attr_accessor :vm_types, :vm_types_by_cpu, :vm_types_by_mem, :vm_types_by_price
-    attr_accessor :current_config, :max_price
+    attr_accessor :current_config, :max_price, :root
 
     attr_reader   :graph_by_cpu, :graph_by_mem, :graph_by_price
-    attr_reader   :configs, :configs_by_price, :strict_graph
+    attr_reader   :configs, :categories, :configs_by_price, :strict_graph
 
     DEFAULT_DEPLOYMENT_SPACE_FILE = File.join( File.expand_path('../../..', __FILE__), "wordpress_deployment_space.yml" )
     TRAVERSAL_MODES = [:cpu, :mem, :price]
@@ -55,17 +55,19 @@ module CloudCapacitor
     end
 
     def build_graphs
+      @root = DeploymentSpaceBuilder.create_root_node
+
       log.debug "Generating graph by strict comparison"
-      @strict_graph = DeploymentSpaceBuilder.strict_graph
+      @strict_graph = DeploymentSpaceBuilder.strict_graph(root)
       # @strict_graph.write_to_graphic_file('jpg','strict_graph')
       log.debug "Generating graph by price"
-      @graph_by_price = DeploymentSpaceBuilder.graph_by_price
+      @graph_by_price = DeploymentSpaceBuilder.graph_by_price(root)
       # @graph_by_price.write_to_graphic_file('jpg','graph_by_price')
       log.debug "Generating graph by CPU"
-      @graph_by_cpu   = DeploymentSpaceBuilder.graph_by_cpu
+      @graph_by_cpu   = DeploymentSpaceBuilder.graph_by_cpu(root)
       # @graph_by_cpu.write_to_graphic_file('jpg','graph_by_cpu')
       log.debug "Generating graph by memory"
-      @graph_by_mem   = DeploymentSpaceBuilder.graph_by_mem
+      @graph_by_mem   = DeploymentSpaceBuilder.graph_by_mem(root)
       # @graph_by_mem.write_to_graphic_file('jpg','graph_by_mem')
     end
     
@@ -94,22 +96,31 @@ module CloudCapacitor
       @current_config = @configs[pos]
     end
     
-    def first(mode=:price)
-      config_list = instance_variable_get("@configs_by_#{mode}")
+    def first(category, mode=:price)
+      config_list = filter_category category, instance_variable_get("@configs_by_#{mode}")
       @current_config = config_list[0]
     end
 
-    def last(mode=:price)
-      config_list = instance_variable_get("@configs_by_#{mode}")
+    def last(category, mode=:price)
+      config_list = filter_category category, instance_variable_get("@configs_by_#{mode}")
       @current_config = config_list[-1]
     end
 
-    def mean(mode=:price)
-      config_list = instance_variable_get("@configs_by_#{mode}")
+    def mean(category, mode=:price)
+      config_list = filter_category category, instance_variable_get("@configs_by_#{mode}")
       @current_config = config_list[config_list.size / 2]
     end
 
+    def categories
+      DeploymentSpaceBuilder.categories
+    end
+
     private
+
+      def filter_category(category, cfg_list)
+        return cfg_list if category.nil?
+        cfg_list.select { |cfg| cfg.category == category }
+      end
 
       def strict_mode?
         Settings.deployment_space.use_strict_comparison_mode == 1  

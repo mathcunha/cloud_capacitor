@@ -2,6 +2,7 @@ require_relative "cloud_capacitor/err/invalid_config_name_error"
 require_relative "cloud_capacitor/err/invalid_mode_error"
 require_relative "cloud_capacitor/err/no_executor_configured_error"
 require_relative "cloud_capacitor/err/no_strategy_configured_error"
+require_relative "cloud_capacitor/err/nil_graph_root_error"
 
 require_relative "cloud_capacitor/util/logger"
 
