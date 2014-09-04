@@ -73,6 +73,14 @@ module CloudCapacitor
             @current_workload = nil if next_config.nil?
           end
 
+          # If it is still a dead-end, then try other category
+          # branch in the Development Space
+          if @current_workload.nil? && next_config.nil?
+            @current_workload = previous_workload
+            next_config = jump_to_another_category
+            @current_workload = nil if next_config.nil?
+          end
+
         else
 
           mark_configuration_as_rejected_for @current_workload
@@ -85,6 +93,14 @@ module CloudCapacitor
           if @current_workload.nil? && next_config.nil?
             @current_workload = previous_workload
             next_config = select_lower_configuration(result)
+            @current_workload = nil if next_config.nil?
+          end
+
+          # If it is still a dead-end, then try other category
+          # branch in the Development Space
+          if @current_workload.nil? && next_config.nil?
+            @current_workload = previous_workload
+            next_config = jump_to_another_category
             @current_workload = nil if next_config.nil?
           end
 
@@ -124,6 +140,16 @@ module CloudCapacitor
     end
 
     private
+      def jump_to_another_category
+        # randomly chooses a category other than the current one
+        new_category = deployment_space.categories.reject { |c| c == current_config.category }.sample
+
+        # picks one config from the chosen category
+        # if new_category is nil, the deployment space is not filtered
+        #   and the next config will be any of the unexplored configs
+        filter_explored deployment_space.select_category(new_category)
+      end
+
       def select_lower_configuration(result)
         filter_explored strategy.select_lower_configurations_based_on(result)
       end
@@ -148,42 +174,36 @@ module CloudCapacitor
 
       def mark_configuration_as_candidate_for(workload)
         keys = @workloads.select { |k| k <= workload }
+        configs = deployment_space.configs.select { |cfg| cfg > current_config }
+        configs << current_config
 
         keys.each do |k| 
-          @candidates_for[k] <<= current_config unless @candidates_for[k].include?(current_config)
-          @results_trace[current_config.fullname][k].
-            update({met_sla: true, executed: (k == @current_workload), execution: @executions}) { |key, v1, v2| v1 }
+          configs.each do |cfg|
+            @candidates_for[k] <<= cfg unless @candidates_for[k].include?(cfg)
+            @results_trace[cfg.fullname][k].
+              update({met_sla: true, executed: false, execution: @executions}) { |key, old, new| old }
+          end
+          @candidates_for[k].uniq!
         end
-
-        higher_configs = deployment_space.configs.select { |cfg| cfg > current_config }
-
-        @candidates_for[workload] += higher_configs
-        @candidates_for[workload].uniq!
-        
-        higher_configs.each do |cfg| 
-          @results_trace[cfg.fullname][workload].
-            update({met_sla: true, executed: false, execution: @executions}) { |key, v1, v2| v1 }
-        end
+        @results_trace[current_config.fullname][workload].
+          update({met_sla: true, executed: true, execution: @executions}) { |key, old, new| new }
       end
 
       def mark_configuration_as_rejected_for(workload)
         keys = @workloads.select { |k| k >= workload }
+        configs = deployment_space.configs.select { |cfg| cfg < current_config }
+        configs << current_config
 
         keys.each do |k| 
-          @rejected_for[k] <<= current_config unless @rejected_for[k].include?(current_config)
-          @results_trace[current_config.fullname][k].
-            update({met_sla: false, executed: (k == @current_workload), execution: @executions}) { |key, v1, v2| v1 }
+          configs.each do |cfg|
+            @rejected_for[k] <<= cfg unless @rejected_for[k].include?(cfg)
+            @results_trace[cfg.fullname][k].
+              update({met_sla: false, executed: false, execution: @executions}) { |key, old, new| old }
+          end
+          @rejected_for[k].uniq!
         end
-
-        lower_configs = deployment_space.configs.select { |cfg| cfg < current_config }
-
-        @rejected_for[workload] += lower_configs
-        @rejected_for[workload].uniq!
-
-        lower_configs.each do |cfg|
-          @results_trace[cfg.fullname][workload].
-            update({met_sla: false, executed: false, execution: @executions}) { |key, v1, v2| v1 }
-        end
+        @results_trace[current_config.fullname][workload].
+          update({met_sla: false, executed: true, execution: @executions}) { |key, old, new| new }
       end
 
       def current_config

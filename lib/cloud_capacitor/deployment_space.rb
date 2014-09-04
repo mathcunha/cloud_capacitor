@@ -96,18 +96,18 @@ module CloudCapacitor
       @current_config = @configs[pos]
     end
     
-    def first(category, mode=:price)
-      config_list = filter_category category, instance_variable_get("@configs_by_#{mode}")
+    def first(category=@current_config.category, mode=:price)
+      config_list = select_category category, instance_variable_get("@configs_by_#{mode}")
       @current_config = config_list[0]
     end
 
-    def last(category, mode=:price)
-      config_list = filter_category category, instance_variable_get("@configs_by_#{mode}")
+    def last(category=@current_config.category, mode=:price)
+      config_list = select_category category, instance_variable_get("@configs_by_#{mode}")
       @current_config = config_list[-1]
     end
 
-    def mean(category, mode=:price)
-      config_list = filter_category category, instance_variable_get("@configs_by_#{mode}")
+    def mean(category=@current_config.category, mode=:price)
+      config_list = select_category category, instance_variable_get("@configs_by_#{mode}")
       @current_config = config_list[config_list.size / 2]
     end
 
@@ -115,13 +115,13 @@ module CloudCapacitor
       DeploymentSpaceBuilder.categories
     end
 
+    def select_category(category, cfg_list=nil)
+      list = cfg_list.nil? ? @configs : cfg_list
+      return list if category.nil?
+      list.select { |cfg| cfg.category == category }
+    end
+
     private
-
-      def filter_category(category, cfg_list)
-        return cfg_list if category.nil?
-        cfg_list.select { |cfg| cfg.category == category }
-      end
-
       def strict_mode?
         Settings.deployment_space.use_strict_comparison_mode == 1  
       end
