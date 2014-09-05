@@ -33,12 +33,12 @@ module CloudCapacitor
       
       def select_lower_configurations_based_on(result)
         # log.debug "Strategy: lowering configuration from #{capacitor.deployment_space.current_config}"
-        cfgs = capacitor.deployment_space.select_lower(:price)
+        cfgs = capacitor.deployment_space.select_lower
       end
 
       def select_higher_configurations_based_on(result)
         # log.debug "Strategy: raising configuration from #{capacitor.deployment_space.current_config}"
-        cfgs = capacitor.deployment_space.select_higher(:price)
+        cfgs = capacitor.deployment_space.select_higher
       end
 
     end

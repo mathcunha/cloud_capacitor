@@ -71,22 +71,12 @@ module CloudCapacitor
       # @graph_by_mem.write_to_graphic_file('jpg','graph_by_mem')
     end
     
-    def select_higher(mode, from: @current_config, step: 1)
-      cfgs = prepare_selection(mode, from, step)
-      if strict_mode?
-        cfgs.select { |c| c > from } unless cfgs.nil?
-      else
-        cfgs.select { |c| c.method(mode).call > from.method(mode).call } unless cfgs.nil?
-      end
+    def select_higher(mode: :price, from: @current_config, step: 1)
+      adjacent_configs(mode: mode, from: from, step: step, direction: :up)
     end
 
-    def select_lower(mode, from: @current_config, step: 1)
-      cfgs = prepare_selection(mode, from, step)
-      if strict_mode?
-        cfgs.select { |c| c < from } unless cfgs.nil?
-      else
-        cfgs.select { |c| c.method(mode).call < from.method(mode).call } unless cfgs.nil?
-      end
+    def select_lower(mode: :price, from: @current_config, step: 1)
+      adjacent_configs(mode: mode, from: from, step: step, direction: :down)
     end
 
     def pick(config_size, config_name)
@@ -126,25 +116,35 @@ module CloudCapacitor
         Settings.deployment_space.use_strict_comparison_mode == 1  
       end
 
-      def prepare_selection(mode, from, step)
+      def adjacent_configs(mode: :price, from: @current_config, step: 1, direction: :up)
         validate_modes mode
-        return nil if @current_config.nil?
-        adjacent_configs(mode, from, step)
-      end
+        raise ArgumentError, "Invalid direction. Valid ones are: :up, :down" if ![:up, :down].include? direction
+        raise ArgumentError, "Step must be > 0" if step <= 0
+        return nil if from.nil?
 
-      def adjacent_configs(mode, from, step)
         graph = instance_variable_get("@graph_by_#{mode}") if !strict_mode?
         graph = @strict_graph if strict_mode?
-        if step == 1
-          return graph.adjacent(from).uniq
-        else
-          array ||= []
-          l_array = graph.adjacent(from).uniq
-          l_array.each do |cfg|
-            array << self.adjacent_configs(mode, cfg, step-1)
+        from = [from]
+        while step > 0
+          cfgs = []
+          from.each do |source| 
+            adjacents = graph.adjacent(source)
+            unless adjacents.nil?
+              if strict_mode?
+                adjacents.select! { |c| c > source } if direction == :up
+                adjacents.select! { |c| c < source } if direction == :down
+              else
+                adjacents.select! { |c| c.method(mode).call > source.method(mode).call } if direction == :up
+                adjacents.select! { |c| c.method(mode).call < source.method(mode).call } if direction == :down
+              end
+              adjacents.select! { |c| c.name != "root" }
+            end
+            cfgs += adjacents
           end
-          return array
+          step -= 1
+          from = cfgs if step > 0
         end
+        cfgs.uniq
       end
 
       def load_deployment_space_from(file)
