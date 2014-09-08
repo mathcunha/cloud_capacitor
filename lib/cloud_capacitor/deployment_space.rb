@@ -138,8 +138,8 @@ module CloudCapacitor
                 adjacents.select! { |c| c.method(mode).call < source.method(mode).call } if direction == :down
               end
               adjacents.select! { |c| c.name != "root" }
+              cfgs += adjacents
             end
-            cfgs += adjacents
           end
           step -= 1
           from = cfgs if step > 0
