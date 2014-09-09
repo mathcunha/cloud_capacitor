@@ -48,6 +48,8 @@ module CloudCapacitor
         @results_trace[c.fullname] = Hash.new {}
         workload_list.map { |w| @results_trace[c.fullname].update({ w => Hash.new {} }) }
       end
+      
+      equivalent_configs = []
 
       while !stop do
 
@@ -61,47 +63,54 @@ module CloudCapacitor
         if result.met_sla?
 
           mark_configuration_as_candidate_for @current_workload
-          next_config = select_lower_configuration(result)
-          
-          previous_workload = @current_workload
-          @current_workload = strategy.raise_workload if next_config.nil?
 
-          # If achieved a dead-end, then try to escape the other way
-          if @current_workload.nil? && next_config.nil?
-            @current_workload = previous_workload
-            next_config = select_higher_configuration(result)
-            @current_workload = nil if next_config.nil?
+          # If tested config met the SLA we give up the equivalent ones
+          #   there is no point in trying more expensive
+          #   equivalent capacity configs. 
+          #   So, we try a lower capacity (maybe cheaper) one
+          equivalent_configs = select_lower_configuration(result) 
+
+          # Take the cheapest (list is sorted by price)
+          #  and remove it from the equivalent list
+          next_config = equivalent_configs.delete_at(0)
+          
+          # If no unexplored lower configs, then try other category
+          # branch in the Development Space
+          if next_config.nil?
+            next_config = jump_to_another_category
           end
 
-          # If it is still a dead-end, then try other category
-          # branch in the Development Space
-          if @current_workload.nil? && next_config.nil?
-            @current_workload = previous_workload
-            next_config = jump_to_another_category
-            @current_workload = nil if next_config.nil?
+          # If there is no unexplored config to try,
+          #   let's raise the workload level
+          if next_config.nil?
+            previous_workload = @current_workload
+            @current_workload = strategy.raise_workload
           end
 
         else
 
           mark_configuration_as_rejected_for @current_workload
-          next_config = select_higher_configuration(result)
 
-          previous_workload = @current_workload
-          @current_workload = strategy.lower_workload if next_config.nil?
+          equivalent_configs = filter_explored(equivalent_configs)
+          next_config = equivalent_configs.delete_at(0)
 
-          # If achieved a dead-end, then try to escape the other way
-          if @current_workload.nil? && next_config.nil?
-            @current_workload = previous_workload
-            next_config = select_lower_configuration(result)
-            @current_workload = nil if next_config.nil?
+          # If there is no unexplored equivalent config,
+          #   then try a higher capacity one (take the cheapest)
+          if next_config.nil?
+            next_config = select_higher_configuration(result)[0]
           end
 
-          # If it is still a dead-end, then try other category
+          # If no unexplored higher configs, then try other category
           # branch in the Development Space
-          if @current_workload.nil? && next_config.nil?
-            @current_workload = previous_workload
+          if next_config.nil?
             next_config = jump_to_another_category
-            @current_workload = nil if next_config.nil?
+          end
+
+          # If there is no unexplored config to try,
+          #   let's lower the workload level
+          if next_config.nil?
+            previous_workload = @current_workload
+            @current_workload = strategy.lower_workload
           end
 
         end
@@ -141,13 +150,18 @@ module CloudCapacitor
 
     private
       def jump_to_another_category
-        # randomly chooses a category other than the current one
-        new_category = deployment_space.categories.reject { |c| c == current_config.category }.sample
-
-        # picks one config from the chosen category
-        # if new_category is nil, the deployment space is not filtered
-        #   and the next config will be any of the unexplored configs
-        filter_explored deployment_space.select_category(new_category)
+        # Searches for a config from another category
+        #  looking for the first unexplored config in all categories
+        #  other than the current one
+        other_categories = deployment_space.categories.reject { |c| c == current_config.category }
+        other_categories.each do |other_category|
+          cfgs = filter_explored deployment_space.select_category(other_category)
+          unless cfgs.empty?
+            return update_current_config cfgs[0]
+          end
+        end
+        # If no unexplored configs found in a different category...
+        return nil
       end
 
       def select_lower_configuration(result)
@@ -162,7 +176,7 @@ module CloudCapacitor
         return nil if config_list.nil?
         cfgs = config_list.select {|c| unexplored_configurations.include? c}
         update_current_config cfgs[0] unless cfgs[0].nil?
-        cfgs[0]
+        cfgs
       end
 
       def invalid_workloads?(workloads)

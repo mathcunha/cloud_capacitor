@@ -84,6 +84,7 @@ module CloudCapacitor
       raise Err::InvalidConfigNameError, "Invalid config size. Maximum # of instances is #{Settings.deployment_space.max_num_instances}" if config_size > Settings.deployment_space.max_num_instances
       pos = @configs.index { |x| x.name == config_name && x.size == config_size}
       @current_config = @configs[pos]
+      @current_config
     end
     
     def first(category=@current_config.category, mode=:price)
@@ -144,7 +145,7 @@ module CloudCapacitor
           step -= 1
           from = cfgs if step > 0
         end
-        cfgs.uniq
+        cfgs.uniq.sort { |x,y| x.price <=> y.price }
       end
 
       def load_deployment_space_from(file)
