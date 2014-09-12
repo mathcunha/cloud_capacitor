@@ -141,6 +141,11 @@ module CloudCapacitor
     end
 
     def candidates
+      @candidates_for.each_pair do |w, cfgs|
+        price = cfgs.sort { |x,y| x.price <=> y.price }[0].price
+        log.debug "Menor preco das candidatas para #{w} usuarios: #{price}"
+        @candidates_for[w] = cfgs.select { |c| c.price == price }
+      end
       @candidates_for
     end
 
