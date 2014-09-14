@@ -120,7 +120,7 @@ module CloudCapacitor
         
       end
       @current_workload = nil
-      @candidates_for
+      candidates
     end
 
     def strategy=(strategy)
@@ -141,12 +141,13 @@ module CloudCapacitor
     end
 
     def candidates
+      candidate_configs = {}
       @candidates_for.each_pair do |w, cfgs|
         price = cfgs.sort { |x,y| x.price <=> y.price }[0].price
         log.debug "Menor preco das candidatas para #{w} usuarios: #{price}"
-        @candidates_for[w] = cfgs.select { |c| c.price == price }
+        candidate_configs[w] = cfgs.select { |c| c.price == price }
       end
-      @candidates_for
+      candidate_configs
     end
 
     def run_cost
