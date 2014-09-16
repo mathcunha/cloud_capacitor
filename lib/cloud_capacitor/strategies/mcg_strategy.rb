@@ -34,7 +34,7 @@ module CloudCapacitor
         when :optimistic
           capacitor.deployment_space.first
         when :conservative
-          capacitor.deployment_space.mean
+          capacitor.deployment_space.middle
         end
         log.debug "Strategy: Initial configuration set to #{capacitor.deployment_space.current_config}"
       end
