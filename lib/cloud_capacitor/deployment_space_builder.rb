@@ -63,15 +63,15 @@ module CloudCapacitor
     end
 
     def self.graph_by_price(root)
-      graph_by_prop(:price, root) 
+      graph_by_property(:price, root)
     end
 
     def self.graph_by_mem(root)
-      graph_by_prop(:mem, root) 
+      graph_by_property(:mem, root)
     end
 
     def self.graph_by_cpu(root)
-      graph_by_prop(:cpu, root) 
+      graph_by_property(:cpu, root)
     end
 
     private
@@ -106,7 +106,7 @@ module CloudCapacitor
       raise InvalidConfigurationError unless defined? @@configs_available && !@@configs_available.nil?
     end
 
-    def self.graph_by_prop(prop_method, root)
+    def self.graph_by_property(property, root)
       raise Err::NilGraphRootError, "Graph root node cannot be nil." if root.nil?
       edges = []
       configurations = @@configs_available.sort {|x,y| x.category <=> y.category}
@@ -119,7 +119,7 @@ module CloudCapacitor
         if(prop.eql?configurations[i].category())
           vertexes << configurations[i]
         else
-          edges.concat(array_by_prop(prop_method, vertexes, root))
+          edges.concat(array_by_prop(property, vertexes, root))
           prop = configurations[i].category
           vertexes = []
           i = i - 1
@@ -127,7 +127,7 @@ module CloudCapacitor
         i += 1
       end
 
-      edges.concat(array_by_prop(prop_method, vertexes, root))
+      edges.concat(array_by_prop(property, vertexes, root))
       
       graph = Plexus::DirectedPseudoGraph.new
       edges.each {|edge| graph.add_edge! edge}
