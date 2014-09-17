@@ -50,24 +50,23 @@ module CloudCapacitor
       @current_config = @configs[0]
     end
 
-    def strict_graph
-      @strict_graph
-    end
-
     def build_graphs
       @root = DeploymentSpaceBuilder.create_root_node
 
       log.debug "Generating graph by strict comparison"
-      @strict_graph = DeploymentSpaceBuilder.strict_graph(root)
+      @strict_graph = DeploymentSpaceBuilder.graph(root, :strict)
       # @strict_graph.write_to_graphic_file('jpg','strict_graph')
+
       log.debug "Generating graph by price"
-      @graph_by_price = DeploymentSpaceBuilder.graph_by_price(root)
+      @graph_by_price = DeploymentSpaceBuilder.graph(root, :price)
       # @graph_by_price.write_to_graphic_file('jpg','graph_by_price')
+
       log.debug "Generating graph by CPU"
-      @graph_by_cpu   = DeploymentSpaceBuilder.graph_by_cpu(root)
+      @graph_by_cpu   = DeploymentSpaceBuilder.graph(root, :cpu)
       # @graph_by_cpu.write_to_graphic_file('jpg','graph_by_cpu')
+
       log.debug "Generating graph by memory"
-      @graph_by_mem   = DeploymentSpaceBuilder.graph_by_mem(root)
+      @graph_by_mem   = DeploymentSpaceBuilder.graph(root, :mem)
       # @graph_by_mem.write_to_graphic_file('jpg','graph_by_mem')
     end
     
@@ -131,6 +130,8 @@ module CloudCapacitor
           from.each do |source| 
             adjacents = graph.adjacent(source)
             unless adjacents.nil?
+              # Get rid of fake nodes like root and categories
+              adjacents.select! { |c| c.size > 0 }
               if strict_mode?
                 adjacents.select! { |c| c > source } if direction == :up
                 adjacents.select! { |c| c < source } if direction == :down
@@ -138,7 +139,6 @@ module CloudCapacitor
                 adjacents.select! { |c| c.method(mode).call > source.method(mode).call } if direction == :up
                 adjacents.select! { |c| c.method(mode).call < source.method(mode).call } if direction == :down
               end
-              adjacents.select! { |c| c.name != "root" }
               cfgs += adjacents
             end
           end

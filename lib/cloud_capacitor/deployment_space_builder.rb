@@ -23,67 +23,80 @@ module CloudCapacitor
       @@categories
     end
 
-    def self.strict_graph(root)
+    def self.graph(root, mode=:price)
       raise Err::NilGraphRootError, "Graph root node cannot be nil." if root.nil?
+      mode == :strict ? property = :price : property = mode
+
       graph = Plexus::DirectedPseudoGraph.new
       edges = []
-      
+
       #We separate configs by category
       categories = separate_categories
-      
+
       #Each category has an array of configurations.
       categories.each_value do |configs|
-        #Sort each category configs by price in order
+        #Sort each category configs in order
         #to find the tiniest one
-        configs.sort! { |x, y| x.price <=> y.price }
+        configs.sort! { |x, y| x.method(property).call <=> y.method(property).call }
+        first = configs.select { |cfg| cfg.method(property) == configs[0].method(property) }
+
+        category = create_fake_node(first[0].category)
 
         #Each category is a branch from the graph root
         #So, round-trip connect the first configs to the root
-        edges << add_edge(root, configs[0], configs[0].category)
-        edges << add_edge(configs[0], root, "root")
+        edges << add_edge(root, category, category)
+        edges << add_edge(category, root, "root")
+
+        #Connect the category node to its first nodes
+        first.each do |cfg|
+          edges << add_edge(category, cfg, 'config')
+          edges << add_edge(cfg, category, 'category')
+        end
 
         #For each configuration, find its successors
         configs.each do |current_config|
-          successors = filter_successors(configs, current_config)
+          successors = filter_successors(configs, current_config, mode)
           edges += connect(current_config, successors)
         end
       end
-      
+
       edges.each { |e| graph.add_edge! e }
       graph
 
     end
 
+    def self.create_fake_node(name)
+      vm = VMType.new(name:name,
+                       cpu:0, mem:0, price:0,
+                       category:name)
+
+      Configuration.new(vm_type:vm, size:0)
+    end
+
     def self.create_root_node
-      root_vm = VMType.new(name:"root",
-                           cpu:0, mem:0, price:0,
-                           category:"root")
-
-      Configuration.new(vm_type:root_vm, size:0)
-    end
-
-    def self.graph_by_price(root)
-      graph_by_property(:price, root)
-    end
-
-    def self.graph_by_mem(root)
-      graph_by_property(:mem, root)
-    end
-
-    def self.graph_by_cpu(root)
-      graph_by_property(:cpu, root)
+      create_fake_node('root')
     end
 
     private
-    def self.filter_successors(configs, current_config)
-      #The > operator works thanks to the strict comparison
-      #nature of the Configurations, eliminating only the
-      #comparable ones. See Configuration#>
-      successors = configs.select {|config| config > current_config }
-      #Filter immediate strict successors only
-      successors.each do |successor| 
-        successors.reject! { |bigger_config| bigger_config > successor}
+    def self.filter_successors(configs, current_config, mode=:strict)
+      successors = []
+      #The > operator works for Configurations thanks to
+      # the strict comparison nature of the Configurations,
+      # eliminating only the comparable ones. See Configuration#>
+      if mode == :strict
+        successors = configs.select {|config| config > current_config }
+        #Filter immediate strict successors only
+        successors.each do |successor|
+          successors.reject! { |bigger_config| bigger_config > successor}
+        end
+      else
+        successors = configs.select {|config| config.method(mode).call > current_config.method(mode).call }
+        #Filter immediate strict successors only
+        successors.each do |successor|
+          successors.reject! { |bigger_config| bigger_config.method(mode).call > successor.method(mode).call}
+        end
       end
+
       successors
     end
 
@@ -106,68 +119,6 @@ module CloudCapacitor
       raise InvalidConfigurationError unless defined? @@configs_available && !@@configs_available.nil?
     end
 
-    def self.graph_by_property(property, root)
-      raise Err::NilGraphRootError, "Graph root node cannot be nil." if root.nil?
-      edges = []
-      configurations = @@configs_available.sort {|x,y| x.category <=> y.category}
-
-      prop = configurations[0].category
-      vertexes = []
-
-      i = 0
-      until i >= configurations.size() do
-        if(prop.eql?configurations[i].category())
-          vertexes << configurations[i]
-        else
-          edges.concat(array_by_prop(property, vertexes, root))
-          prop = configurations[i].category
-          vertexes = []
-          i = i - 1
-        end
-        i += 1
-      end
-
-      edges.concat(array_by_prop(property, vertexes, root))
-      
-      graph = Plexus::DirectedPseudoGraph.new
-      edges.each {|edge| graph.add_edge! edge}
-      graph
-    end
-
-    def self.array_by_prop(prop_method, config, root)
-      validate_setup
-      edges = []
-
-      configurations = config.sort {|x,y| x.method(prop_method).call() <=> y.method(prop_method).call()}
-
-      prop = configurations[0].method(prop_method).call()
-      vertexes = []
-      vertexes_old = []
-      vertexes_old << root
-
-      i = 0
-      until i >= configurations.size() do
-        if(equal(prop, configurations[i].method(prop_method).call(), 0.01))
-          vertexes << configurations[i]
-        else
-          add_edges(vertexes_old, vertexes, edges, prop_method)
-          prop = configurations[i].method(prop_method).call()
-          vertexes_old = Array.new(vertexes)
-          vertexes = []
-          i = i - 1
-        end
-        i += 1
-      end
-
-      add_edges(vertexes_old, vertexes, edges, prop_method)
-      edges
-    end
-
-    def self.equal(prop, prop2, error)
-      diff = prop2 - prop
-      diff < error
-    end
-
     def self.configs_under_price_limit(vm_types)
       configs = []
 
@@ -186,15 +137,5 @@ module CloudCapacitor
       Plexus::Arc.new(source, target, label)
     end
 
-    def self.add_edges(vertexes_old, vertexes, edges, prop_method)
-      if(!vertexes_old.nil? && !vertexes.nil?)
-        vertexes_old.each do |vertex_old|
-          vertexes.each do |vertex|
-            edges << add_edge(vertex_old, vertex, (vertex.method(prop_method).call() - vertex_old.method(prop_method).call()).round(2))
-            edges << add_edge(vertex, vertex_old, (vertex_old.method(prop_method).call() - vertex.method(prop_method).call()).round(2))
-          end
-        end
-      end
-    end
   end
 end
