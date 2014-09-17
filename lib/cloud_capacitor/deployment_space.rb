@@ -128,18 +128,18 @@ module CloudCapacitor
         while step > 0
           cfgs = []
           from.each do |source| 
-            adjacents = graph.adjacent(source)
-            unless adjacents.nil?
+            adjacent = graph.adjacent(source)
+            unless adjacent.nil?
               # Get rid of fake nodes like root and categories
-              adjacents.select! { |c| c.size > 0 }
+              adjacent.select! { |c| c.size > 0 }
               if strict_mode?
-                adjacents.select! { |c| c > source } if direction == :up
-                adjacents.select! { |c| c < source } if direction == :down
+                adjacent.select! { |c| c > source } if direction == :up
+                adjacent.select! { |c| c < source } if direction == :down
               else
-                adjacents.select! { |c| c.method(mode).call > source.method(mode).call } if direction == :up
-                adjacents.select! { |c| c.method(mode).call < source.method(mode).call } if direction == :down
+                adjacent.select! { |c| c.method(mode).call > source.method(mode).call } if direction == :up
+                adjacent.select! { |c| c.method(mode).call < source.method(mode).call } if direction == :down
               end
-              cfgs += adjacents
+              cfgs += adjacent
             end
           end
           step -= 1
