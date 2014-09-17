@@ -1,4 +1,3 @@
-require 'plexus'
 module CloudCapacitor
 
   class DeploymentSpaceBuilder
@@ -27,24 +26,28 @@ module CloudCapacitor
       raise Err::NilGraphRootError, "Graph root node cannot be nil." if root.nil?
       mode == :strict ? property = :price : property = mode
 
-      graph = Plexus::DirectedPseudoGraph.new
+      graph = DeploymentSpaceGraph.new
+      graph.root = root
+      graph.mode = mode
+
       edges = []
 
       #We separate configs by category
       categories = separate_categories
 
       #Each category has an array of configurations.
-      categories.each_value do |configs|
+      categories.each_pair do |category, configs|
+
+        graph.categories << category
+
         #Sort each category configs in order
         #to find the tiniest one
         configs.sort! { |x, y| x.method(property).call <=> y.method(property).call }
         first = configs.select { |cfg| cfg.method(property) == configs[0].method(property) }
 
-        category = create_fake_node(first[0].category)
-
         #Each category is a branch from the graph root
         #So, round-trip connect the first configs to the root
-        edges << add_edge(root, category, category)
+        edges << add_edge(root, category, category.name)
         edges << add_edge(category, root, "root")
 
         #Connect the category node to its first nodes
@@ -91,7 +94,7 @@ module CloudCapacitor
         end
       else
         successors = configs.select {|config| config.method(mode).call > current_config.method(mode).call }
-        #Filter immediate strict successors only
+        #Filter immediate successors only
         successors.each do |successor|
           successors.reject! { |bigger_config| bigger_config.method(mode).call > successor.method(mode).call}
         end
@@ -102,7 +105,7 @@ module CloudCapacitor
 
     def self.separate_categories
       categories = Hash.new{[]}
-      @@configs_available.each { |cfg| categories[cfg.category] <<= cfg }
+      @@configs_available.each { |cfg| categories[create_fake_node(cfg.category)] <<= cfg }
       categories
     end
 
