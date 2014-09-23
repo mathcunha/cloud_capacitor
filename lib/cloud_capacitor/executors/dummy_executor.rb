@@ -26,7 +26,6 @@ module CloudCapacitor
 
       def run(configuration:, workload:)
         # log.debug "DummyExecutor: executing performance test..."
-        sleep 0.2
         res = @result_for[workload][configuration.size][configuration.name]
         result = Result.new(value: res[:value], cpu: res[:cpu], mem: res[:mem])
         # log.debug "DummyExecutor: response time = #{result.raw_value}ms Workload: #{workload} Configuration: #{configuration.size}.#{configuration.name}\n"

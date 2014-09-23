@@ -13,6 +13,8 @@ require_relative "cloud_capacitor/strategies/strategy"
 require_relative "cloud_capacitor/strategies/nm_strategy"
 require_relative "cloud_capacitor/strategies/mcg_strategy"
 
+require_relative "cloud_capacitor/graphs/deployment_space_graph"
+
 require_relative 'cloud_capacitor/settings/settings' if !defined?(Rails)
 
 require_relative "cloud_capacitor/capacitor"
@@ -26,22 +28,61 @@ module CloudCapacitor
 end
 
 # capacitor = CloudCapacitor::Capacitor.new
+# capacitor.workloads = [100,200,300,400,500,600,700,800,900,1000]
+#
 # capacitor.executor = CloudCapacitor::Executors::DummyExecutor.new
 # capacitor.strategy = CloudCapacitor::Strategies::MCG_Strategy.new
+#
+# approaches = [:optimistic, :pessimistic, :conservative, :random]
+#
+# approaches.each do |wkl_approach|
+#   approaches.each do |config_approach|
+#     capacitor.strategy.approach workload: wkl_approach, config: config_approach
+#     current_workload  = capacitor.strategy.select_initial_workload
+#     current_category  = capacitor.strategy.select_initial_category
+#     current_capacity  = capacitor.strategy.select_initial_capacity_level
+#
+#     equivalent_configs = current_capacity[1]
+#
+#     capacitor.deployment_space.take equivalent_configs[0]
+#
+#     puts "Approaches -  Workload: #{wkl_approach}   Config: #{config_approach}"
+#     puts "Initial workload = #{current_workload}"
+#     puts "Initial category = #{current_category}"
+#     puts "Capacity level = #{current_capacity[0]}"
+#     puts "Capacity level configs = #{equivalent_configs.map { |c| c.fullname }}"
+#     puts "Initial configuration= #{capacitor.current_config}"
+#
+#   end
+# end
+# config = capacitor.deployment_space.middle[1]
 
-# capacitor.strategy.attitude :conservative
-# capacitor.strategy.attitude :pessimistic
-# capacitor.strategy.attitude :optimistic
+# grafo = capacitor.deployment_space.graph
+# grafo.capacity_levels.each_pair do |categoria, alturas|
+#   puts "Categoria #{categoria.name}"
+#   alturas.each_pair do |altura, configs|
+#     puts "  Altura #{altura} - #{configs.map { |c| c.fullname } }"
+#   end
+# end
 
-# capacitor.strategy.attitude workload: :conservative, config: :optimistic
-# capacitor.strategy.attitude workload: :optimistic,   config: :optimistic
-# capacitor.strategy.attitude workload: :pessimistic,  config: :optimistic
-# capacitor.strategy.attitude workload: :optimistic,   config: :pessimistic
-# capacitor.strategy.attitude workload: :optimistic,   config: :conservative
-# capacitor.strategy.attitude workload: :pessimistic,  config: :pessimistic
-# capacitor.strategy.attitude workload: :pessimistic,  config: :conservative
-# capacitor.strategy.attitude workload: :conservative, config: :conservative
-# capacitor.strategy.attitude workload: :conservative, config: :pessimistic
+
+# puts "Primeiro = #{capacitor.deployment_space.first(from:config)}"
+# puts "Ultimo = #{capacitor.deployment_space.last(from:config)}"
+# puts "Meio = #{capacitor.deployment_space.middle(from:config)}"
+
+
+# capacitor.strategy.approach :conservative
+# capacitor.strategy.approach :pessimistic
+# capacitor.strategy.approach :optimistic
+# capacitor.strategy.approach workload: :conservative, config: :optimistic
+# capacitor.strategy.approach workload: :optimistic,   config: :optimistic
+# capacitor.strategy.approach workload: :pessimistic,  config: :optimistic
+# capacitor.strategy.approach workload: :optimistic,   config: :pessimistic
+# capacitor.strategy.approach workload: :optimistic,   config: :conservative
+# capacitor.strategy.approach workload: :pessimistic,  config: :pessimistic
+# capacitor.strategy.approach workload: :pessimistic,  config: :conservative
+# capacitor.strategy.approach workload: :conservative, config: :conservative
+# capacitor.strategy.approach workload: :conservative, config: :pessimistic
 
 # capacitor.run_for(100,200,300,400,500,600,700,800,900,1000)
 
