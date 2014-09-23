@@ -5,12 +5,15 @@ module CloudCapacitor
 
     attr_accessor :deployment_space
     attr_accessor :executor, :strategy
-    attr_reader   :current_workload, :workloads
+    attr_accessor :current_workload, :workloads, :current_category
     attr_reader   :candidates_for, :candidates, :rejected_for, :executed_for
     attr_reader   :executions, :run_cost, :execution_trace, :results_trace
 
     def initialize
-      @deployment_space = DeploymentSpace.new
+      #mode = :strict
+      mode = :price # if Settings.deployment_space.use_strict_comparison_mode == 0
+
+      @deployment_space = DeploymentSpace.new mode: mode
       @executor = Executors::DefaultExecutor.new
     end
     
@@ -19,7 +22,6 @@ module CloudCapacitor
       raise Err::NoStrategyConfiguredError if @strategy.nil?
       raise ArgumentError if invalid_workloads?(workload_list)
       
-      # create a copy to preserve original parameter
       @workloads = Array.new(workload_list)
 
       @candidates_for = Hash.new{ [] } # each key defaults to an empty array
@@ -32,10 +34,6 @@ module CloudCapacitor
       @run_cost = 0.0
       stop = false
       
-      @strategy.select_initial_configuration
-      @current_workload = @strategy.select_initial_workload(workload_list)
-      # log.debug "Strategy: Initial workload set to #{@current_workload}"
-
       # @execution_trace[@executions] = {config:current_config, workload:@current_workload, met_sla: result.met_sla?}
       # Format: {1: config: <Configuration instance>1.m3_medium, workload: 100, met_sla: true}
       @execution_trace = Hash.new{{}}
@@ -49,7 +47,13 @@ module CloudCapacitor
         workload_list.map { |w| @results_trace[c.fullname].update({ w => Hash.new {} }) }
       end
       
-      equivalent_configs = []
+      @current_workload = @strategy.select_initial_workload
+      @current_category = @strategy.select_initial_category
+      @current_capacity = @strategy.select_initial_capacity_level
+
+      equivalent_configs = @current_capacity[1]
+
+      update_current_config equivalent_configs[0]
 
       while !stop do
 
@@ -60,62 +64,30 @@ module CloudCapacitor
         @executed_for[@current_workload]<<= current_config
         @execution_trace[@executions] = {config:current_config, workload:@current_workload, met_sla: result.met_sla?}
 
-        if result.met_sla?
+        mark_configuration_as_candidate_for @current_workload if result.met_sla?
+        mark_configuration_as_rejected_for @current_workload unless result.met_sla?
 
-          mark_configuration_as_candidate_for @current_workload
+        equivalent_configs = filter_explored(equivalent_configs)
+        next_config = equivalent_configs.delete_at(0) unless equivalent_configs.nil?
 
-          # If tested config met the SLA we give up the equivalent ones
-          #   there is no point in trying more expensive
-          #   equivalent capacity configs. 
-          #   So, we try a lower capacity (maybe cheaper) one
-          equivalent_configs = select_lower_configuration(result) 
-
-          # Take the cheapest (list is sorted by price)
-          #  and remove it from the equivalent list
-          next_config = equivalent_configs.delete_at(0)
-          
-          # If no unexplored lower configs, then try other category
-          # branch in the Development Space
-          if next_config.nil?
-            next_config = jump_to_another_category
-          end
-
-          # If there is no unexplored config to try,
-          #   let's raise the workload level
-          if next_config.nil?
-            previous_workload = @current_workload
-            @current_workload = strategy.raise_workload
-          end
-
-        else
-
-          mark_configuration_as_rejected_for @current_workload
-
-          equivalent_configs = filter_explored(equivalent_configs)
-          next_config = equivalent_configs.delete_at(0)
-
-          # If there is no unexplored equivalent config,
-          #   then try a higher capacity one (take the cheapest)
-          if next_config.nil?
-            next_config = select_higher_configuration(result)[0]
-          end
-
-          # If no unexplored higher configs, then try other category
-          # branch in the Development Space
-          if next_config.nil?
-            next_config = jump_to_another_category
-          end
-
-          # If there is no unexplored config to try,
-          #   let's lower the workload level
-          if next_config.nil?
-            previous_workload = @current_workload
-            @current_workload = strategy.lower_workload
-          end
-
+        if next_config.nil?
+          equivalent_configs = select_lower_capacity_level if result.met_sla?
+          equivalent_configs = select_higher_capacity_level unless result.met_sla?
+          next_config = equivalent_configs.delete_at(0) unless equivalent_configs.nil?
         end
 
-        # log.debug "Capacitor: next_config = #{next_config}"
+        if next_config.nil?
+          equivalent_configs = jump_to_another_category
+          next_config = equivalent_configs[0] unless equivalent_configs.nil?
+        else
+          update_current_config next_config
+        end
+
+        if next_config.nil?
+          @current_workload = @strategy.raise_workload if result.met_sla?
+          @current_workload = @strategy.lower_workload unless result.met_sla?
+        end
+
         stop = next_config.nil? && @current_workload.nil?
         
       end
@@ -155,20 +127,25 @@ module CloudCapacitor
       @run_cost
     end
 
+    def current_config
+      @deployment_space.current_config
+    end
+
     private
       def jump_to_another_category
-        # Searches for a config from another category
-        #  looking for the first unexplored config in all categories
-        #  other than the current one
-        other_categories = deployment_space.categories.reject { |c| c == current_config.category }
-        other_categories.each do |other_category|
-          cfgs = filter_explored deployment_space.select_category(other_category)
-          unless cfgs.empty?
-            return update_current_config cfgs[0]
-          end
+        # Searches for a category with unexplored configs
+        #  other than the current category
+        categories = @deployment_space.graph.categories
+        other_categories = categories.reject { |c| @strategy.unexplored_capacity_levels(category: c).empty? }
+
+        # Select an unexplored capacity level from the new category
+        unless other_categories.empty?
+          @current_category = other_categories[0]
+          levels = @strategy.unexplored_capacity_levels(category: @current_category)
+          @current_capacity = @strategy.take_a_capacity_level_from( levels )
+          return nil if @current_capacity.nil?
+          @current_capacity[1]
         end
-        # If no unexplored configs found in a different category...
-        return nil
       end
 
       def select_lower_configuration(result)
@@ -179,9 +156,30 @@ module CloudCapacitor
         filter_explored strategy.select_higher_configurations_based_on(result)
       end
 
+      def select_lower_capacity_level
+        @current_capacity = @strategy.select_lower_capacity_level(@current_capacity)
+        log.debug "Selectin lower capacity"
+        configs_from_capacity_level @current_capacity
+      end
+
+      def select_higher_capacity_level
+        @current_capacity = @strategy.select_higher_capacity_level(@current_capacity)
+        log.debug "Selectin higher capacity"
+        configs_from_capacity_level @current_capacity
+      end
+
+      def configs_from_capacity_level(capacity)
+        unless capacity.nil? || capacity.empty?
+          log.debug "Capacity level = #{capacity}"
+          update_current_config capacity[1][0]
+          return capacity[1]
+        end
+      end
+
       def filter_explored(config_list)
         return nil if config_list.nil?
-        cfgs = config_list.select {|c| unexplored_configurations.include? c}
+        unexplored = unexplored_configurations
+        cfgs = config_list.select {|c| unexplored.include? c}
         update_current_config cfgs[0] unless cfgs[0].nil?
         cfgs
       end
@@ -227,12 +225,8 @@ module CloudCapacitor
           update({met_sla: false, executed: true, execution: @executions}) { |key, old, new| new }
       end
 
-      def current_config
-        @deployment_space.current_config
-      end
-
       def update_current_config(config)
-        @deployment_space.pick config.size, config.name
+        @deployment_space.take config
       end
   end
 end

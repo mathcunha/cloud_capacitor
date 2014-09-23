@@ -8,14 +8,15 @@ module CloudCapacitor
     attr_accessor :vm_types, :vm_types_by_cpu, :vm_types_by_mem, :vm_types_by_price
     attr_accessor :current_config, :max_price, :root
 
+    attr_reader   :graph, :mode
     attr_reader   :graph_by_cpu, :graph_by_mem, :graph_by_price
     attr_reader   :configs, :categories, :configs_by_price, :strict_graph
 
     DEFAULT_DEPLOYMENT_SPACE_FILE = File.join( File.expand_path('../../..', __FILE__), "wordpress_deployment_space.yml" )
-    TRAVERSAL_MODES = [:cpu, :mem, :price]
+    TRAVERSAL_MODES = [:cpu, :mem, :price, :strict]
     
-    def initialize(file:DEFAULT_DEPLOYMENT_SPACE_FILE, vm_types: [])
-      
+    def initialize(mode: :strict, file:DEFAULT_DEPLOYMENT_SPACE_FILE, vm_types: [])
+      @mode = mode
       if vm_types.size > 0
         self.vm_types = vm_types
       else
@@ -39,7 +40,7 @@ module CloudCapacitor
       DeploymentSpaceBuilder.setup(@vm_types)
 
       log.debug "Building deployment space graphs"
-      build_graphs
+      build_graph
 
       @configs = DeploymentSpaceBuilder.configs_available
 
@@ -50,24 +51,11 @@ module CloudCapacitor
       @current_config = @configs[0]
     end
 
-    def build_graphs
+    def build_graph
       @root = DeploymentSpaceBuilder.create_root_node
-
-      log.debug "Generating graph by strict comparison"
-      @strict_graph = DeploymentSpaceBuilder.graph(root, :strict)
-      # @strict_graph.write_to_graphic_file('jpg','strict_graph')
-
-      log.debug "Generating graph by price"
-      @graph_by_price = DeploymentSpaceBuilder.graph(root, :price)
-      # @graph_by_price.write_to_graphic_file('jpg','graph_by_price')
-
-      log.debug "Generating graph by CPU"
-      @graph_by_cpu   = DeploymentSpaceBuilder.graph(root, :cpu)
-      # @graph_by_cpu.write_to_graphic_file('jpg','graph_by_cpu')
-
-      log.debug "Generating graph by memory"
-      @graph_by_mem   = DeploymentSpaceBuilder.graph(root, :mem)
-      # @graph_by_mem.write_to_graphic_file('jpg','graph_by_mem')
+      log.debug "Generating graph by #{@mode} mode"
+      @graph = DeploymentSpaceBuilder.graph(root, @mode)
+      # @graph.write_to_graphic_file('jpg','#{@mode}_graph')
     end
     
     def select_higher(mode: :price, from: @current_config, step: 1)
@@ -78,6 +66,18 @@ module CloudCapacitor
       adjacent_configs(mode: mode, from: from, step: step, direction: :down)
     end
 
+    def select_higher_capacity_level(step: 1)
+      capa
+    end
+
+    def select_lower_capacity_level(step: 1)
+      adjacent_configs(mode: mode, from: from, step: step, direction: :down)
+    end
+
+    def take(config)
+      @current_config = config unless @configs.index(config).nil?
+    end
+
     def pick(config_size, config_name)
       raise Err::InvalidConfigNameError, "Unsupported config name. #{list_supported_configs}" if @vm_types.select {|vm| vm.name == config_name }.size == 0
       raise Err::InvalidConfigNameError, "Invalid config size. Maximum # of instances is #{Settings.deployment_space.max_num_instances}" if config_size > Settings.deployment_space.max_num_instances
@@ -85,24 +85,35 @@ module CloudCapacitor
       @current_config = @configs[pos]
       @current_config
     end
-    
-    def first(category=@current_config.category, mode=:price)
-      config_list = select_category category, instance_variable_get("@configs_by_#{mode}")
-      @current_config = config_list[0]
+
+    def random(from_category:@graph.categories[0])
+      height = @graph.capacity_levels[from_category].keys.sample
+      @graph.capacity_levels[from_category].assoc(height)
     end
 
-    def last(category=@current_config.category, mode=:price)
-      config_list = select_category category, instance_variable_get("@configs_by_#{mode}")
-      @current_config = config_list[-1]
+    def first(from_category:@graph.categories[0])
+      raise ArgumentError unless from_category.respond_to?(:fullname) && from_category.size == 0
+      @graph.capacity_levels[from_category].assoc(1)
     end
 
-    def middle(category=@current_config.category, mode=:price)
-      config_list = select_category category, instance_variable_get("@configs_by_#{mode}")
-      @current_config = config_list[config_list.size / 2]
+    def last(from_category:@graph.categories[0])
+      raise ArgumentError unless from_category.respond_to?(:fullname) && from_category.size == 0
+      last_height = @graph.capacity_levels[from_category].keys[-1]
+      @graph.capacity_levels[from_category].assoc(last_height)
+    end
+
+    def middle(from_category:@graph.categories[0])
+      raise ArgumentError unless from_category.respond_to?(:fullname) && from_category.size == 0
+      last_height = @graph.capacity_levels[from_category].keys[-1]
+      @graph.capacity_levels[from_category].assoc(last_height / 2)
     end
 
     def categories
       DeploymentSpaceBuilder.categories
+    end
+
+    def capacity_levels
+      @graph.capacity_levels
     end
 
     def select_category(category, cfg_list=nil)
@@ -116,14 +127,12 @@ module CloudCapacitor
         Settings.deployment_space.use_strict_comparison_mode == 1  
       end
 
-      def adjacent_configs(mode: :price, from: @current_config, step: 1, direction: :up)
+      def adjacent_configs(mode: @mode, from: @current_config, step: 1, direction: :up)
         validate_modes mode
         raise ArgumentError, "Invalid direction. Valid ones are: :up, :down" if ![:up, :down].include? direction
         raise ArgumentError, "Step must be > 0" if step <= 0
         return nil if from.nil?
 
-        graph = instance_variable_get("@graph_by_#{mode}") if !strict_mode?
-        graph = @strict_graph if strict_mode?
         from = [from]
         while step > 0
           cfgs = []
@@ -133,8 +142,8 @@ module CloudCapacitor
               # Get rid of fake nodes like root and categories
               adjacent.select! { |c| c.size > 0 }
               if strict_mode?
-                adjacent.select! { |c| c > source } if direction == :up
-                adjacent.select! { |c| c < source } if direction == :down
+                adjacent.select! { |c| c > source  || source.size == 0} if direction == :up
+                adjacent.select! { |c| c < source  || source.size == 0} if direction == :down
               else
                 adjacent.select! { |c| c.method(mode).call > source.method(mode).call } if direction == :up
                 adjacent.select! { |c| c.method(mode).call < source.method(mode).call } if direction == :down

@@ -64,6 +64,7 @@ module CloudCapacitor
       end
 
       edges.each { |e| graph.add_edge! e }
+      graph.calculate_capacity_levels
       graph
 
     end
