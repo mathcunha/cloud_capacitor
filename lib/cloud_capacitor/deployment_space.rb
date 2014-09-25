@@ -47,13 +47,13 @@ module CloudCapacitor
       @configs_by_cpu   = @configs.sort { |x,y| x.cpu <=> y.cpu }
       @configs_by_mem   = @configs.sort { |x,y| x.mem <=> y.mem }
       @configs_by_price = @configs.sort { |x,y| x.price <=> y.price }
-      log.debug "Deployment space complete with these configs:\n#{@configs_by_price.map { |cfg| cfg.fullname }}"
+      # log.debug "Deployment space complete with these configs:\n#{@configs_by_price.map { |cfg| cfg.fullname }}"
       @current_config = @configs[0]
     end
 
     def build_graph
       @root = DeploymentSpaceBuilder.create_root_node
-      log.debug "Generating graph by #{@mode} mode"
+      # log.debug "Generating graph by #{@mode} mode"
       @graph = DeploymentSpaceBuilder.graph(root, @mode)
       # @graph.write_to_graphic_file('jpg','#{@mode}_graph')
     end

@@ -36,7 +36,7 @@ module CloudCapacitor
       end
 
       def select_workload(workload_list)
-        log.debug "Strategy: Selecting a workload level with #{@wkl_approach} approach"
+        # log.debug "Strategy: Selecting a workload level with #{@wkl_approach} approach"
         case @wkl_approach
           when :pessimistic
             workload_list.first
@@ -50,7 +50,7 @@ module CloudCapacitor
       end
 
       def select_initial_capacity_level
-        log.debug "Strategy: Selecting initial capacity level with #{@cfg_approach} approach"
+        # log.debug "Strategy: Selecting initial capacity level with #{@cfg_approach} approach"
 
         depspace = capacitor.deployment_space
 
