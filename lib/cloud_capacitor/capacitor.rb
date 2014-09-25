@@ -40,7 +40,7 @@ module CloudCapacitor
       
       # Filled in mark_configuration_as_candidate_for 
       # and mark_configuration_as_rejected_for
-      # Format: {1.m3_medium: {100: {met_sla: false, executed: true, execution: 1}}}
+      # Format: {"1.m3_medium": {100: {met_sla: false, executed: true, execution: 1}}}
       @results_trace   = Hash.new{{}}
       deployment_space.configs_by_price.map do |c| 
         @results_trace[c.fullname] = Hash.new {}
@@ -67,7 +67,8 @@ module CloudCapacitor
         mark_configuration_as_candidate_for @current_workload if result.met_sla?
         mark_configuration_as_rejected_for @current_workload unless result.met_sla?
 
-        equivalent_configs = filter_explored(equivalent_configs)
+        equivalent_configs.delete current_config unless equivalent_configs.nil?
+
         next_config = equivalent_configs.delete_at(0) unless equivalent_configs.nil?
 
         if next_config.nil?
@@ -158,19 +159,19 @@ module CloudCapacitor
 
       def select_lower_capacity_level
         @current_capacity = @strategy.select_lower_capacity_level(@current_capacity)
-        log.debug "Selectin lower capacity"
+        # log.debug "Selectin lower capacity"
         configs_from_capacity_level @current_capacity
       end
 
       def select_higher_capacity_level
         @current_capacity = @strategy.select_higher_capacity_level(@current_capacity)
-        log.debug "Selectin higher capacity"
+        # log.debug "Selectin higher capacity"
         configs_from_capacity_level @current_capacity
       end
 
       def configs_from_capacity_level(capacity)
         unless capacity.nil? || capacity.empty?
-          log.debug "Capacity level = #{capacity}"
+          # log.debug "Capacity level = #{capacity}"
           update_current_config capacity[1][0]
           return capacity[1]
         end
