@@ -29,6 +29,7 @@ module CloudCapacitor
           cfgs = adjacent_from(from)
           height += 1 unless cfgs.empty?
           @capacity_levels[category][height] = cfgs.uniq{|c| c.fullname} unless cfgs.empty?
+          @capacity_levels[category][height].each { |c| c.capacity_level = height }
           from = cfgs
         end
       end
