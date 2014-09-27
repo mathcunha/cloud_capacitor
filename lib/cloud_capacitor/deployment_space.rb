@@ -58,22 +58,6 @@ module CloudCapacitor
       # @graph.write_to_graphic_file('jpg','#{@mode}_graph')
     end
     
-    def select_higher(mode: :price, from: @current_config, step: 1)
-      adjacent_configs(mode: mode, from: from, step: step, direction: :up)
-    end
-
-    def select_lower(mode: :price, from: @current_config, step: 1)
-      adjacent_configs(mode: mode, from: from, step: step, direction: :down)
-    end
-
-    def select_higher_capacity_level(step: 1)
-      capa
-    end
-
-    def select_lower_capacity_level(step: 1)
-      adjacent_configs(mode: mode, from: from, step: step, direction: :down)
-    end
-
     def take(config)
       @current_config = config unless @configs.index(config).nil?
     end
@@ -116,46 +100,51 @@ module CloudCapacitor
       @graph.capacity_levels
     end
 
+    def capacity_level(config)
+      category = DeploymentSpaceBuilder.create_fake_node(config.category)
+      @graph.capacity_levels[category][config.capacity_level]
+    end
+
     def select_category(category, cfg_list=nil)
       list = cfg_list.nil? ? @configs : cfg_list
       return list if category.nil?
       list.select { |cfg| cfg.category == category }
     end
 
-    private
-      def strict_mode?
-        Settings.deployment_space.use_strict_comparison_mode == 1  
-      end
+    def eager_adjacent_configs(mode: @mode, from: @current_config, direction: :up)
+      validate_modes mode
+      raise ArgumentError, "Invalid direction. Valid ones are: :up, :down" unless [:up, :down].include? direction
+      return nil if from.nil?
 
-      def adjacent_configs(mode: @mode, from: @current_config, step: 1, direction: :up)
-        validate_modes mode
-        raise ArgumentError, "Invalid direction. Valid ones are: :up, :down" if ![:up, :down].include? direction
-        raise ArgumentError, "Step must be > 0" if step <= 0
-        return nil if from.nil?
-
-        from = [from]
-        while step > 0
-          cfgs = []
-          from.each do |source| 
-            adjacent = graph.adjacent(source)
-            unless adjacent.nil?
-              # Get rid of fake nodes like root and categories
-              adjacent.select! { |c| c.size > 0 }
-              if strict_mode?
-                adjacent.select! { |c| c > source  || source.size == 0} if direction == :up
-                adjacent.select! { |c| c < source  || source.size == 0} if direction == :down
-              else
-                adjacent.select! { |c| c.method(mode).call > source.method(mode).call } if direction == :up
-                adjacent.select! { |c| c.method(mode).call < source.method(mode).call } if direction == :down
-              end
-              cfgs += adjacent
+      from = [from]
+      cfgs = from
+      adjacent = from[0]
+      while from.size > 0
+        from.each do |source|
+          adjacent = graph.adjacent(source)
+          unless adjacent.nil?
+            # Get rid of fake nodes like root and categories
+            adjacent.select! { |c| c.size > 0 }
+            if strict_mode?
+              adjacent.select! { |c| c > source  || source.size == 0} if direction == :up
+              adjacent.select! { |c| c < source  || source.size == 0} if direction == :down
+            else
+              adjacent.select! { |c| c.method(mode).call > source.method(mode).call } if direction == :up
+              adjacent.select! { |c| c.method(mode).call < source.method(mode).call } if direction == :down
             end
+            cfgs += adjacent
           end
-          step -= 1
-          from = cfgs if step > 0
         end
-        cfgs.uniq.sort { |x,y| x.price <=> y.price }
+        from = adjacent
       end
+      cfgs.uniq.sort { |x,y| x.price <=> y.price }
+    end
+
+    private
+    def strict_mode?
+        Settings.deployment_space.use_strict_comparison_mode == 1
+      end
+
 
       def load_deployment_space_from(file)
         depl_space = []
