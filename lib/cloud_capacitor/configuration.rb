@@ -1,7 +1,7 @@
 module CloudCapacitor
   class Configuration
     attr_reader :name, :mem, :price, :cpu, :category
-    attr_accessor :size, :vm_type
+    attr_accessor :size, :vm_type, :capacity_level
     
     def initialize(vm_type:, size:)
       @vm_type = vm_type
