@@ -37,7 +37,7 @@ module CloudCapacitor
     end
 
     it "allows querying for the unexplored workloads for the current Configuration being tested" do
-      expect(subject).to respond_to :unexplored_workloads
+      expect(subject).to respond_to :unexplored_workloads_for
     end
     
     it "execute tests for a list of workloads" do

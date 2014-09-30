@@ -87,14 +87,29 @@ module CloudCapacitor
           @current_workload = @strategy.raise_workload if result.met_sla?
           @current_workload = @strategy.lower_workload unless result.met_sla?
           equivalent_configs = filter_explored deployment_space.capacity_level(current_config)
-        else
-          update_current_config next_config
+          next_config = equivalent_configs[0] unless equivalent_configs.nil?
         end
+
+        if next_config.nil? && @current_workload.nil?
+# byebug
+          @current_workload = @strategy.select_workload(unexplored_workloads_for)
+
+          categs = @deployment_space.graph.categories
+          unexplored_categories = categs.reject {|cat| @strategy.unexplored_capacity_levels(category: cat) == {} }
+          @current_category = unexplored_categories[0]
+
+          levels = @strategy.unexplored_capacity_levels
+          @current_capacity = @strategy.take_a_capacity_level_from( levels )
+
+          equivalent_configs = @current_capacity[1]
+          next_config = equivalent_configs[0] unless equivalent_configs.nil?
+        end
+
+        update_current_config next_config unless next_config.nil?
 
         stop = next_config.nil? && @current_workload.nil?
         
       end
-      @current_workload = nil
       candidates
     end
 
@@ -104,12 +119,19 @@ module CloudCapacitor
     end
 
     def unexplored_configurations(workload: @current_workload)
+      return [] if workload.nil?
       cfgs = @deployment_space.configs - (@candidates_for[workload] | @rejected_for[workload])
       # log.debug "Unexplored configs for workload #{@current_workload}:\n#{cfgs.map { |cfg| cfg.fullname }}"
       cfgs
     end
 
-    def unexplored_workloads
+    def all_unexplored_workloads
+      unexplored = @workloads.select { |w| (@rejected_for[w] | @candidates_for[w]).size < @deployment_space.configs.size }
+      unexplored.sort!
+    end
+
+    def unexplored_workloads_for(config=nil)
+      return all_unexplored_workloads if config.nil?
       unexplored = @workloads - (@rejected_for.select {|_,v| v.include? current_config }.keys | @candidates_for.select {|_,v| v.include? current_config }.keys)
       # unexplored = unexplored - @candidates_for.select {|_,v| v.include? current_config }.keys
       unexplored.sort!

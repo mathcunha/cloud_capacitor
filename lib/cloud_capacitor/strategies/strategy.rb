@@ -22,12 +22,14 @@ module CloudCapacitor
       end
 
       def raise_workload
-        unexplored = capacitor.unexplored_workloads.reject { |w| w <= capacitor.current_workload }.sort!
+        unexplored = capacitor.unexplored_workloads_for(capacitor.current_config)
+        unexplored = unexplored.reject { |w| w <= capacitor.current_workload }.sort!
         select_workload unexplored
       end
 
       def lower_workload
-        unexplored = capacitor.unexplored_workloads.reject { |w| w >= capacitor.current_workload }.sort!
+        unexplored = capacitor.unexplored_workloads_for(capacitor.current_config)
+        unexplored = unexplored.reject { |w| w >= capacitor.current_workload }.sort!
         select_workload unexplored
       end
 
@@ -60,6 +62,8 @@ module CloudCapacitor
       end
 
       def unexplored_capacity_levels(workload: capacitor.current_workload, category: capacitor.current_category)
+        return Hash.new {[]} if workload.nil?
+        return Hash.new {[]} if category.nil?
         graph = capacitor.deployment_space.graph
         levels = graph.capacity_levels[category]
 
