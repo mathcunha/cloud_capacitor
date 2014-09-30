@@ -92,22 +92,3 @@ end
 #     end
 #   end
 # end
-
-# grafo = capacitor.deployment_space.graph
-# grafo.capacity_levels.each_pair do |categoria, alturas|
-#   puts "Categoria #{categoria.name}"
-#   alturas.each_pair do |altura, configs|
-#     puts "  Altura #{altura} - #{configs.map { |c| c.fullname } }"
-#   end
-# end
-
-
-# puts "_" * 80
-# puts ""
-# puts "Execution count: #{capacitor.executions} executions. Total cost: $#{capacitor.run_cost.round(3)}\n\n"
-# candidates = capacitor.candidates_for.sort.map { |k,v| "Workload #{k}: #{v.sort {|x,y| x.price <=> y.price }.map {|c| c.fullname}.join(", ")}" }.join("\n\n")
-# puts "Candidate configs are as follows:\n\n#{candidates}\n\n\n" unless candidates.empty?
-# puts "No configs were able to meet the SLA parameter.\n" if candidates.empty?
-# rejected = capacitor.rejected_for.sort.map { |k,v| "Workload #{k}: #{v.sort {|x,y| x.price <=> y.price }.map {|c| c.fullname}.join(", ")}" }.join("\n\n")
-# puts "Rejected configs are as follows:\n\n#{rejected}\n\n" unless rejected.empty?
-# puts "All configs were able to meet the SLA parameter.\n" if rejected.empty?

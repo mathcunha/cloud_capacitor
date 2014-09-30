@@ -67,7 +67,7 @@ module CloudCapacitor
 
         mark_candidates_for @current_workload if result.met_sla?
         mark_rejected_for @current_workload unless result.met_sla?
-#byebug #ate executions == 21
+
         equivalent_configs.delete current_config unless equivalent_configs.nil?
 
         next_config = equivalent_configs.delete_at(0) unless equivalent_configs.nil?

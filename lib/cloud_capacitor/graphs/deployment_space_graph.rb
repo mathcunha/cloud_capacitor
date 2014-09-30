@@ -16,6 +16,10 @@ module CloudCapacitor
       mode == :strict
     end
 
+    def capacity_levels
+      @capacity_levels.deep_dup
+    end
+
     def find_category(name)
       @categories[@categories.index { |c| c.name == name }]
     end

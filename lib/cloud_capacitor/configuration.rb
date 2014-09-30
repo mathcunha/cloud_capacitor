@@ -14,7 +14,7 @@ module CloudCapacitor
     end
 
     def fullname
-      "#{@size}.#{@vm_type.name}"
+      "#{@size}_#{@vm_type.name}"
     end
 
     def mem
