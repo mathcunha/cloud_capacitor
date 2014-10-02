@@ -120,6 +120,7 @@ module CloudCapacitor
       cfgs = from
       adjacent = from[0]
       while from.size > 0
+        cfgs_temp = []
         from.each do |source|
           adjacent = graph.adjacent(source)
           unless adjacent.nil?
@@ -132,10 +133,11 @@ module CloudCapacitor
               adjacent.select! { |c| c.method(mode).call > source.method(mode).call } if direction == :up
               adjacent.select! { |c| c.method(mode).call < source.method(mode).call } if direction == :down
             end
-            cfgs += adjacent
+            cfgs_temp += adjacent
           end
         end
-        from = adjacent
+        from = cfgs_temp.uniq
+        cfgs += from
       end
       cfgs.uniq.sort { |x,y| x.price <=> y.price }
     end

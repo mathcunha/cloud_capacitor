@@ -91,7 +91,6 @@ module CloudCapacitor
         end
 
         if next_config.nil? && @current_workload.nil?
-# byebug
           @current_workload = @strategy.select_workload(unexplored_workloads_for)
 
           categs = @deployment_space.graph.categories
