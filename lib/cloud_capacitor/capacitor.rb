@@ -87,7 +87,10 @@ module CloudCapacitor
           @current_workload = @strategy.raise_workload if result.met_sla?
           @current_workload = @strategy.lower_workload unless result.met_sla?
           equivalent_configs = filter_explored deployment_space.capacity_level(current_config)
-          next_config = equivalent_configs[0] unless equivalent_configs.nil?
+          unless equivalent_configs.nil?
+            next_config = current_config if equivalent_configs.include? current_config
+            next_config = equivalent_configs[0] if next_config.nil?
+          end
         end
 
         if next_config.nil? && @current_workload.nil?
