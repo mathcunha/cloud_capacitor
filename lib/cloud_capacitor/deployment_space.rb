@@ -55,7 +55,7 @@ module CloudCapacitor
       @root = DeploymentSpaceBuilder.create_root_node
       # log.debug "Generating graph by #{@mode} mode"
       @graph = DeploymentSpaceBuilder.graph(root, @mode)
-      # @graph.write_to_graphic_file('jpg','#{@mode}_graph')
+      # @graph.write_to_graphic_file('jpg',"#{@mode}_graph")
     end
     
     def take(config)
