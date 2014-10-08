@@ -126,7 +126,7 @@ module CloudCapacitor
           unless adjacent.nil?
             # Get rid of fake nodes like root and categories
             adjacent.select! { |c| c.size > 0 }
-            if strict_mode?
+            if mode == :strict
               adjacent.select! { |c| c > source  || source.size == 0} if direction == :up
               adjacent.select! { |c| c < source  || source.size == 0} if direction == :down
             else
@@ -143,11 +143,6 @@ module CloudCapacitor
     end
 
     private
-    def strict_mode?
-        Settings.deployment_space.use_strict_comparison_mode == 1
-      end
-
-
       def load_deployment_space_from(file)
         depl_space = []
         File.open file do |f|
