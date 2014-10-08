@@ -47,18 +47,7 @@ module CloudCapacitor
       end
 
       def select_initial_capacity_level
-        depspace = capacitor.deployment_space
-
-        case @cfg_approach
-          when :pessimistic
-            depspace.last(from_category: capacitor.current_category)
-          when :optimistic
-            depspace.first(from_category: capacitor.current_category)
-          when :conservative
-            depspace.middle(from_category: capacitor.current_category)
-          when :random
-            depspace.random
-        end
+        take_a_capacity_level_from(unexplored_capacity_levels)
       end
 
       def unexplored_capacity_levels(workload: capacitor.current_workload, category: capacitor.current_category)
