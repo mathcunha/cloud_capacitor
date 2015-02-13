@@ -8,15 +8,16 @@ module CloudCapacitor
     attr_accessor :vm_types, :vm_types_by_cpu, :vm_types_by_mem, :vm_types_by_price
     attr_accessor :current_config, :max_price, :root
 
-    attr_reader   :graph, :mode
+    attr_reader   :graph, :mode, :catbypass
     attr_reader   :graph_by_cpu, :graph_by_mem, :graph_by_price
     attr_reader   :configs, :categories, :configs_by_price, :strict_graph
 
     DEFAULT_DEPLOYMENT_SPACE_FILE = File.join( File.expand_path('../../..', __FILE__), "wordpress_deployment_space.yml" )
     TRAVERSAL_MODES = [:cpu, :mem, :price, :strict]
     
-    def initialize(mode: :strict, file:DEFAULT_DEPLOYMENT_SPACE_FILE, vm_types: [])
+    def initialize(mode: :strict, file:DEFAULT_DEPLOYMENT_SPACE_FILE, vm_types: [], catbypass: false)
       @mode = mode
+      @catbypass = catbypass
       if vm_types.size > 0
         self.vm_types = vm_types
       else
@@ -148,6 +149,9 @@ module CloudCapacitor
         File.open file do |f|
           depl_space = YAML::load( f.read )
         end
+
+	depl_space.each{|vm_type| vm_type.category = "vm"} if catbypass
+
         raise Err::InvalidConfigurationFileError if depl_space.reject { |x| x.instance_of? CloudCapacitor::VMType }.size > 0
         depl_space
       end

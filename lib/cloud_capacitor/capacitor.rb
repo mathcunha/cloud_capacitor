@@ -9,11 +9,11 @@ module CloudCapacitor
     attr_reader   :candidates_for, :candidates, :rejected_for, :executed_for, :current_config
     attr_reader   :executions, :run_cost, :execution_trace, :results_trace
 
-    def initialize(mode=:strict)
+    def initialize(mode=:strict, catbypass=false)
       # mode = :strict
       # mode = :price if Settings.deployment_space.use_strict_comparison_mode == 0
 
-      @deployment_space = DeploymentSpace.new mode: mode
+      @deployment_space = DeploymentSpace.new mode: mode, catbypass: catbypass
       @executor = Executors::DefaultExecutor.new
     end
     
