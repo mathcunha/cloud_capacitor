@@ -43,7 +43,7 @@ module CloudCapacitor
         #Sort each category configs in order
         #to find the tiniest one
         configs.sort! { |x, y| x.method(property).call <=> y.method(property).call }
-        first = configs.select { |cfg| cfg.method(property) == configs[0].method(property) }
+        first = configs.select { |cfg| cfg.method(property).call == configs[0].method(property).call }
 
         #Each category is a branch from the graph root
         #So, round-trip connect the first configs to the root
