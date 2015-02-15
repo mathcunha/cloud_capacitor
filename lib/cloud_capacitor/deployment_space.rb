@@ -32,6 +32,7 @@ module CloudCapacitor
     end
 
     def build_deployment_space
+      validate_catbypass
       @vm_types_by_cpu   = @vm_types.sort { |x,y| x.cpu <=> y.cpu }
       @vm_types_by_mem   = @vm_types.sort { |x,y| x.mem <=> y.mem }
       @vm_types_by_price = @vm_types.sort { |x,y| x.price <=> y.price }
@@ -56,7 +57,7 @@ module CloudCapacitor
       @root = DeploymentSpaceBuilder.create_root_node
       # log.debug "Generating graph by #{@mode} mode"
       @graph = DeploymentSpaceBuilder.graph(root, @mode)
-      # @graph.write_to_graphic_file('jpg',"#{@mode}_graph")
+      # @graph.write_to_graphic_file('jpg',"#{@mode}_#{@catbypass}_graph")
     end
     
     def take(config)
@@ -158,6 +159,10 @@ module CloudCapacitor
 
       def validate_modes(mode)
         raise Err::InvalidModeError, "Unsupported mode: #{mode}. Supported modes are: #{modes}" if !TRAVERSAL_MODES.include? mode
+      end
+
+      def validate_catbypass
+	      raise Err::InvalidModeError, "Unsupported config. #{@mode} and bypass #{@catbypass} - LOOP!" if @catbypass && @mode == :strict
       end
 
       def rank(config, mode)
