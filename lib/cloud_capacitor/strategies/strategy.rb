@@ -9,8 +9,15 @@ module CloudCapacitor
       end
 
       def approach(workload:, config:)
-        @wkl_approach = workload if [:optimistic, :conservative, :pessimistic, :random].include? workload
-        @cfg_approach = config if [:optimistic, :conservative, :pessimistic, :random].include? config
+        @wkl_approach = workload if [:optimistic, :conservative, :pessimistic, :random, :hybrid].include? workload
+        @cfg_approach = config if [:optimistic, :conservative, :pessimistic, :random, :hybrid].include? config
+      end
+
+      def validate_approach(mode)
+        if (@wkl_approach == :hybrid || @cfg_approach == :hybrid)
+		return false if (mode != :mem && mode != :cpu)
+	end
+	return true
       end
 
       def select_initial_category
@@ -34,7 +41,9 @@ module CloudCapacitor
       end
 
       def select_workload(workload_list)
-        case @wkl_approach
+	local_approach = @wkl_approach
+	local_approach = hybrid_select() if local_approach == :hybrid
+        case local_approach
           when :pessimistic
             workload_list.first
           when :optimistic
@@ -79,7 +88,9 @@ module CloudCapacitor
       def take_a_capacity_level_from(unexplored_levels)
         levels = unexplored_levels.keys
         return [] if levels.empty?
-        case @cfg_approach
+	local_approach = @cfg_approach
+	local_approach = hybrid_select() if local_approach == :hybrid
+        case local_approach
           when :pessimistic
             unexplored_levels.assoc(levels[-1])
           when :optimistic
@@ -89,6 +100,16 @@ module CloudCapacitor
           when :random
             unexplored_levels.assoc(levels.sample)
         end
+      end
+
+      def hybrid_select()
+	 #puts "#{capacitor.deployment_space.mode} - [#{capacitor.current_result.cpu}, #{capacitor.current_result.mem}]" unless capacitor.current_result.nil?
+	 return :conservative if capacitor.current_result.nil?
+	 
+	 usage = capacitor.current_result.method(capacitor.deployment_space.mode).call
+	 return :optimistic if usage == :low
+	 return :conservative if usage == :moderate
+	 return :pessimistic if usage == :high
       end
 
     end

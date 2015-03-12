@@ -6,7 +6,7 @@ module CloudCapacitor
     attr_accessor :deployment_space
     attr_accessor :executor, :strategy
     attr_accessor :current_workload, :workloads, :current_category
-    attr_reader   :candidates_for, :candidates, :rejected_for, :executed_for, :current_config
+    attr_reader   :candidates_for, :candidates, :rejected_for, :executed_for, :current_config, :current_result
     attr_reader   :executions, :run_cost, :execution_trace, :results_trace
 
     def initialize(mode=:strict, catbypass=false)
@@ -21,6 +21,7 @@ module CloudCapacitor
       raise Err::NoExecutorConfiguredError if @executor.nil?
       raise Err::NoStrategyConfiguredError if @strategy.nil?
       raise ArgumentError if invalid_workloads?(workload_list)
+      raise ArgumentError if !strategy.validate_approach(deployment_space.mode)
       
       @workloads = Array.new(workload_list)
 
@@ -59,6 +60,7 @@ module CloudCapacitor
       while !stop do
 
         result = @executor.run(configuration: current_config, workload: @current_workload)
+	@current_result = result
         @executions += 1
         @run_cost += current_config.price
 

@@ -16,13 +16,15 @@ module CloudCapacitor
     end
     
     def cpu
-      return :high  if raw_cpu > Settings.capacitor.cpu_limit
-      return :low_moderate
+      return :high  if raw_cpu > Settings.capacitor.cpu_moderate
+      return :low if raw_cpu < Settings.capacitor.cpu_low
+      return :moderate
     end
 
     def mem
-      return :high  if raw_mem > Settings.capacitor.mem_limit
-      return :low_moderate
+      return :high  if raw_mem > Settings.capacitor.mem_moderate
+      return :low if raw_mem < Settings.capacitor.mem_low
+      return :moderate
     end
 
     def met_sla?
